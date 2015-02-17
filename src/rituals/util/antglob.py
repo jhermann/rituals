@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+""" Recursive globbing with ant-style syntax.
+"""
 #
 # The MIT License (MIT)
 #
@@ -26,10 +28,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import itertools
-import os, os.path
+import os
 import re
 import sys
+import itertools
 
 
 class Pattern(object):
@@ -66,7 +68,7 @@ class Pattern(object):
         return self.compiled.match(path) is not None
 
 
-class Fileset(object):
+class FileSet(object):
     """
         Ant style file matching.
 
@@ -124,7 +126,7 @@ class Fileset(object):
 
 
 def includes(pattern):
-    return Pattern(pattern, inclusive = True)
+    return Pattern(pattern, inclusive=True)
 
 def excludes(pattern):
-    return Pattern(pattern, inclusive = False)
+    return Pattern(pattern, inclusive=False)
