@@ -1,0 +1,4 @@
+#
+# Additional files for source distribution
+#
+include README.md LICENSE requirements.txt *-requirements.txt
