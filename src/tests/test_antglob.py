@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+""" Tests for `rituals.util.antglob`.
+"""
 #
 # The MIT License (MIT)
 #
@@ -29,27 +31,41 @@
 import os
 import shutil
 import tempfile
-
 from os.path import join
 
-import nose
-from nose.tools import *
+import pytest
 
-from paver.easy import path
+from rituals.util.antglob import *
 
-from fileset import *
 
-def setup():
-    global root
-    root = tempfile.mkdtemp()
-    foo = join(root, "foo")
+@pytest.fixture(scope='module')
+def root(request):
+    """ Root of filesystem layout for tests.
+
+        ./foo/
+        ./foo/bar/
+        ./foo/bar/baz/
+        ./foo/bar/baz/...
+        ./foo/bar/baz/three
+        ./foo/bar/baz/three.py
+        ./foo/bar/two
+        ./foo/bar/two.py
+        ./foo/one
+        ./foo/one.py
+        ./zero
+        ./zero.py
+    """
+    rootpath = tempfile.mkdtemp()
+    request.addfinalizer(lambda: shutil.rmtree(rootpath))
+
+    foo = join(rootpath, "foo")
     bar = join(foo, "bar")
     baz = join(bar, "baz")
     os.makedirs(baz)
 
     new = (
-        join(root, "zero.py"),
-        join(root, "zero"),
+        join(rootpath, "zero.py"),
+        join(rootpath, "zero"),
         join(foo, "one.py"),
         join(foo, "one"),
         join(bar, "two.py"),
@@ -59,24 +75,24 @@ def setup():
         join(baz, "..."),
     )
 
-    def touch(path):
-        with open(path, "a"):
-            pass
+    for path in new:
+        open(path, "a").close()
 
-    for p in new:
-        touch(p)
+    return rootpath
 
-def teardown():
-    shutil.rmtree(root)
 
-def check(pattern, expected):
-    actual = sorted(Fileset(root, [includes(pattern)]))
-    eq_(sorted(expected), actual)
+def assert_sets_equal(s1, s2):
+    """Helper to compare sets."""
+    assert list(sorted(s1)) == list(sorted(s2))
+
+
+def check_glob(root, pattern, expected):
+    assert_sets_equal(FileSet(root, [includes(pattern)]), expected)
 
 
 ALL_THE_PIES = ["zero.py", "foo/one.py", "foo/bar/two.py", "foo/bar/baz/three.py"]
 
-def test_empty():
+def test_empty(root):
     cases = (
         ("foo/blah/*.py", []),
         ("*.blah", []),
@@ -86,10 +102,10 @@ def test_empty():
     )
 
     for pattern, results in cases:
-        yield check, pattern, results
+        check_glob(root, pattern, results)
 
 
-def test_glob():
+def test_glob(root):
     cases = [
         ("*.py", ["zero.py"]),
         ("foo/*.py", ["foo/one.py"]),
@@ -98,20 +114,20 @@ def test_glob():
     ]
 
     for pattern, results in cases:
-        yield check, pattern, results
+        check_glob(root, pattern, results)
 
 
-def test_exact():
+def test_exact(root):
     cases = [
         ("zero.py", ["zero.py"]),
         ("foo/bar/baz/three.py", ["foo/bar/baz/three.py"]),
     ]
 
     for pattern, results in cases:
-        yield check, pattern, results
+        check_glob(root, pattern, results)
 
 
-def test_recursive():
+def test_recursive(root):
     cases = (
         ("**/...", ["foo/bar/baz/..."]),
         ("**/*.py", ALL_THE_PIES),
@@ -119,38 +135,33 @@ def test_recursive():
     )
 
     for pattern, results in cases:
-        yield check, pattern, results
+        check_glob(root, pattern, results)
 
 
-def check_multi((paths, expected)):
-    actual = sorted(paths)
-    eq_(sorted(expected), actual)
-
-
-def test_multi():
-    a = Fileset(root, [
+def test_multi(root):
+    a = FileSet(root, [
         includes("*.py"),
         includes("*/*.py"),
     ])
 
-    b = Fileset(root, [
+    b = FileSet(root, [
         includes("**/zero*"),
         includes("**/one*"),
     ])
 
-    c = Fileset(root, [
+    c = FileSet(root, [
         includes("**/*"),
         excludes("**/*.py"),
         excludes("**/baz/*"),
     ])
 
-    d = Fileset(root, [
+    d = FileSet(root, [
         includes("**/*.py"),
         excludes("**/foo/**/*"),
         includes("**/baz/**/*.py"),
     ])
 
-    e = Fileset(root, [
+    e = FileSet(root, [
         includes("**/*.py"),
         excludes("**/two.py"),
         excludes("**/three.py"),
@@ -164,21 +175,21 @@ def test_multi():
         (e, ["zero.py", "foo/one.py"]),
     )
 
-    for case in cases:
-        yield check_multi, case
+    for result, expected in cases:
+        assert_sets_equal(result, expected)
 
-def test_set():
-    a = Fileset(root, [
+
+def test_set(root):
+    a = FileSet(root, [
         includes("**/*.py")
     ])
 
-    b = Fileset(root, [
+    b = FileSet(root, [
         includes("**/*"),
         excludes("**/bar/**/*"),
     ])
 
-    c = Fileset(root, [])
-
+    c = FileSet(root, [])
 
     cases = (
         (a | b, ALL_THE_PIES + ["zero", "foo/one"]),
@@ -190,9 +201,5 @@ def test_set():
         (a & b & c, []),
     )
 
-    for case in cases:
-        yield check_multi, case
-
-
-if __name__ == "__main__":
-    nose.main()
+    for result, expected in cases:
+        assert_sets_equal(result, expected)
