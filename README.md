@@ -17,11 +17,27 @@ from rituals.invoke import *
 
 Of course, you can also do more selective imports, or remove specific tasks from the standard set via `del`.
 
+To refer to the current GitHub ``master`` branch, use a ``pip`` requirement like this:
+
+```
+-e git+https://github.com/jhermann/rituals.git#egg=rituals
+```
+
 
 ## Contributing
 
 To create a working directory for this project, call these commands:
 
-… **TODO**
+```sh
+git clone https://github.com/jhermann/rituals.git
+cd rituals; deactivate; /usr/bin/virtualenv .; . ./bin/activate
+./bin/pip install -U pip; ./bin/pip install -r dev-requirements.txt
+invoke build --docs
+```
 
-See CONTRIBUTING.md for more.
+To use the source in this working directory within another project,
+first activate that project's virtualenv.
+Then change your current directory to _this_ project,
+and either call ``pip install -e .`` or ``python setup.py develop -U``.
+
+See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
