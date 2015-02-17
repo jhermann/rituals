@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=
 """ py.test dynamic configuration.
+
+    For details needed to understand these tests, refer to:
+        https://pytest.org/
+        http://pythontesting.net/start-here/
 """
 # Copyright ⓒ  2015 Jürgen Hermann
 #
