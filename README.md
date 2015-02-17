@@ -47,4 +47,5 @@ See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTI
 
 ## Acknowledgements
 
+* Logo elements from [clker.com Free Clipart](http://www.clker.com/).
 * In case you wonder about the logo, [watch this](http://youtu.be/9VDvgL58h_Y).
