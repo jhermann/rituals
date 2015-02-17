@@ -2,6 +2,8 @@
 
 Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and again.
 
+![GPL v2 licensed](http://img.shields.io/badge/license-GPL_v2-red.svg)
+
 
 ## Usage
 
