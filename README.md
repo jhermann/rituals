@@ -2,6 +2,8 @@
 
 Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and again.
 
+![GINOSAJI](https://raw.githubusercontent.com/jhermann/rituals/master/static/img/logo-60.png) … and again and again.
+
 ![GPL v2 licensed](http://img.shields.io/badge/license-GPL_v2-red.svg)
 
 
@@ -41,3 +43,8 @@ Then change your current directory to _this_ project,
 and either call ``pip install -e .`` or ``python setup.py develop -U``.
 
 See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
+
+
+## Acknowledgements
+
+* In case you wonder about the logo, [watch this](http://youtu.be/9VDvgL58h_Y).
