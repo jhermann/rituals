@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-few-public-methods
 """ Recursive globbing with ant-style syntax.
 """
 #
@@ -30,8 +31,6 @@
 
 import os
 import re
-import sys
-import itertools
 
 # TODO: allow '?'
 # TODO: prune excluded directories during walk()
@@ -47,39 +46,46 @@ def glob2re(part):
     )
 
 
+def parse_glob(pattern):
+    """Generate parts of regex transformed from glob pattern."""
+    if not pattern:
+        raise StopIteration
+
+    bits = pattern.split("/")
+    dirs, filename = bits[:-1], bits[-1]
+
+    for dirname in dirs:
+        if dirname == "**":
+            yield  "(|.+/)"
+
+        else:
+            yield glob2re(dirname) + "/"
+
+    yield glob2re(filename)
+
+
+def compile_glob(spec):
+    """Convert the given glob `spec` to a compiled regex."""
+    parsed = "".join(parse_glob(spec))
+    regex = "^{0}$".format(parsed)
+    return re.compile(regex)
+
+
 class Pattern(object):
     """A single pattern for either inclusion or exclusion."""
 
     def __init__(self, spec, inclusive):
-        self.compiled = self.compile(spec)
+        """Create regex-based pattern matcher from glob `spec`."""
+        self.compiled = compile_glob(spec)
         self.inclusive = inclusive
 
     def __str__(self):
+        """Return inclusiveness indicator and original glob pattern."""
         return ('+' if self.inclusive else '-') + self.compiled.pattern
 
-    def compile(self, spec):
-        parse = "".join(self.parse(spec))
-        regex = "^{0}$".format(parse)
-        return re.compile(regex)
-
-    def parse(self, pattern):
-        if not pattern:
-            raise StopIteration
-
-        bits = pattern.split("/")
-        dirs, file = bits[:-1], bits[-1]
-
-        for dir in dirs:
-            if dir == "**":
-                yield  "(|.+/)"
-
-            else:
-                yield glob2re(dir) + "/"
-
-        yield glob2re(file)
-
     def matches(self, path):
-        return self.compiled.match(path) is not None
+        """Check this pattern against given `path`."""
+        return bool(self.compiled.match(path))
 
 
 class FileSet(object):
@@ -134,7 +140,12 @@ class FileSet(object):
         return self & other
 
     def walk(self, **kwargs):
-        for base, dirs, files in os.walk(self.root, **kwargs):
+        """ Like `os.walk` and taking the same keyword arguments,
+            but generating paths relative to the root.
+
+            Starts in the fileset's root and filters based on its patterns.
+        """
+        for base, _, files in os.walk(self.root, **kwargs):
             prefix = base[len(self.root):].lstrip(os.sep)
             bits = prefix.split(os.sep) if prefix else []
 
@@ -143,8 +154,12 @@ class FileSet(object):
                 if self.included(path):
                     yield path
 
+
 def includes(pattern):
+    """A single inclusive glob pattern."""
     return Pattern(pattern, inclusive=True)
 
+
 def excludes(pattern):
+    """A single exclusive glob pattern."""
     return Pattern(pattern, inclusive=False)
