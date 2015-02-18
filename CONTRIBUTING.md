@@ -18,8 +18,8 @@ The easiest way to provide examples or related documentation that helps other us
 is the *GitHub wiki*.
 
 If you are comfortable with the Sphinx documentation tool, you can also prepare a
-pull request with changes to the core documentation. 
-GitHub's built-in text editor makes this especially easy, when you choose the 
+pull request with changes to the core documentation.
+GitHub's built-in text editor makes this especially easy, when you choose the
 _“Create a new branch for this commit and start a pull request”_ option on saving.
 Small fixes for typos and the like are a matter of minutes when using that tool.
 
@@ -29,7 +29,7 @@ Small fixes for typos and the like are a matter of minutes when using that tool.
 Here's a quick guide to improve the code:
 
 1. Fork the repo, and clone the fork to your machine.
-1. Add your improvements, the technical details are futher below.
+1. Add your improvements, the technical details are further below.
 1. Run the tests and make sure they're passing (`invoke test`).
 1. Check for violations of code conventions (`invoke check`).
 1. Make sure the documentation builds without errors (`invoke build --docs`).
