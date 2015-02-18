@@ -6,6 +6,9 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
 
 ![GPL v2 licensed](http://img.shields.io/badge/license-GPL_v2-red.svg)
 
+| :warning: | For the moment, these tasks assume a project layout as found in [javaprops](https://github.com/Feed-The-Web/javaprops) and [py-generic-project](https://github.com/Springerle/py-generic-project). |
+|:---:|:---:|
+
 
 ## Usage
 
