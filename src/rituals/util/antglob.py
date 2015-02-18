@@ -34,6 +34,7 @@ import re
 
 # TODO: allow '?'
 # TODO: prune excluded directories during walk()
+# TODO: matching for Windows? (need to canonize to forward slashes in 'root')
 
 __all__ = ['FileSet', 'includes', 'excludes']
 
@@ -57,7 +58,6 @@ def parse_glob(pattern):
     for dirname in dirs:
         if dirname == "**":
             yield  "(|.+/)"
-
         else:
             yield glob2re(dirname) + "/"
 
