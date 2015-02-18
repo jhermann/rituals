@@ -33,6 +33,7 @@ import os
 import re
 
 # TODO: allow '?'
+# TODO: Add matching for directories if pattern ends with a slash
 # TODO: prune excluded directories during walk()
 # TODO: matching for Windows? (need to canonize to forward slashes in 'root')
 
