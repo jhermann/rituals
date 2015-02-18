@@ -36,18 +36,26 @@ import itertools
 # TODO: allow '?'
 # TODO: prune excluded directories during walk()
 
+__all__ = ['FileSet', 'includes', 'excludes']
 
-def globify(part):
-    return "[^/]*".join(re.escape(bit).replace(r'\[', '[').replace(r'\]', ']') for bit in part.split("*"))
+
+def glob2re(part):
+    """Convert a path part to regex syntax."""
+    return "[^/]*".join(
+        re.escape(bit).replace(r'\[', '[').replace(r'\]', ']')
+        for bit in part.split("*")
+    )
 
 
 class Pattern(object):
+    """A single pattern for either inclusion or exclusion."""
+
     def __init__(self, spec, inclusive):
         self.compiled = self.compile(spec)
         self.inclusive = inclusive
 
     def __str__(self):
-        return self.compiled.pattern
+        return ('+' if self.inclusive else '-') + self.compiled.pattern
 
     def compile(self, spec):
         parse = "".join(self.parse(spec))
@@ -66,9 +74,9 @@ class Pattern(object):
                 yield  "(|.+/)"
 
             else:
-                yield globify(dir) + "/"
+                yield glob2re(dir) + "/"
 
-        yield globify(file)
+        yield glob2re(file)
 
     def matches(self, path):
         return self.compiled.match(path) is not None

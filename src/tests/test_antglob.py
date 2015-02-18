@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=wildcard-import, missing-docstring, redefined-outer-name, invalid-name, no-self-use
 """ Tests for `rituals.util.antglob`.
 """
 #
@@ -31,11 +32,30 @@
 import os
 import shutil
 import tempfile
+import unittest
 from os.path import join
 
 import pytest
 
+from rituals.util import antglob
 from rituals.util.antglob import *
+
+
+class Glob2reTest(unittest.TestCase):
+
+    def test_star_import(self):
+        assert 'glob2re' not in globals()
+
+    def test_star(self):
+        assert antglob.glob2re('a*b') == 'a[^/]*b'
+        assert antglob.glob2re('a*b*') == 'a[^/]*b[^/]*'
+
+    def test_charset(self):
+        assert antglob.glob2re('[abc]') == '[abc]'
+
+    def test_escape(self):
+        assert antglob.glob2re('\\') == r'\\'
+        assert antglob.glob2re('+') == r'\+'
 
 
 @pytest.fixture(scope='module')
@@ -58,21 +78,21 @@ def root(request):
     rootpath = tempfile.mkdtemp()
     request.addfinalizer(lambda: shutil.rmtree(rootpath))
 
-    foo = join(rootpath, "foo")
-    bar = join(foo, "bar")
-    baz = join(bar, "baz")
-    os.makedirs(baz)
+    dir_foo = join(rootpath, "foo")
+    dir_bar = join(dir_foo, "bar")
+    dir_baz = join(dir_bar, "baz")
+    os.makedirs(dir_baz)
 
     new = (
         join(rootpath, "zero.py"),
         join(rootpath, "zero"),
-        join(foo, "one.py"),
-        join(foo, "one"),
-        join(bar, "two.py"),
-        join(bar, "two"),
-        join(baz, "three.py"),
-        join(baz, "three"),
-        join(baz, "..."),
+        join(dir_foo, "one.py"),
+        join(dir_foo, "one"),
+        join(dir_bar, "two.py"),
+        join(dir_bar, "two"),
+        join(dir_baz, "three.py"),
+        join(dir_baz, "three"),
+        join(dir_baz, "..."),
     )
 
     for path in new:
@@ -87,7 +107,7 @@ def assert_sets_equal(s1, s2):
 
 
 def check_glob(root, pattern, expected):
-    assert_sets_equal(FileSet(root, [includes(pattern)]), expected)
+    assert_sets_equal(antglob.FileSet(root, [antglob.includes(pattern)]), expected)
 
 
 ALL_THE_PIES = ["zero.py", "foo/one.py", "foo/bar/two.py", "foo/bar/baz/three.py"]
