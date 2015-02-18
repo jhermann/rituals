@@ -66,14 +66,19 @@ def test():
 
 
 @task
-def check():
+def check(skip_tests=False):
     """Perform source code checks."""
     os.chdir(project_root)
-    run('pylint "{0}"'.format(srcfile('src', project['name'])))
-
+    cmd = 'pylint "{0}"'.format(srcfile('src', project['name']))
+    if not skip_tests:
+        test_root = srcfile('src', 'tests')
+        test_py = FileSet(test_root, [includes('**/*.py')])
+        test_py = [os.path.join(test_root, i) for i in test_py]
+        if test_py:
+            cmd += ' "{0}"'.format('" "'.join(test_py))
+    run(cmd)
 
 @task
 def ci(): # pylint: disable=invalid-name
     """Perform continuous integration tasks."""
     run("invoke clean --all build --docs test check")
-
