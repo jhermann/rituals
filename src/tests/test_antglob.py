@@ -58,6 +58,28 @@ class Glob2reTest(unittest.TestCase):
         assert antglob.glob2re('+') == r'\+'
 
 
+class ParseGlobTest(unittest.TestCase):
+
+    def test_star_import(self):
+        assert 'parse_glob' not in globals()
+
+    def test_empty(self):
+        assert not list(antglob.parse_glob(None))
+        assert not list(antglob.parse_glob(''))
+
+    def test_twinstar(self):
+        assert list(antglob.parse_glob('a/**/b')) == ['a/', '(|.+/)', 'b']
+
+    def test_trailing_slash(self):
+        assert list(antglob.parse_glob('a/b/')) == ['a/', 'b/', '']
+
+    def test_path_glob(self):
+        assert list(antglob.parse_glob('a*b/c')) == ['a[^/]*b/', 'c']
+
+    def test_abspath(self):
+        assert list(antglob.parse_glob('/root')) == ['/', 'root']
+
+
 @pytest.fixture(scope='module')
 def root(request):
     """ Root of filesystem layout for tests.
