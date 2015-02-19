@@ -51,7 +51,7 @@ def help(): # pylint: disable=redefined-builtin
 
 
 @task
-def clean(docs=False, backups=False, bytecode=False, dist=False,
+def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disable=redefined-outer-name
         all=False, venv=False, extra=''): # pylint: disable=redefined-builtin
     """Perform house-cleaning."""
     cfg = config.load()
@@ -93,7 +93,7 @@ def build(docs=False):
 @task
 def dist(devpi=False, egg=True, wheel=False):
     """Distribute the project."""
-    cfg = config.load()
+    config.load()
     cmd = ["python", "setup.py", "sdist"]
     if egg:
         cmd.append("bdist_egg")
