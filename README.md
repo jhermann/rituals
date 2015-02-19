@@ -6,6 +6,22 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
 
 ![GPL v2 licensed](http://img.shields.io/badge/license-GPL_v2-red.svg)
 
+## Common Tasks
+
+The following describes the common task implementations that the ``invoke_tasks`` module contains.
+See the next section on how to integrate them into your `tasks.py`.
+
+* ``help`` –    Default task, when invoked with no task names.
+* ``clean`` –   Perform house-cleaning.
+* ``build`` –   Build the project.
+* ``dist`` –    Distribute the project.
+* ``test`` –    Perform standard unittests.
+* ``check`` –   Perform source code checks.
+
+Use ``inv -h ‹task›`` as usual to get details on the options of these tasks.
+Look at the [invoke_tasks](https://github.com/jhermann/rituals/blob/master/src/rituals/invoke_tasks.py) source
+if you want to know what these tasks do exactly.
+
 
 ## Usage
 
@@ -29,6 +45,7 @@ To refer to the current GitHub ``master`` branch, use a ``pip`` requirement like
 ```
 -e git+https://github.com/jhermann/rituals.git#egg=rituals
 ```
+
 
 ### Change default project layout
 
