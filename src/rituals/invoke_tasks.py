@@ -31,7 +31,7 @@ from rituals.util.antglob import *
 from rituals import config
 
 
-__all__ = ['config', 'help', 'clean', 'build', 'test', 'check']
+__all__ = ['config', 'help', 'clean', 'build', 'dist', 'test', 'check']
 
 
 def add_root2pypath(cfg):
@@ -90,6 +90,20 @@ def build(docs=False):
 
 
 @task
+def dist(devpi=False, egg=True, wheel=False):
+    """Distribute the project."""
+    cfg = config.load()
+    cmd = ["python", "setup.py", "sdist"]
+    if egg:
+        cmd.append("bdist_egg")
+
+    run("invoke clean --all build --docs test") # TODO: check
+    run(' '.join(cmd))
+    if devpi:
+        run("devpi upload dist/*")
+
+
+@task
 def test():
     """Perform standard unittests."""
     config.load()
@@ -108,4 +122,4 @@ def check(skip_tests=False):
         test_py = [cfg.testjoin(i) for i in test_py]
         if test_py:
             cmd += ' "{0}"'.format('" "'.join(test_py))
-    run(cmd)
+    run(cmd) # TODO: check return code and only abort on errors (or set threshold via options)
