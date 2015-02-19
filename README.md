@@ -6,11 +6,10 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
 
 ![GPL v2 licensed](http://img.shields.io/badge/license-GPL_v2-red.svg)
 
-| :warning: | For the moment, these tasks assume a project layout as found in [javaprops](https://github.com/Feed-The-Web/javaprops) and [py-generic-project](https://github.com/Springerle/py-generic-project). |
-|:---:|:---:|
-
 
 ## Usage
+
+### Add common tasks to your project's `task.py`
 
 Add `rituals` to your `dev-requirements.txt` or a similar file,
 or add it to `setup_requires` in your `setup.py`.
@@ -22,11 +21,28 @@ from rituals.invoke_tasks import *
 
 Of course, you can also do more selective imports, or remove specific tasks from the standard set via `del`.
 
+| :warning: | For now, these tasks expect an importable `setup.py` that defines a `project` dict with the setup parameters, see [javaprops](https://github.com/Feed-The-Web/javaprops) and [py-generic-project](https://github.com/Springerle/py-generic-project) for examples. |
+|:---:|:---:|
+
 To refer to the current GitHub ``master`` branch, use a ``pip`` requirement like this:
 
 ```
 -e git+https://github.com/jhermann/rituals.git#egg=rituals
 ```
+
+### Change default project layout
+
+By default, sources are expected in `src/‹packagename›` and tests in `src/tests`.
+
+You can change this by calling one of the following functions, directly after the import from `rituals.invoke_tasks`.
+
+* `config.set_maven_layout()` – Changes locations to `src/main/python` and `src/test/python`.
+* `config.set_flat_layout()` – Changes locations to `‹packagename›` and `tests`.
+
+
+### Change default project configuration
+
+**TODO**
 
 
 ## Contributing
