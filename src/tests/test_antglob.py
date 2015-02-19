@@ -253,3 +253,8 @@ def test_set(root):
 
     for result, expected in cases:
         assert_sets_equal(result, expected)
+
+
+def test_string_pattern(root):
+    assert list(antglob.FileSet(root, "*.py")) == ["zero.py"]
+    assert list(antglob.FileSet(root, ["*.py"])) == ["zero.py"]

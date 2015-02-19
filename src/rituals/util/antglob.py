@@ -111,8 +111,11 @@ class FileSet(object):
     """
 
     def __init__(self, root, patterns):
+        if isinstance(patterns, basestring):
+            patterns = [patterns]
+
         self.root = root
-        self.patterns = patterns
+        self.patterns = [i if hasattr(i, 'inclusive') else includes(i) for i in patterns]
 
     def __repr__(self):
         return "<FileSet at {0} {1}>".format(repr(self.root), ' '.join(str(i) for i in self. patterns))
