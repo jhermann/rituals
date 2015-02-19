@@ -62,9 +62,9 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
     if dist or all:
         patterns.append('dist/**/*')
     if backups or all:
-        patterns.extend(['*~', '**/*~'])
+        patterns.extend(['**/*~'])
     if bytecode or all:
-        patterns.extend(['*.py[co]', '**/*.py[co]', '**/__pycache__/**/*'])
+        patterns.extend(['**/*.py[co]', '**/__pycache__/**/*'])
 
     venv_dirs = ['bin', 'include', 'lib', 'share', 'local']
     if venv:
