@@ -3,6 +3,8 @@
 #
 
 pip==6.0.8
+# pip install -UI setuptools==12.1 wheel==0.24.0
+
 pylint==1.4.1
 bpython==0.13.1
 yolk==0.4.3

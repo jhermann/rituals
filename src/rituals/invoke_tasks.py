@@ -97,6 +97,8 @@ def dist(devpi=False, egg=True, wheel=False):
     cmd = ["python", "setup.py", "sdist"]
     if egg:
         cmd.append("bdist_egg")
+    if wheel:
+        cmd.append("bdist_wheel")
 
     run("invoke clean --all build --docs test") # TODO: check
     run(' '.join(cmd))
