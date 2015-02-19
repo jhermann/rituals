@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+# pylint: disable=bad-whitespace, attribute-defined-outside-init, invalid-name
 """ rituals – Common tasks for 'Invoke' that are needed again and again.
 
     Copyright ⓒ  2015 Jürgen Hermann
@@ -42,6 +43,7 @@ def srcfile(*args):
     return os.path.join(*((project_root,) + args))
 
 class PyTest(TestCommand):
+    """pytest integration into setuptool's `test` command."""
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
 
     def initialize_options(self):

@@ -4,7 +4,7 @@
 """
 
 from invoke import run, task
-from rituals.invoke_tasks import *
+from rituals.invoke_tasks import * # pylint: disable=redefined-builtin
 
 
 @task
