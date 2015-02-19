@@ -88,7 +88,12 @@ def _build_metadata():
         requires[key] = []
         if os.path.exists(srcfile(filename)):
             with open(srcfile(filename), 'r') as handle:
-                requires[key] = [i.strip() for i in handle if i.strip() and not i.startswith('#')]
+                for line in handle:
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        if line.startswith('-e'):
+                            line = line.split()[1].split('#egg=')[1]
+                        requires[key].append(line)
     if 'pytest' not in requires['test']:
         requires['test'].append('pytest')
 
