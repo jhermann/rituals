@@ -114,6 +114,9 @@ class FileSet(object):
         self.root = root
         self.patterns = patterns
 
+    def __repr__(self):
+        return "<FileSet at {0} {1}>".format(repr(self.root), ' '.join(str(i) for i in self. patterns))
+
     def included(self, path):
         """Check patterns in order, last match that includes or excludes `path` wins."""
         inclusive = False
