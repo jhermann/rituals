@@ -159,6 +159,14 @@ def test_glob(root):
         check_glob(root, pattern, results)
 
 
+def test_twinstar_matches_root_files(root):
+    root_py = set(antglob.FileSet(root, [antglob.includes('*.py')]))
+    all_py = set(antglob.FileSet(root, [antglob.includes('**/*.py')]))
+    assert len(root_py) == 1
+    assert len(all_py) > 1
+    assert root_py <= all_py
+
+
 def test_exact(root):
     cases = [
         ("zero.py", ["zero.py"]),
