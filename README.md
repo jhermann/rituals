@@ -53,7 +53,7 @@ By default, sources are expected in `src/‹packagename›` and tests in `src/te
 
 You can change this by calling one of the following functions, directly after the import from `rituals.invoke_tasks`.
 
-* `config.set_maven_layout()` – Changes locations to `src/main/python` and `src/test/python`.
+* `config.set_maven_layout()` – Changes locations to `src/main/python/‹packagename›` and `src/test/python`.
 * `config.set_flat_layout()` – Changes locations to `‹packagename›` and `tests`.
 
 
