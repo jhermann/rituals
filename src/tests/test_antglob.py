@@ -104,7 +104,7 @@ def root(request):
     dir_foo = join(rootpath, "foo")
     dir_bar = join(dir_foo, "bar")
     dir_baz = join(dir_bar, "baz")
-    hidden  = join(dir_bar, ".hidden")
+    hidden = join(dir_bar, ".hidden")
     os.makedirs(dir_baz)
     os.makedirs(hidden)
 
