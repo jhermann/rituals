@@ -43,7 +43,7 @@ __all__ = ['FileSet', 'includes', 'excludes']
 def glob2re(part):
     """Convert a path part to regex syntax."""
     return "[^/]*".join(
-        re.escape(bit).replace(r'\[', '[').replace(r'\]', ']')
+        re.escape(bit).replace(r'\[\^', '[^').replace(r'\[', '[').replace(r'\]', ']')
         for bit in part.split("*")
     )
 
@@ -77,8 +77,9 @@ class Pattern(object):
 
     def __init__(self, spec, inclusive):
         """Create regex-based pattern matcher from glob `spec`."""
-        self.compiled = compile_glob(spec)
+        self.compiled = compile_glob(spec.rstrip('/'))
         self.inclusive = inclusive
+        self.is_dir = spec.endswith('/')
 
     def __str__(self):
         """Return inclusiveness indicator and original glob pattern."""
@@ -90,24 +91,33 @@ class Pattern(object):
 
 
 class FileSet(object):
-    """ Ant style file matching.
+    """ Ant-style file and directory matching.
 
-        Produces an iterator of all of the files that match the provided pattern.
+        Produces an iterator of all of the files that match the provided patterns.
+        Note that directory matches must end with a slash, and if they're exclusions,
+        they won't be scanned (which prunes anything in that directory that would
+        otherwise match).
 
         Directory specifiers:
-            **          matches zero or more directories.
-            *           matches any directory name.
-            /           path separator.
+            **              matches zero or more directories.
+            /               path separator.
 
         File specifiers:
-            *           glob style wildcard.
-            [chars]     character sets.
+            *               glob style wildcard.
+            [chars]         inclusive character sets.
+            [^chars]        exclusive character sets.
 
         Examples:
             **/*.py         recursively match all python files.
-            foo/**/*.py     recursively match all python files in the foo/ directory.
-            *.py            match all the python files in the current diretory.
-            */*.txt         match all the text files in child directories.
+            foo/**/*.py     recursively match all python files in the 'foo' directory.
+            *.py            match all the python files in the current directory.
+            */*.txt         match all the text files in top-level directories.
+            foo/**/*        all files under directory 'foo'.
+            */              top-level directories.
+            foo/            the directory 'foo' itself.
+            **/foo/         any directory named 'foo'.
+            **/.*           hidden files.
+            **/.*/          hidden directories.
     """
 
     def __init__(self, root, patterns):
@@ -120,11 +130,11 @@ class FileSet(object):
     def __repr__(self):
         return "<FileSet at {0} {1}>".format(repr(self.root), ' '.join(str(i) for i in self. patterns))
 
-    def included(self, path):
-        """Check patterns in order, last match that includes or excludes `path` wins."""
-        inclusive = False
+    def included(self, path, is_dir=False):
+        """Check patterns in order, last match that includes or excludes `path` wins. Return `None` on undecided."""
+        inclusive = None
         for pattern in self.patterns:
-            if pattern.matches(path):
+            if pattern.is_dir == is_dir and pattern.matches(path):
                 inclusive = pattern.inclusive
 
         #print '+++' if inclusive else '---', path, pattern
@@ -152,9 +162,17 @@ class FileSet(object):
 
             Starts in the fileset's root and filters based on its patterns.
         """
-        for base, _, files in os.walk(self.root, **kwargs):
+        for base, dirs, files in os.walk(self.root, **kwargs):
             prefix = base[len(self.root):].lstrip(os.sep)
             bits = prefix.split(os.sep) if prefix else []
+
+            for dirname in dirs[:]:
+                path = '/'.join(bits + [dirname])
+                inclusive = self.included(path, is_dir=True)
+                if inclusive:
+                    yield path + '/'
+                elif inclusive is False:
+                    dirs.remove(dirname)
 
             for filename in files:
                 path = '/'.join(bits + [filename])

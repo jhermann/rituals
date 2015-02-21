@@ -86,6 +86,7 @@ def root(request):
 
         ./foo/
         ./foo/bar/
+        ./foo/bar/.hidden/
         ./foo/bar/baz/
         ./foo/bar/baz/...
         ./foo/bar/baz/three
@@ -103,7 +104,9 @@ def root(request):
     dir_foo = join(rootpath, "foo")
     dir_bar = join(dir_foo, "bar")
     dir_baz = join(dir_bar, "baz")
+    hidden  = join(dir_bar, ".hidden")
     os.makedirs(dir_baz)
+    os.makedirs(hidden)
 
     new = (
         join(rootpath, "zero.py"),
@@ -139,7 +142,6 @@ def test_empty(root):
         ("foo/blah/*.py", []),
         ("*.blah", []),
         ("**/hree.py", []),
-        ("foo/", []),
         ("bar/foo/two.py", []),
     )
 
@@ -211,6 +213,12 @@ def test_multi(root):
         includes("**/baz/**/*.py"),
     ])
 
+    d2 = FileSet(root, [
+        includes("**/*.py"),
+        excludes("**/foo/"),
+        includes("**/baz/**/*.py"),
+    ])
+
     e = FileSet(root, [
         includes("**/*.py"),
         excludes("**/two.py"),
@@ -222,6 +230,7 @@ def test_multi(root):
         (b, ["zero.py", "zero", "foo/one.py", "foo/one"]),
         (c, ["zero", "foo/one", "foo/bar/two"]),
         (d, ["zero.py", "foo/bar/baz/three.py"]),
+        (d2, ["zero.py"]),
         (e, ["zero.py", "foo/one.py"]),
     )
 
@@ -253,6 +262,21 @@ def test_set(root):
 
     for result, expected in cases:
         assert_sets_equal(result, expected)
+
+
+def test_dir_match(root):
+    assert_sets_equal(antglob.FileSet(root, "foo/"), ["foo/"])
+    assert_sets_equal(antglob.FileSet(root, "**/baz/"), ["foo/bar/baz/"])
+    assert_sets_equal(antglob.FileSet(root, "**/b*/"), ["foo/bar/", "foo/bar/baz/"])
+    assert_sets_equal(antglob.FileSet(root, "**/.*/"), ["foo/bar/.hidden/"])
+    assert_sets_equal(antglob.FileSet(root, "**/.*"), ["foo/bar/baz/..."])
+    assert_sets_equal(antglob.FileSet(root, "*/"), ["foo/"])
+    assert_sets_equal(antglob.FileSet(root, "*/*/*/"), ["foo/bar/.hidden/", "foo/bar/baz/"])
+
+
+def test_charsets(root):
+    assert_sets_equal(antglob.FileSet(root, "**/baz/[^.]*"), ["foo/bar/baz/three", "foo/bar/baz/three.py"])
+    assert_sets_equal(antglob.FileSet(root, "**/baz/[^t]*"), ["foo/bar/baz/..."])
 
 
 def test_string_pattern(root):
