@@ -24,6 +24,7 @@
 
 import os
 import shlex
+import shutil
 
 from invoke import run, task
 
@@ -58,27 +59,30 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
     # TODO: replace "…/**/*" when dir patterns are added
     patterns = ['build/**/*', 'pip-selfcheck.json']
     if docs or all:
-        patterns.append('docs/_build/**/*')
+        patterns.append('docs/_build/')
     if dist or all:
-        patterns.append('dist/**/*')
+        patterns.append('dist/')
     if backups or all:
         patterns.extend(['**/*~'])
     if bytecode or all:
-        patterns.extend(['**/*.py[co]', '**/__pycache__/**/*'])
+        patterns.extend(['**/*.py[co]', '**/__pycache__/'])
 
     venv_dirs = ['bin', 'include', 'lib', 'share', 'local']
     if venv:
-        patterns.extend([i + '/**/*' for i in venv_dirs])
+        patterns.extend([i + '/' for i in venv_dirs])
     if extra:
         patterns.extend(shlex.split(extra))
 
     patterns = [includes(i) for i in patterns]
     if not venv:
-        patterns.extend([excludes(i + '/**/*') for i in venv_dirs])
+        patterns.extend([excludes(i + '/') for i in venv_dirs])
     fileset = FileSet(cfg.project_root, patterns)
     for name in fileset:
         print('rm {0}'.format(name))
-        os.unlink(os.path.join(cfg.project_root, name))
+        if name.endswith('/'):
+            shutil.rmtree(os.path.join(cfg.project_root, name))
+        else:
+            os.unlink(os.path.join(cfg.project_root, name))
 
 
 @task
