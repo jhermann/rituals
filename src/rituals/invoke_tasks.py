@@ -28,8 +28,8 @@ import shutil
 
 from invoke import run, task
 
-from rituals.util.antglob import *
 from rituals import config
+from rituals.util import antglob
 
 
 __all__ = ['config', 'help', 'clean', 'build', 'dist', 'test', 'check']
@@ -73,10 +73,10 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
     if extra:
         patterns.extend(shlex.split(extra))
 
-    patterns = [includes(i) for i in patterns]
+    patterns = [antglob.includes(i) for i in patterns]
     if not venv:
-        patterns.extend([excludes(i + '/') for i in venv_dirs])
-    fileset = FileSet(cfg.project_root, patterns)
+        patterns.extend([antglob.excludes(i + '/') for i in venv_dirs])
+    fileset = antglob.FileSet(cfg.project_root, patterns)
     for name in fileset:
         print('rm {0}'.format(name))
         if name.endswith('/'):
@@ -125,7 +125,7 @@ def check(skip_tests=False):
 
     cmd = 'pylint "{0}"'.format(cfg.srcjoin(cfg.project.name))
     if not skip_tests:
-        test_py = FileSet(cfg.testdir, [includes('**/*.py')])
+        test_py = antglob.FileSet(cfg.testdir, '**/*.py')
         test_py = [cfg.testjoin(i) for i in test_py]
         if test_py:
             cmd += ' "{0}"'.format('" "'.join(test_py))
