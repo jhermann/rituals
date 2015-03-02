@@ -56,8 +56,8 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
         all=False, venv=False, extra=''): # pylint: disable=redefined-builtin
     """Perform house-cleaning."""
     cfg = config.load()
-    # TODO: replace "…/**/*" when dir patterns are added
-    patterns = ['build/**/*', 'pip-selfcheck.json']
+
+    patterns = ['build/', 'pip-selfcheck.json']
     if docs or all:
         patterns.append('docs/_build/')
     if dist or all:
@@ -65,7 +65,7 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
     if backups or all:
         patterns.extend(['**/*~'])
     if bytecode or all:
-        patterns.extend(['**/*.py[co]', '**/__pycache__/'])
+        patterns.extend(['**/*.py[co]', '**/__pycache__/', 'src/*.egg-info/'])
 
     venv_dirs = ['bin', 'include', 'lib', 'share', 'local']
     if venv:
