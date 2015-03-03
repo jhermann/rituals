@@ -30,9 +30,11 @@ DEFAULTS = dict(
     srcdir = 'src',
     testdir = 'src/tests',
     project_root = None,
+    project = {},
     cwd = None,
     rootjoin = None,
     srcjoin = None,
+    testjoin = None,
 )
 
 
