@@ -23,6 +23,7 @@
 # TODO: Move task bodies to common_tasks module, and just keep Invoke wrappers here
 
 import os
+import sys
 import shlex
 import shutil
 
@@ -113,8 +114,18 @@ def dist(devpi=False, egg=True, wheel=False):
 @task
 def test():
     """Perform standard unittests."""
-    config.load()
-    run('python setup.py test')
+    cfg = config.load()
+    add_root2pypath(cfg)
+
+    try:
+        console = sys.stdin.isatty()
+    except AttributeError:
+        console = False
+
+    if console and os.path.exists('bin/py.test'):
+        run('bin/py.test --color=yes {0}'.format(cfg.testdir))
+    else:
+        run('python setup.py test')
 
 
 @task
