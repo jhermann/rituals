@@ -83,6 +83,11 @@ and either call ``pip install -e .`` or ``python setup.py develop -U``.
 See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
 
 
+## Related Projects
+
+* [pyinvoke/invocations](https://github.com/pyinvoke/invocations) – A collection of reusable Invoke tasks and task modules.
+
+
 ## Acknowledgements
 
 * Logo elements from [clker.com Free Clipart](http://www.clker.com/).
