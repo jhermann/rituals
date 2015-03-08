@@ -10,4 +10,4 @@ from rituals.invoke_tasks import * # pylint: disable=redefined-builtin
 @task
 def ci(): # pylint: disable=invalid-name
     """Perform continuous integration tasks."""
-    run("invoke clean --all build --docs test check")
+    run("invoke clean --all build --docs test check --reports")
