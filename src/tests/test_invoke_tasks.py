@@ -38,6 +38,6 @@ def test_task_py_path_has_setup_py():
 def test_all_tasks_are_exported():
     """Check that all defined tasks are also exported."""
     defined_tasks = set(k
-        for k, v in vars(invoke_tasks).iteritems()
+        for k, v in vars(invoke_tasks).items()
         if isinstance(v, Task))
     assert defined_tasks <= set(invoke_tasks.__all__)
