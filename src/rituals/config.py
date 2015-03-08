@@ -48,7 +48,7 @@ def load():
 
     try:
         cfg.project_root = os.path.dirname(sys.modules['tasks'].__file__)
-    except KeyError, exc:
+    except KeyError as exc:
         raise RuntimeError("No tasks module is imported, cannot determine project root ({0})".format(exc))
 
     cfg.rootjoin = lambda *names: os.path.join(cfg.project_root, *names)
