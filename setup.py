@@ -3,6 +3,18 @@
 # pylint: disable=bad-whitespace, attribute-defined-outside-init, invalid-name
 """ rituals – Common tasks for 'Invoke' that are needed again and again.
 
+    This setuptools script follows the DRY principle and tries to
+    minimize repetition of project metadata by loading it from other
+    places (like the package's `__init__.py`). Incidently, this makes
+    the script almost identical between different projects.
+
+    It is also importable (by using the usual `if __name__ == '__main__'`
+    idiom), and exposes the project's setup data in a `project` dict.
+    This allows other tools to exploit the data assembling code contained
+    in here, and again supports the DRY principle. The `rituals` package
+    uses that to provide Invoke tasks that work for any project, based on
+    its project metadata.
+
     Copyright ⓒ  2015 Jürgen Hermann
 
     This program is free software; you can redistribute it and/or modify
@@ -26,13 +38,13 @@ import re
 import sys
 
 # Project data (the rest is parsed from __init__.py and other project files)
-name = 'rituals'
+name = __doc__.strip().split(None, 1)[0]
 
 # Import setuptools
 try:
     from setuptools import setup, find_packages
     from setuptools.command.test import test as TestCommand
-except ImportError, exc:
+except ImportError as exc:
     raise RuntimeError("Cannot install '{0}', setuptools is missing ({1})".format(name, exc))
 
 # Helpers
