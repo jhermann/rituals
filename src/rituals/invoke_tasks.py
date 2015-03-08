@@ -45,6 +45,12 @@ def add_root2pypath(cfg):
         os.environ['PYTHONPATH'] = py_path
 
 
+def run_banner(msg):
+    """Emit a banner just like Invoke's `run(…, echo=True)`."""
+    if RUN_ECHO:
+        print("\033[1;37m{}\033[0m".format(msg))
+
+
 @task(default=True)
 def help(): # pylint: disable=redefined-builtin
     """Invoked with no arguments."""
@@ -58,6 +64,7 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
         all=False, venv=False, extra=''): # pylint: disable=redefined-builtin
     """Perform house-cleaning."""
     cfg = config.load()
+    run_banner("Cleaning up project files")
 
     patterns = ['build/', 'pip-selfcheck.json']
     if docs or all:
@@ -91,9 +98,9 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
 def build(docs=False):
     """Build the project."""
     cfg = config.load()
-    run("python setup.py build")
+    run("python setup.py build", echo=RUN_ECHO)
     if docs and os.path.exists(cfg.rootjoin("docs", "conf.py")):
-        run("sphinx-build docs docs/_build")
+        run("sphinx-build docs docs/_build", echo=RUN_ECHO)
 
 
 @task
