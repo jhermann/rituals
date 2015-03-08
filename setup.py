@@ -98,7 +98,7 @@ def _build_metadata():
         test = 'test-requirements.txt',
     )
     requires = {}
-    for key, filename in requirements_files.iteritems():
+    for key, filename in requirements_files.items():
         requires[key] = []
         if os.path.exists(srcfile(filename)):
             with open(srcfile(filename), 'r') as handle:
