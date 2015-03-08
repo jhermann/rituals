@@ -119,6 +119,10 @@ class FileSet(object):
     """
 
     def __init__(self, root, patterns):
+        try:
+            basestring
+        except NameError: # py3
+            basestring = str # pylint: disable=redefined-builtin
         if isinstance(patterns, basestring):
             patterns = [patterns]
 
