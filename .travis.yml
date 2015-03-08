@@ -16,7 +16,7 @@ matrix:
 
 # command to install dependencies
 install:
-    - "pip install -r dev-requirements.txt --use-mirrors"
+    - "pip install -r dev-requirements.txt"
 
 # command to run tests
 script: invoke ci
