@@ -27,13 +27,14 @@ import sys
 import shlex
 import shutil
 
-from invoke import run, task
+from invoke import run, task, exceptions
 
 from rituals import config
 from rituals.util import antglob
 
 
 __all__ = ['config', 'help', 'clean', 'build', 'dist', 'test', 'check']
+RUN_ECHO = True
 
 
 def add_root2pypath(cfg):
@@ -105,10 +106,10 @@ def dist(devpi=False, egg=True, wheel=False):
     if wheel:
         cmd.append("bdist_wheel")
 
-    run("invoke clean --all build --docs test") # TODO: check
-    run(' '.join(cmd))
+    run("invoke clean --all build --docs test check", echo=RUN_ECHO)
+    run(' '.join(cmd), echo=RUN_ECHO)
     if devpi:
-        run("devpi upload dist/*")
+        run("devpi upload dist/*", echo=RUN_ECHO)
 
 
 @task
@@ -123,13 +124,13 @@ def test():
         console = False
 
     if console and os.path.exists('bin/py.test'):
-        run('bin/py.test --color=yes {0}'.format(cfg.testdir))
+        run('bin/py.test --color=yes {0}'.format(cfg.testdir), echo=RUN_ECHO)
     else:
-        run('python setup.py test')
+        run('python setup.py test', echo=RUN_ECHO)
 
 
 @task
-def check(skip_tests=False):
+def check(skip_tests=False, reports=False):
     """Perform source code checks."""
     cfg = config.load()
     add_root2pypath(cfg)
@@ -140,4 +141,31 @@ def check(skip_tests=False):
         test_py = [cfg.testjoin(i) for i in test_py]
         if test_py:
             cmd += ' "{0}"'.format('" "'.join(test_py))
-    run(cmd) # TODO: check return code and only abort on errors (or set threshold via options)
+    cmd += ' --reports={0}'.format('y' if reports else 'n')
+    for cfgfile in ('.pylintrc', 'pylint.rc', 'pylint.cfg'):
+        if os.path.exists(cfgfile):
+            cmd += ' --rcfile={0}'.format(cfgfile)
+            break
+    try:
+        run(cmd, echo=RUN_ECHO)
+        print("OK  No problems found by pylint.")
+    except exceptions.Failure as exc:
+        # Check bit flags within pylint return code
+        if exc.result.return_code & 32:
+            # Usage error (internal error in this code)
+            sys.stderr.write("ERR Usage error, bad arguments in {}?!".format(repr(cmd)))
+            raise
+        else:
+            bits = {
+                1: "fatal",
+                2: "error",
+                4: "warning",
+                8: "refactor",
+                16: "convention",
+            }
+            print("!!! Some {} message(s) issued by pylint.".format(
+                ", ".join([text for bit, text in bits.items() if exc.result.return_code & bit])
+            ))
+            if exc.result.return_code & 3:
+                print("ERR Exiting due to fatal / error message.")
+                raise
