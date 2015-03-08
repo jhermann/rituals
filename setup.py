@@ -111,6 +111,19 @@ def _build_metadata():
     if 'pytest' not in requires['test']:
         requires['test'].append('pytest')
 
+    # CLI entry points
+    console_scripts = []
+    for path, _, files in os.walk(srcfile('src', name)):
+        if '__main__.py' in files:
+            path = path[len(srcfile('src') + os.sep):]
+            appname = path.split(os.sep)[-1]
+            with open(srcfile('src', path, '__main__.py')) as handle:
+                for line in handle.readlines():
+                    match = re.match(r"""^__app_name__ += (?P<q>['"])(.+?)(?P=q)$""", line)
+                    if match:
+                        appname = match.group(2)
+            console_scripts.append('{0} = {1}.__main__:cli'.format(appname, path.replace(os.sep, '.')))
+
     # Complete project metadata
     with open(srcfile('classifiers.txt'), 'r') as handle:
         classifiers = [i.strip() for i in handle if i.strip() and not i.startswith('#')]
@@ -129,6 +142,9 @@ def _build_metadata():
         classifiers = classifiers,
         cmdclass = dict(
             test = PyTest,
+        ),
+        entry_points = dict(
+            console_scripts = console_scripts,
         ),
     ))
     return metadata
