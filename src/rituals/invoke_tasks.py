@@ -76,7 +76,7 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
     if bytecode or all:
         patterns.extend(['**/*.py[co]', '**/__pycache__/', 'src/*.egg-info/'])
 
-    venv_dirs = ['bin', 'include', 'lib', 'share', 'local']
+    venv_dirs = ['bin', 'include', 'lib', 'share', 'local', '.venv']
     if venv:
         patterns.extend([i + '/' for i in venv_dirs])
     if extra:

@@ -70,8 +70,9 @@ To create a working directory for this project, call these commands:
 
 ```sh
 git clone "https://github.com/jhermann/rituals.git"
-cd rituals; deactivate; /usr/bin/virtualenv .; . ./bin/activate
-./bin/pip install -U pip; ./bin/pip install -r "dev-requirements.txt"
+cd rituals; deactivate; /usr/bin/virtualenv .venv/$(basename $PWD)
+. .venv/$(basename $PWD)/bin/activate
+pip install -U pip; pip install -r "dev-requirements.txt"
 invoke build --docs
 ```
 
