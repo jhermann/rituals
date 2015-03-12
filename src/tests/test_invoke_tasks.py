@@ -41,3 +41,8 @@ def test_all_tasks_are_exported():
         for k, v in vars(invoke_tasks).items()
         if isinstance(v, Task))
     assert defined_tasks <= set(invoke_tasks.__all__)
+
+
+def test_config_is_exported():
+    """Check that `config` is exported."""
+    assert 'config' in invoke_tasks.__all__
