@@ -2,3 +2,4 @@
 # Additional files for source distribution
 #
 include README.md LICENSE *.txt
+recursive-include debian changelog
