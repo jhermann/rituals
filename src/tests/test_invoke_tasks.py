@@ -40,7 +40,7 @@ def test_all_tasks_are_exported():
     defined_tasks = set(k
         for k, v in vars(invoke_tasks).items()
         if isinstance(v, Task))
-    assert defined_tasks <= set(invoke_tasks.__all__)
+    assert defined_tasks - set(invoke_tasks.__all__) == set()
 
 
 def test_config_is_exported():
