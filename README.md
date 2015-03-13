@@ -79,7 +79,7 @@ To use the source in this working directory within another project,
 change your current directory to _this_ project,
 then call `bin/pip` from *that* project's virtualenv like so:
 
-        …/.venv/…/bin/pip install -e .
+    …/.venv/…/bin/pip install -e .
 
 See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
 
