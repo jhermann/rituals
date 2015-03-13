@@ -70,16 +70,16 @@ To create a working directory for this project, call these commands:
 
 ```sh
 git clone "https://github.com/jhermann/rituals.git"
-cd rituals; deactivate; /usr/bin/virtualenv .venv/$(basename $PWD)
-. .venv/$(basename $PWD)/bin/activate
-pip install -U pip; pip install -r "dev-requirements.txt"
+cd rituals
+. .env # answer the prompt with (y)es
 invoke build --docs
 ```
 
 To use the source in this working directory within another project,
-first activate that project's virtualenv.
-Then change your current directory to _this_ project,
-and either call ``pip install -e .`` or ``python setup.py develop -U``.
+change your current directory to _this_ project,
+then call `bin/pip` from *that* project's virtualenv like so:
+
+        …/.venv/…/bin/pip install -e .
 
 See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
 
