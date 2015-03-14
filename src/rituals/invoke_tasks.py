@@ -142,7 +142,11 @@ def check(skip_tests=False, reports=False):
     cfg = config.load()
     add_root2pypath(cfg)
 
-    cmd = 'pylint "{0}"'.format(cfg.srcjoin(cfg.project.name))
+    cmd = 'pylint'
+    for package in cfg.project.packages:
+        if '.' not in package:
+            cmd += ' "{}"'.format(cfg.srcjoin(package))
+
     if not skip_tests:
         test_py = antglob.FileSet(cfg.testdir, '**/*.py')
         test_py = [cfg.testjoin(i) for i in test_py]
