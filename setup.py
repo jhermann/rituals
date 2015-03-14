@@ -76,7 +76,7 @@ class PyTest(TestCommand):
         if errno:
             sys.exit(errno)
 
-def _build_metadata():
+def _build_metadata(): # pylint: disable=too-many-locals, too-many-branches
     "Return project's metadata as a dict."
     # Handle metadata in package source
     expected_keys = ('url', 'version', 'license', 'author', 'author_email', 'long_description')
@@ -135,7 +135,7 @@ def _build_metadata():
     data_files = defaultdict(list)
     for filename in candidate_files:
         if os.path.exists(srcfile(filename)):
-            data_files['EGG-INFO'.format(name)].append(filename)
+            data_files['EGG-INFO'].append(filename)
 
     # Complete project metadata
     with open(srcfile('classifiers.txt'), 'r') as handle:
