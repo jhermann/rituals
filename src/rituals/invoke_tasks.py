@@ -137,7 +137,7 @@ def test():
 
 
 @task
-def check(skip_tests=False, reports=False):
+def check(skip_tests=False, skip_root=False, reports=False):
     """Perform source code checks."""
     cfg = config.load()
     add_root2pypath(cfg)
@@ -152,6 +152,12 @@ def check(skip_tests=False, reports=False):
         test_py = [cfg.testjoin(i) for i in test_py]
         if test_py:
             cmd += ' "{0}"'.format('" "'.join(test_py))
+
+    if not skip_root:
+        root_py = antglob.FileSet('.', '*.py')
+        if root_py:
+            cmd += ' "{0}"'.format('" "'.join(root_py))
+
     cmd += ' --reports={0}'.format('y' if reports else 'n')
     for cfgfile in ('.pylintrc', 'pylint.rc', 'pylint.cfg'):
         if os.path.exists(cfgfile):
