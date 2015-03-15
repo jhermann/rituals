@@ -4,8 +4,11 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
 
 ![GINOSAJI](https://raw.githubusercontent.com/jhermann/rituals/master/static/img/symbol-200.png) … and again and again.
 
-![GPL v2 licensed](http://img.shields.io/badge/license-GPL_v2-red.svg)
-[![Travis CI](https://api.travis-ci.org/jhermann/rituals.svg)](https://travis-ci.org/jhermann/rituals)
+ [![Travis CI](https://api.travis-ci.org/jhermann/rituals.svg)](https://travis-ci.org/jhermann/rituals)
+ [![GitHub Issues](https://img.shields.io/github/issues/jhermann/rituals.svg)]()
+ [![License](https://img.shields.io/pypi/l/rituals.svg)](/jhermann/rituals/blob/master/LICENSE)
+ [![Latest Version](https://img.shields.io/pypi/v/rituals.svg)](https://pypi.python.org/pypi/rituals/)
+ [![Downloads](https://img.shields.io/pypi/dw/rituals.svg)](https://pypi.python.org/pypi/rituals/)
 
 
 ## Common Tasks
