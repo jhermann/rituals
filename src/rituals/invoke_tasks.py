@@ -136,8 +136,8 @@ def test():
     except which.WhichError:
         pytest = None
 
-    if console and pytest:
-        run('{0} --color=yes {1}'.format(pytest, cfg.testdir), echo=RUN_ECHO)
+    if pytest:
+        run('{}{} "{}"'.format(pytest, ' --color=yes' if console else '', cfg.testdir), echo=RUN_ECHO)
     else:
         run('python setup.py test', echo=RUN_ECHO)
 
