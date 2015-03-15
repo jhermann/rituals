@@ -27,6 +27,7 @@ import sys
 import shlex
 import shutil
 
+import which
 from invoke import run, task, exceptions
 
 from rituals import config
@@ -130,8 +131,13 @@ def test():
     except AttributeError:
         console = False
 
-    if console and os.path.exists('bin/py.test'):
-        run('bin/py.test --color=yes {0}'.format(cfg.testdir), echo=RUN_ECHO)
+    try:
+        pytest = which.which("py.test").replace(cfg.project_root + os.sep, '')
+    except which.WhichError:
+        pytest = None
+
+    if console and pytest:
+        run('{0} --color=yes {1}'.format(pytest, cfg.testdir), echo=RUN_ECHO)
     else:
         run('python setup.py test', echo=RUN_ECHO)
 
