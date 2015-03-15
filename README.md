@@ -6,7 +6,7 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
 
  [![Travis CI](https://api.travis-ci.org/jhermann/rituals.svg)](https://travis-ci.org/jhermann/rituals)
  [![GitHub Issues](https://img.shields.io/github/issues/jhermann/rituals.svg)]()
- [![License](https://img.shields.io/pypi/l/rituals.svg)](/jhermann/rituals/blob/master/LICENSE)
+ [![License](https://img.shields.io/pypi/l/rituals.svg)](https://github.com/jhermann/rituals/blob/master/LICENSE)
  [![Latest Version](https://img.shields.io/pypi/v/rituals.svg)](https://pypi.python.org/pypi/rituals/)
  [![Downloads](https://img.shields.io/pypi/dw/rituals.svg)](https://pypi.python.org/pypi/rituals/)
 
