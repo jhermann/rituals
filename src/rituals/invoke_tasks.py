@@ -20,8 +20,6 @@
 # The full LICENSE file and source are available at
 #    https://github.com/jhermann/rituals
 
-# TODO: Move task bodies to common_tasks module, and just keep Invoke wrappers here
-
 import os
 import sys
 import shlex
@@ -30,11 +28,14 @@ import shutil
 from invoke import run, task, exceptions
 
 from rituals import config
-from rituals.util import antglob, which
+from rituals.util import antglob, notify, scm, which
 
 
-__all__ = ['config', 'help', 'clean', 'build', 'dist', 'test', 'check']
-RUN_ECHO = True
+__all__ = [
+    'config',
+    'help', 'clean', 'build', 'dist', 'test', 'check',
+    'release_prep',
+]
 
 
 def add_root2pypath(cfg):
@@ -45,27 +46,12 @@ def add_root2pypath(cfg):
         os.environ['PYTHONPATH'] = py_path
 
 
-def run_banner(msg):
-    """Emit a banner just like Invoke's `run(…, echo=True)`."""
-    if RUN_ECHO:
-        sys.stdout.flush()
-        print("\033[1;7;32;40m{}\033[0m".format(msg))
-        sys.stdout.flush()
-
-
-def warning(msg):
-    """Emit a warning message."""
-    sys.stdout.flush()
-    print("\033[1;7;33;40mWARNING: {}\033[0m".format(msg))
-    sys.stdout.flush()
-
-
 @task(default=True)
 def help(): # pylint: disable=redefined-builtin
     """Invoked with no arguments."""
     run("invoke --help")
     run("invoke --list")
-    print("Use 'invoke -h ‹taskname›' to get detailed help.")
+    notify.echo("Use 'invoke -h ‹taskname›' to get detailed help.")
 
 
 @task(help=dict(
@@ -81,7 +67,7 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
         all=False, venv=False, extra=''): # pylint: disable=redefined-builtin
     """Perform house-keeping."""
     cfg = config.load()
-    run_banner("Cleaning up project files")
+    notify.banner("Cleaning up project files")
 
     patterns = ['build/', 'pip-selfcheck.json']
     if docs or all:
@@ -104,7 +90,7 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
         patterns.extend([antglob.excludes(i + '/') for i in venv_dirs])
     fileset = antglob.FileSet(cfg.project_root, patterns)
     for name in fileset:
-        print('rm {0}'.format(name))
+        notify.echo('rm {0}'.format(name))
         if name.endswith('/'):
             shutil.rmtree(os.path.join(cfg.project_root, name))
         else:
@@ -117,7 +103,7 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
 def build(docs=False):
     """Build the project."""
     cfg = config.load()
-    run("python setup.py build", echo=RUN_ECHO)
+    run("python setup.py build", echo=notify.ECHO)
 
     if docs:
         for doc_path in ('docs', 'doc'):
@@ -127,9 +113,9 @@ def build(docs=False):
             doc_path = None
 
         if doc_path:
-            run("sphinx-build {0} {0}/_build".format(doc_path), echo=RUN_ECHO)
+            run("sphinx-build {0} {0}/_build".format(doc_path), echo=notify.ECHO)
         else:
-            warning("Cannot find either a 'docs' or 'doc' Sphinx directory!")
+            notify.warning("Cannot find either a 'docs' or 'doc' Sphinx directory!")
 
 
 @task(help=dict(
@@ -157,10 +143,10 @@ def dist(devpi=False, egg=False, wheel=False, auto=True):
     if wheel:
         cmd.append("bdist_wheel")
 
-    run("invoke clean --all build --docs test check", echo=RUN_ECHO)
-    run(' '.join(cmd), echo=RUN_ECHO)
+    run("invoke clean --all build --docs test check", echo=notify.ECHO)
+    run(' '.join(cmd), echo=notify.ECHO)
     if devpi:
-        run("devpi upload dist/*", echo=RUN_ECHO)
+        run("devpi upload dist/*", echo=notify.ECHO)
 
 
 @task
@@ -180,9 +166,9 @@ def test():
         pytest = None
 
     if pytest:
-        run('{}{} "{}"'.format(pytest, ' --color=yes' if console else '', cfg.testdir), echo=RUN_ECHO)
+        run('{}{} "{}"'.format(pytest, ' --color=yes' if console else '', cfg.testdir), echo=notify.ECHO)
     else:
-        run('python setup.py test', echo=RUN_ECHO)
+        run('python setup.py test', echo=notify.ECHO)
 
 
 @task(help=dict(
@@ -217,13 +203,13 @@ def check(skip_tests=False, skip_root=False, reports=False):
             cmd += ' --rcfile={0}'.format(cfgfile)
             break
     try:
-        run(cmd, echo=RUN_ECHO)
-        print("OK  No problems found by pylint.")
+        run(cmd, echo=notify.ECHO)
+        notify.echo("OK - No problems found by pylint.")
     except exceptions.Failure as exc:
         # Check bit flags within pylint return code
         if exc.result.return_code & 32:
             # Usage error (internal error in this code)
-            sys.stderr.write("ERR Usage error, bad arguments in {}?!".format(repr(cmd)))
+            notify.error("Usage error, bad arguments in {}?!".format(repr(cmd)))
             raise
         else:
             bits = {
@@ -233,9 +219,28 @@ def check(skip_tests=False, skip_root=False, reports=False):
                 8: "refactor",
                 16: "convention",
             }
-            warning("Some {} message(s) issued by pylint.".format(
+            notify.warning("Some {} message(s) issued by pylint.".format(
                 ", ".join([text for bit, text in bits.items() if exc.result.return_code & bit])
             ))
             if exc.result.return_code & 3:
-                print("ERR Exiting due to fatal / error message.")
+                notify.error("Exiting due to fatal / error message.")
                 raise
+
+
+@task(name='release-prep')
+def release_prep():
+    """Prepare for a release."""
+    cfg = config.load()
+
+    # Check for uncommitted changes
+    known_scm = True
+    if os.path.exists(cfg.rootjoin('.git', 'config')):
+        if not scm.git_workdir_is_clean():
+            notify.failure("You have uncommitted changes, please commit or stash them!")
+    else:
+        known_scm = False
+        notify.warning("Unsupported SCM, make sure you have committed your work!")
+
+    # Rewrite 'setup.cfg'
+    # Check version  number
+    # Commit changes and tag the release
