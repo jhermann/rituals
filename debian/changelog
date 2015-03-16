@@ -1,8 +1,15 @@
 rituals (0.2.0) unstable; urgency=low
 
-  * …
+  * fix: get src package list for 'check' from 'project.packages'
+  * new: added --skip-root to 'check', and checking './*.py' too
+  * fix: use 'which' to look for py.test binary (closes #2)
+  * new: make 'dist' automatically create wheels if possible
+  * chg: better handling of 'build --docs'
+  * chg: added help for task parameters (closes #4)
+  * chg: warn about missing Sphinx docs (when --docs is provided)
+  * new: added 'release-prep' task
 
- -- Juergen Hermann <jh@web.de>  Thu, 12 Mar 2015 18:51:39 +0100
+ -- Juergen Hermann <jh@web.de>  Mon, 16 Mar 2015 18:02:42 +0100
 
 rituals (0.1.0) unstable; urgency=low
 
