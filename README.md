@@ -110,7 +110,7 @@ inv dist --devpi # local release + tox testing
 
 git push && git push --tags # … and wait for Travis CI to do its thing
 
-twine dist/* # upload to PyPI
+twine upload -r pypi dist/*
 ```
 
 
