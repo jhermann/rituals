@@ -99,6 +99,20 @@ then call `bin/pip` from *that* project's virtualenv like so:
 See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
 
 
+## Releasing
+
+This is the process of releasing  ``rituals`` itself,
+projects that use it will have an identifcal to very similar sequence of commands.
+
+```sh
+inv release-prep
+inv dist --devpi # local release + tox testing
+
+# … and now also check Travis CI
+twine dist/* # upload to PyPI
+```
+
+
 ## Related Projects
 
 * [Springerle/py-generic-project](https://github.com/Springerle/py-generic-project)
