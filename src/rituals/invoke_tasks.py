@@ -48,7 +48,16 @@ def add_root2pypath(cfg):
 def run_banner(msg):
     """Emit a banner just like Invoke's `run(…, echo=True)`."""
     if RUN_ECHO:
-        print("\033[1;37m{}\033[0m".format(msg))
+        sys.stdout.flush()
+        print("\033[1;7;32;40m{}\033[0m".format(msg))
+        sys.stdout.flush()
+
+
+def warning(msg):
+    """Emit a warning message."""
+    sys.stdout.flush()
+    print("\033[1;7;33;40mWARNING: {}\033[0m".format(msg))
+    sys.stdout.flush()
 
 
 @task(default=True)
@@ -120,7 +129,7 @@ def build(docs=False):
         if doc_path:
             run("sphinx-build {0} {0}/_build".format(doc_path), echo=RUN_ECHO)
         else:
-            raise RuntimeError("Cannot find either a 'docs' or 'doc' Sphinx directory!")
+            warning("Cannot find either a 'docs' or 'doc' Sphinx directory!")
 
 
 @task(help=dict(
@@ -224,7 +233,7 @@ def check(skip_tests=False, skip_root=False, reports=False):
                 8: "refactor",
                 16: "convention",
             }
-            print("!!! Some {} message(s) issued by pylint.".format(
+            warning("Some {} message(s) issued by pylint.".format(
                 ", ".join([text for bit, text in bits.items() if exc.result.return_code & bit])
             ))
             if exc.result.return_code & 3:
