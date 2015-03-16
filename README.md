@@ -54,7 +54,7 @@ from rituals.invoke_tasks import *
 
 Of course, you can also do more selective imports, or remove specific tasks from the standard set via `del`.
 
-:warning: | For now, these tasks expect an importable `setup.py` that defines a `project` dict with the setup parameters, see [javaprops](https://github.com/Feed-The-Web/javaprops) and [py-generic-project](https://github.com/Springerle/py-generic-project) for examples.
+:warning: | These tasks expect an importable `setup.py` that defines a `project` dict with the setup parameters, see [javaprops](https://github.com/Feed-The-Web/javaprops) and [py-generic-project](https://github.com/Springerle/py-generic-project) for examples.
 ---- | :----
 
 To refer to the current GitHub ``master`` branch, use a ``pip`` requirement like this:
