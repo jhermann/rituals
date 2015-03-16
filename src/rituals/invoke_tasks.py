@@ -253,7 +253,7 @@ def release_prep(commit=True):
     known_scm = True
     if os.path.exists(cfg.rootjoin('.git', 'config')):
         if not scm.git_workdir_is_clean():
-            pass# XXX notify.failure("You have uncommitted changes, please commit or stash them!")
+            notify.failure("You have uncommitted changes, please commit or stash them!")
     else:
         known_scm = False
         notify.warning("Unsupported SCM, make sure you have committed your work!")
