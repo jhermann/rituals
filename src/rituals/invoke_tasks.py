@@ -99,8 +99,18 @@ def build(docs=False):
     """Build the project."""
     cfg = config.load()
     run("python setup.py build", echo=RUN_ECHO)
-    if docs and os.path.exists(cfg.rootjoin("docs", "conf.py")):
-        run("sphinx-build docs docs/_build", echo=RUN_ECHO)
+
+    if docs:
+        for doc_path in ('docs', 'doc'):
+            if os.path.exists(cfg.rootjoin(doc_path, 'conf.py')):
+                break
+        else:
+            doc_path = None
+
+        if doc_path:
+            run("sphinx-build {0} {0}/_build".format(doc_path), echo=RUN_ECHO)
+        else:
+            raise RuntimeError("Cannot find either a 'docs' or 'doc' Sphinx directory!")
 
 
 @task
