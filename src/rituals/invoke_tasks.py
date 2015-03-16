@@ -59,10 +59,18 @@ def help(): # pylint: disable=redefined-builtin
     print("Use 'invoke -h ‹taskname›' to get detailed help.")
 
 
-@task
+@task(help=dict(
+    docs="Also clean the documentation build area",
+    backups="Also clean '*~' files etc.",
+    bytecode="Also clean '.pyc', '.pyo', and package metadata",
+    dist="Also clean the 'dist' dir",
+    all="The same as --backups --bytecode --dist --docs",
+    venv="Include an existing virtualenv (in '.' or in '.venv')",
+    extra="Any extra patterns, space-separated and possibly quoted",
+))
 def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disable=redefined-outer-name
         all=False, venv=False, extra=''): # pylint: disable=redefined-builtin
-    """Perform house-cleaning."""
+    """Perform house-keeping."""
     cfg = config.load()
     run_banner("Cleaning up project files")
 
@@ -94,7 +102,9 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
             os.unlink(os.path.join(cfg.project_root, name))
 
 
-@task
+@task(help=dict(
+    docs="Also build the documentation (with Sphinx)",
+))
 def build(docs=False):
     """Build the project."""
     cfg = config.load()
@@ -113,7 +123,12 @@ def build(docs=False):
             raise RuntimeError("Cannot find either a 'docs' or 'doc' Sphinx directory!")
 
 
-@task
+@task(help=dict(
+    devpi="Upload the created 'dist' using 'devpi'",
+    egg="Also create an EGG",
+    wheel="Also create a WHL",
+    auto="Create EGG for Python2, and WHL whenever possible",
+))
 def dist(devpi=False, egg=False, wheel=False, auto=True):
     """Distribute the project."""
     config.load()
@@ -161,7 +176,11 @@ def test():
         run('python setup.py test', echo=RUN_ECHO)
 
 
-@task
+@task(help=dict(
+    skip_tests="Do not check test modules",
+    skip_root="Do not check scripts in project root",
+    reports="Create extended report?",
+))
 def check(skip_tests=False, skip_root=False, reports=False):
     """Perform source code checks."""
     cfg = config.load()
