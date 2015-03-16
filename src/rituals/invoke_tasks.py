@@ -43,9 +43,11 @@ def run(cmd, **kw):
     """Run a command and flush its output."""
     if os.name == 'posix':
         cmd += ' 2>&1' # ensure ungarbled output
-    invoke_run(cmd, **kw)
-    sys.stdout.flush()
-    sys.stderr.flush()
+    try:
+        return invoke_run(cmd, **kw)
+    finally:
+        sys.stdout.flush()
+        sys.stderr.flush()
 
 
 def add_root2pypath(cfg):
