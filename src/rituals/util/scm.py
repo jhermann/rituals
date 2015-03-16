@@ -37,7 +37,7 @@ def git_workdir_is_clean(quiet=False):
     # Disallow unstaged changes in the working tree
     try:
         run('git diff-files --quiet --ignore-submodules --')
-    except exceptions.Failure as exc:
+    except exceptions.Failure:
         unchanged = False
         if not quiet:
             notify.warning('You have unstaged changes!')
@@ -46,7 +46,7 @@ def git_workdir_is_clean(quiet=False):
     # Disallow uncommitted changes in the index
     try:
         run('git diff-index --cached --quiet HEAD --ignore-submodules --')
-    except exceptions.Failure as exc:
+    except exceptions.Failure:
         unchanged = False
         if not quiet:
             notify.warning('Your index contains uncommitted changes!')
