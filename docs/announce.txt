@@ -1,0 +1,41 @@
+The 2nd release (v0.2.0) of `rituals` hit the Internet pipelines
+today, adding a 'release-prep' task and wheel support.
+
+The `rituals` package provides PyInvoke tasks that work for any
+project, based on its project metadata, to automate common
+developer chores like 'clean', 'build', 'dist', 'test', 'check',
+and 'release-prep' (for the moment).
+
+The guiding principle for these tasks is to strictly separate
+low-level tasks for building and installing (via setup.py) from
+high-level convenience tasks a developer uses (via tasks.py).
+Invoke tasks can use Setuptools ones as building blocks, but
+never the other way 'round – this removes bootstrapping head-
+aches during package installations using `pip`.
+
+The easiest way to get a working project based on `rituals` is
+the `py-generic-project` cookiecutter template. That way you have
+a working project skeleton within minutes that is fully equipped,
+with all aspects of bootstrapping, building, testing, quality
+checks, continuous integration, documentation, and releasing
+covered.
+
+Enjoy, Jürgen
+
+–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+Links:
+  * https://pypi.python.org/pypi/rituals/0.2.0
+  * https://github.com/jhermann/rituals#rituals
+  * https://github.com/Springerle/py-generic-project#py-generic-project
+
+Detailed changes:
+  * new: added 'release-prep' task
+  * new: added --skip-root to 'check', and checking './*.py' too
+  * new: 'dist' task automatically creates wheels if possible
+  * chg: better handling of 'build --docs'
+  * chg: added help for task parameters (closes #4)
+  * chg: warn about missing Sphinx docs (when '--docs' is provided)
+  * fix: get src package list for 'check' from 'project.packages'
+  * fix: use 'which' to look for 'py.test' binary (closes #2)
+
+See also https://github.com/jhermann/rituals/releases/tag/v0.2.0
