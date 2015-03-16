@@ -16,8 +16,7 @@ matrix:
 
 # command to install dependencies
 install:
-    # "which" has an external download link
-    - "pip install --allow-external -r dev-requirements.txt"
+    - "pip install -r dev-requirements.txt"
 
 # command to run tests
 script: invoke ci

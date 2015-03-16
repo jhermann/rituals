@@ -5,4 +5,3 @@
 bunch>=1.0,<2
 #-e git+https://github.com/dsc/bunch.git#egg=bunch
 invoke>=0.9,<1
-which>=1.1,<2

@@ -27,11 +27,10 @@ import sys
 import shlex
 import shutil
 
-import which
 from invoke import run, task, exceptions
 
 from rituals import config
-from rituals.util import antglob
+from rituals.util import antglob, which
 
 
 __all__ = ['config', 'help', 'clean', 'build', 'dist', 'test', 'check']
