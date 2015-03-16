@@ -108,7 +108,8 @@ projects that use it will have an identifcal to very similar sequence of command
 inv release-prep
 inv dist --devpi # local release + tox testing
 
-# … and now also check Travis CI
+git push # … and wait for Travis CI to do its thing
+
 twine dist/* # upload to PyPI
 ```
 
