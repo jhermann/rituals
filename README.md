@@ -113,7 +113,7 @@ git push && git push --tags # … and wait for Travis CI to do its thing
 twine upload -r pypi dist/*
 ```
 
-If you have any pending changes, staged or unstaged. you'll get an error like this:
+If you have any pending changes, staged or unstaged, you'll get an error like this:
 
 ![uncommitted changes](https://raw.githubusercontent.com/jhermann/rituals/master/docs/_static/img/invoke-release-prep-changes.png)
 
