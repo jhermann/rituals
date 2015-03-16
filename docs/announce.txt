@@ -10,7 +10,7 @@ The guiding principle for these tasks is to strictly separate
 low-level tasks for building and installing (via setup.py) from
 high-level convenience tasks a developer uses (via tasks.py).
 Invoke tasks can use Setuptools ones as building blocks, but
-never the other way 'round – this removes bootstrapping head-
+never the other way 'round – this avoids bootstrapping head-
 aches during package installations using `pip`.
 
 The easiest way to get a working project based on `rituals` is
