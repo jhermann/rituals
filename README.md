@@ -102,7 +102,7 @@ See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTI
 ## Releasing
 
 This is the process of releasing  ``rituals`` itself,
-projects that use it will have an identifcal to very similar sequence of commands.
+projects that use it will have an identical to very similar sequence of commands.
 
 ```sh
 inv release-prep
