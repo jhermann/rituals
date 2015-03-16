@@ -239,8 +239,10 @@ def check(skip_tests=False, skip_root=False, reports=False):
                 raise
 
 
-@task(name='release-prep')
-def release_prep():
+@task(name='release-prep', help=dict(
+    commit="Commit any automatic changes and tag the release",
+))
+def release_prep(commit=True):
     """Prepare for a release."""
     cfg = config.load()
 
@@ -251,11 +253,46 @@ def release_prep():
     known_scm = True
     if os.path.exists(cfg.rootjoin('.git', 'config')):
         if not scm.git_workdir_is_clean():
-            notify.failure("You have uncommitted changes, please commit or stash them!")
+            pass# XXX notify.failure("You have uncommitted changes, please commit or stash them!")
     else:
         known_scm = False
         notify.warning("Unsupported SCM, make sure you have committed your work!")
 
+    # TODO Check that changelog entry carries the current date
+
     # Rewrite 'setup.cfg'
-    # Check version  number
+    setup_cfg = cfg.rootjoin('setup.cfg')
+    if os.path.exists(setup_cfg):
+        with open(setup_cfg) as handle:
+            data = handle.readlines()
+        changed = False
+        for i, line in enumerate(data):
+            if any(line.startswith(i) for i in ('tag_build', 'tag_date')):
+                data[i] = '#' + data[i]
+                changed = True
+        if changed:
+            notify.info("Rewriting 'setup.cfg'...")
+            with open(setup_cfg, 'w') as handle:
+                handle.write(''.join(data))
+            run('git add setup.cfg')
+    else:
+        notify.warning("Cannot rewrite 'setup.cfg', none found!")
+
+    # Build a clean dist and check version number
+    version = run('python setup.py --version').stdout.strip()
+    run('invoke clean --all build --docs dist')
+    for distfile in os.listdir('dist'):
+        trailer = distfile.split('-' + version)[1]
+        trailer, _ = os.path.splitext(trailer)
+        if trailer and trailer[0] not in '.-':
+            notify.failure("The version found in 'dist' seems to be"
+                           " a pre-release one! [{}{}]".format(version, trailer))
+
     # Commit changes and tag the release
+    if commit:
+        perform = run
+    else:
+        notify.warning("Due to --no-commit, these commands were skipped:")
+        perform = notify.info
+    perform('git commit -m ":package: Release v{}"'.format(version))
+    perform('git tag "v{}"'.format(version))
