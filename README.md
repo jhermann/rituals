@@ -101,6 +101,7 @@ See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTI
 
 ## Related Projects
 
+* [Springerle/py-generic-project](https://github.com/Springerle/py-generic-project)
 * [pyinvoke/invocations](https://github.com/pyinvoke/invocations) – A collection of reusable Invoke tasks and task modules.
 
 
