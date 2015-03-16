@@ -27,32 +27,37 @@ from invoke import exceptions
 ECHO = True
 
 
+def _flush():
+    """Flush all console output."""
+    sys.stdout.flush()
+    sys.stderr.flush()
+
+
 def banner(msg):
     """Emit a banner just like Invoke's `run(…, echo=True)`."""
-    if RUN_ECHO:
-        sys.stdout.flush()
-        print("\033[1;7;32;40m{}\033[0m".format(msg))
-        sys.stdout.flush()
+    if ECHO:
+        _flush()
+        sys.stderr.write("\033[1;7;32;40m{}\033[0m\n".format(msg))
+        sys.stderr.flush()
 
 
 def info(msg):
     """Emit a normal message."""
-    sys.stdout.flush()
-    print(msg)
+    _flush()
+    sys.stdout.write(msg + '\n')
     sys.stdout.flush()
 
 
 def warning(msg):
     """Emit a warning message."""
-    sys.stdout.flush()
-    print("\033[1;7;33;40mWARNING: {}\033[0m".format(msg))
-    sys.stdout.flush()
+    _flush()
+    sys.stderr.write("\033[1;7;33;40mWARNING: {}\033[0m\n".format(msg))
+    sys.stderr.flush()
 
 
 def error(msg):
     """Emit an error message to stderr."""
-    sys.stdout.flush()
-    sys.stderr.flush()
+    _flush()
     sys.stderr.write("\033[1;37;41mERROR: {}\033[0m\n".format(msg))
     sys.stderr.flush()
 

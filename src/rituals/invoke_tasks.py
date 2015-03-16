@@ -25,7 +25,8 @@ import sys
 import shlex
 import shutil
 
-from invoke import run, task, exceptions
+from invoke import run as invoke_run
+from invoke import task, exceptions
 
 from rituals import config
 from rituals.util import antglob, notify, scm, which
@@ -36,6 +37,15 @@ __all__ = [
     'help', 'clean', 'build', 'dist', 'test', 'check',
     'release_prep',
 ]
+
+
+def run(cmd, **kw):
+    """Run a command and flush its output."""
+    if os.name == 'posix':
+        cmd += ' 2>&1' # ensure ungarbled output
+    invoke_run(cmd, **kw)
+    sys.stdout.flush()
+    sys.stderr.flush()
 
 
 def add_root2pypath(cfg):
@@ -51,7 +61,7 @@ def help(): # pylint: disable=redefined-builtin
     """Invoked with no arguments."""
     run("invoke --help")
     run("invoke --list")
-    notify.echo("Use 'invoke -h ‹taskname›' to get detailed help.")
+    notify.info("Use 'invoke -h ‹taskname›' to get detailed help.")
 
 
 @task(help=dict(
@@ -90,7 +100,7 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
         patterns.extend([antglob.excludes(i + '/') for i in venv_dirs])
     fileset = antglob.FileSet(cfg.project_root, patterns)
     for name in fileset:
-        notify.echo('rm {0}'.format(name))
+        notify.info('rm {0}'.format(name))
         if name.endswith('/'):
             shutil.rmtree(os.path.join(cfg.project_root, name))
         else:
@@ -204,7 +214,7 @@ def check(skip_tests=False, skip_root=False, reports=False):
             break
     try:
         run(cmd, echo=notify.ECHO)
-        notify.echo("OK - No problems found by pylint.")
+        notify.info("OK - No problems found by pylint.")
     except exceptions.Failure as exc:
         # Check bit flags within pylint return code
         if exc.result.return_code & 32:
@@ -219,7 +229,7 @@ def check(skip_tests=False, skip_root=False, reports=False):
                 8: "refactor",
                 16: "convention",
             }
-            notify.warning("Some {} message(s) issued by pylint.".format(
+            notify.warning("Some messages of type {} issued by pylint.".format(
                 ", ".join([text for bit, text in bits.items() if exc.result.return_code & bit])
             ))
             if exc.result.return_code & 3:
@@ -231,6 +241,9 @@ def check(skip_tests=False, skip_root=False, reports=False):
 def release_prep():
     """Prepare for a release."""
     cfg = config.load()
+
+    # Perform quality checks
+    run('inv test check', echo=notify.ECHO)
 
     # Check for uncommitted changes
     known_scm = True
