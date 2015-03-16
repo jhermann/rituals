@@ -222,9 +222,9 @@ def which(command, path=None, verbose=0, exts=None):
 
     If no match is found for the command, a WhichError is raised.
     """
-    matches = whichgen(command, path, verbose, exts)
+    matched = whichgen(command, path, verbose, exts)
     try:
-        match = matches.next()
+        match = next(matched)
     except StopIteration:
         raise WhichError("Could not find '%s' on the path." % command)
     else:
