@@ -36,7 +36,7 @@ Use ``inv -h ‹task›`` as usual to get details on the options of these tasks.
 Look at the [invoke_tasks](https://github.com/jhermann/rituals/blob/master/src/rituals/invoke_tasks.py) source
 if you want to know what these tasks do exactly.
 
-:bulb: | The easiest way to get a working project using `rituals` is the [py-generic-project](https://github.com/Springerle/py-generic-project) cookiecutter archetype. That way you have a working project skeleton within minutes that is fully equipped with all aspects of building, testing, quality checks, continuous integration, documentation, and releasing covered.
+:bulb: | The easiest way to get a working project using `rituals` is the [py-generic-project](https://github.com/Springerle/py-generic-project) cookiecutter archetype. That way you have a working project skeleton within minutes that is fully equipped, with all aspects of building, testing, quality checks, continuous integration, documentation, and releasing covered.
 ---- | :----
 
 
