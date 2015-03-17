@@ -1,3 +1,9 @@
+rituals (0.3.0) UNRELEASED; urgency=low
+
+  * ...
+
+ -- Juergen Hermann <jh@web.de>  Mon, 17 Mar 2015 10:02:42 +0100
+
 rituals (0.2.0) unstable; urgency=low
 
   * new: added 'release-prep' task
