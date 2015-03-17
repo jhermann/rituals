@@ -21,9 +21,10 @@ See the next section on how to integrate them into your `tasks.py`.
 * ``help`` –    Default task, when invoked with no task names.
 * ``clean`` –   Perform house-cleaning.
 * ``build`` –   Build the project.
-* ``dist`` –    Distribute the project.
 * ``test`` –    Perform standard unittests.
 * ``check`` –   Perform source code checks.
+* ``dist`` –    Distribute the project.
+* ``release-prep`` – Prepare for a release (perform QA checks, and switch to non-dev versioning).
 
 The guiding principle for these tasks is to strictly separate
 low-level tasks for building and installing (via ``setup.py``)
