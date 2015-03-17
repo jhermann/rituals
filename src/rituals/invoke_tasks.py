@@ -250,12 +250,12 @@ def release_prep(commit=True):
     run('inv test check', echo=notify.ECHO)
 
     # Check for uncommitted changes
-    known_scm = True
+    scm_type = None
     if os.path.exists(cfg.rootjoin('.git', 'config')):
+        scm_type = 'git' # TODO repo = scm.Git() – abstract away SCM commands
         if not scm.git_workdir_is_clean():
             notify.failure("You have uncommitted changes, please commit or stash them!")
     else:
-        known_scm = False
         notify.warning("Unsupported SCM, make sure you have committed your work!")
 
     # TODO Check that changelog entry carries the current date
@@ -274,7 +274,8 @@ def release_prep(commit=True):
             notify.info("Rewriting 'setup.cfg'...")
             with open(setup_cfg, 'w') as handle:
                 handle.write(''.join(data))
-            run('git add setup.cfg')
+            if scm_type == 'git':
+                run('git add setup.cfg')
     else:
         notify.warning("Cannot rewrite 'setup.cfg', none found!")
 
@@ -294,5 +295,9 @@ def release_prep(commit=True):
     else:
         notify.warning("Due to --no-commit, these commands were skipped:")
         perform = notify.info
-    perform('git commit -m ":package: Release v{}"'.format(version))
-    perform('git tag "v{}"'.format(version))
+
+    if scm_type == 'git':
+        perform('git commit -m ":package: Release v{}"'.format(version))
+        perform('git tag "v{}"'.format(version))
+    else:
+        notify.warning("Unsupported SCM, make sure you commit pending release changes!")
