@@ -189,6 +189,7 @@ pre code {
 }
 
 p code, li code {
+  color: #339;
   background-color: #f2f2f2;
   box-shadow: none;
 }
