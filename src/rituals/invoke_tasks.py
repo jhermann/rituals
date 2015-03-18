@@ -22,13 +22,12 @@
 
 import os
 import sys
-import shlex
-import shutil
 
 from invoke import run as invoke_run
 from invoke import task, exceptions
 
 from rituals import config
+from rituals.acts.basic import clean
 from rituals.util import antglob, notify, scm, which
 
 
@@ -66,47 +65,6 @@ def help(): # pylint: disable=redefined-builtin
     notify.info("Use 'invoke -h ‹taskname›' to get detailed help.")
 
 
-@task(help=dict(
-    docs="Also clean the documentation build area",
-    backups="Also clean '*~' files etc.",
-    bytecode="Also clean '.pyc', '.pyo', and package metadata",
-    dist="Also clean the 'dist' dir",
-    all="The same as --backups --bytecode --dist --docs",
-    venv="Include an existing virtualenv (in '.' or in '.venv')",
-    extra="Any extra patterns, space-separated and possibly quoted",
-))
-def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disable=redefined-outer-name
-        all=False, venv=False, extra=''): # pylint: disable=redefined-builtin
-    """Perform house-keeping."""
-    cfg = config.load()
-    notify.banner("Cleaning up project files")
-
-    patterns = ['build/', 'pip-selfcheck.json']
-    if docs or all:
-        patterns.append('docs/_build/')
-    if dist or all:
-        patterns.append('dist/')
-    if backups or all:
-        patterns.extend(['**/*~'])
-    if bytecode or all:
-        patterns.extend(['**/*.py[co]', '**/__pycache__/', 'src/*.egg-info/'])
-
-    venv_dirs = ['bin', 'include', 'lib', 'share', 'local', '.venv']
-    if venv:
-        patterns.extend([i + '/' for i in venv_dirs])
-    if extra:
-        patterns.extend(shlex.split(extra))
-
-    patterns = [antglob.includes(i) for i in patterns]
-    if not venv:
-        patterns.extend([antglob.excludes(i + '/') for i in venv_dirs])
-    fileset = antglob.FileSet(cfg.project_root, patterns)
-    for name in fileset:
-        notify.info('rm {0}'.format(name))
-        if name.endswith('/'):
-            shutil.rmtree(os.path.join(cfg.project_root, name))
-        else:
-            os.unlink(os.path.join(cfg.project_root, name))
 
 
 @task(help=dict(
