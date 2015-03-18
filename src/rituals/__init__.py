@@ -20,7 +20,7 @@
     The full LICENSE file and source are available at
        https://github.com/jhermann/rituals
 """
-__url__             = 'https://github.com/jhermann/rituals'
+__url__             = 'http://jhermann.github.io/rituals/'
 __version__         = '0.3.0'
 __license__         = 'GPL v2'
 __author__          = 'Jürgen Hermann'
