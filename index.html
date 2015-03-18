@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>rituals by jhermann</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>rituals</h1>
+        <p>Project automation tasks for ‘Invoke’ that are needed again and again.</p>
+        <p class="view"><a href="https://github.com/jhermann/rituals">View the Project on GitHub <small>jhermann/rituals</small></a></p>
+        <ul>
+          <li><a href="https://github.com/jhermann/rituals/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/jhermann/rituals/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/jhermann/rituals">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><img src="https://raw.githubusercontent.com/jhermann/rituals/master/static/img/symbol-200.png" alt="GINOSAJI"> … and again and again.</p>
+
+<p> <a href="https://travis-ci.org/jhermann/rituals"><img src="https://api.travis-ci.org/jhermann/rituals.svg" alt="Travis CI"></a>
+ <a href="https://github.com/jhermann/rituals/issues"><img src="https://img.shields.io/github/issues/jhermann/rituals.svg" alt="GitHub Issues"></a>
+ <a href="https://github.com/jhermann/rituals/blob/master/LICENSE"><img src="https://img.shields.io/pypi/l/rituals.svg" alt="License"></a>
+ <a href="https://pypi.python.org/pypi/rituals/"><img src="https://pypip.in/status/rituals/badge.svg" alt="Development Status"></a>
+ <a href="https://pypi.python.org/pypi/rituals/"><img src="https://img.shields.io/pypi/v/rituals.svg" alt="Latest Version"></a>
+ <a href="https://pypi.python.org/pypi/rituals/"><img src="https://pypip.in/format/rituals/badge.svg" alt="Download format"></a>
+ <a href="https://pypi.python.org/pypi/rituals/"><img src="https://img.shields.io/pypi/dw/rituals.svg" alt="Downloads"></a></p>
+
+<h2>
+<a id="common-tasks" class="anchor" href="#common-tasks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Common Tasks</h2>
+
+<p>The following lists the common task implementations that the <code>invoke_tasks</code> module contains.
+See the next section on how to integrate them into your <code>tasks.py</code>.</p>
+
+<ul>
+<li>
+<code>help</code> –    Default task, when invoked with no task names.</li>
+<li>
+<code>clean</code> –   Perform house-cleaning.</li>
+<li>
+<code>build</code> –   Build the project.</li>
+<li>
+<code>test</code> –    Perform standard unittests.</li>
+<li>
+<code>check</code> –   Perform source code checks.</li>
+<li>
+<code>dist</code> –    Distribute the project.</li>
+<li>
+<code>release-prep</code> – Prepare for a release (perform QA checks, and switch to non-dev versioning).</li>
+</ul>
+
+<p>The guiding principle for these tasks is to strictly separate
+low-level tasks for building and installing (via <code>setup.py</code>)
+from high-level convenience tasks a developer uses (via <code>invoke</code>).
+Invoke tasks can use Setuptools ones as building blocks,
+but never the other way 'round
+– this removes any bootstrapping headaches during package installations.</p>
+
+<p>Use <code>inv -h ‹task›</code> as usual to get details on the options of these tasks.
+Look at the <a href="https://github.com/jhermann/rituals/blob/master/src/rituals/invoke_tasks.py">invoke_tasks</a> source
+if you want to know what these tasks do exactly.</p>
+
+<table>
+<thead>
+<tr>
+<th><img class="emoji" title=":bulb:" alt=":bulb:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20" align="absmiddle"></th>
+<th align="left">The easiest way to get a working project using <code>rituals</code> is the <a href="https://github.com/Springerle/py-generic-project">py-generic-project</a> cookiecutter archetype. That way you have a working project skeleton within minutes that is fully equipped, with all aspects of building, testing, quality checks, continuous integration, documentation, and releasing covered.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="add-common-tasks-to-your-projects-taskpy" class="anchor" href="#add-common-tasks-to-your-projects-taskpy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add common tasks to your project's <code>task.py</code>
+</h3>
+
+<p>Add <code>rituals</code> to your <code>dev-requirements.txt</code> or a similar file,
+or add it to <code>setup_requires</code> in your <code>setup.py</code>.
+Then at the start of your <code>tasks.py</code>, use the following statement to define <em>all</em> tasks that are considered standard:</p>
+
+<div class="highlight highlight-py"><pre><span class="pl-k">from</span> rituals.invoke_tasks <span class="pl-k">import</span> <span class="pl-k">*</span></pre></div>
+
+<p>Of course, you can also do more selective imports, or remove specific tasks from the standard set via <code>del</code>.</p>
+
+<table>
+<thead>
+<tr>
+<th><img class="emoji" title=":warning:" alt=":warning:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/26a0.png" height="20" width="20" align="absmiddle"></th>
+<th align="left">These tasks expect an importable <code>setup.py</code> that defines a <code>project</code> dict with the setup parameters, see <a href="https://github.com/Feed-The-Web/javaprops">javaprops</a> and <a href="https://github.com/Springerle/py-generic-project">py-generic-project</a> for examples.</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+
+<p>To refer to the current GitHub <code>master</code> branch, use a <code>pip</code> requirement like this:</p>
+
+<pre><code>-e git+https://github.com/jhermann/rituals.git#egg=rituals
+</code></pre>
+
+<h3>
+<a id="change-default-project-layout" class="anchor" href="#change-default-project-layout" aria-hidden="true"><span class="octicon octicon-link"></span></a>Change default project layout</h3>
+
+<p>By default, sources are expected in <code>src/‹packagename›</code> and tests in <code>src/tests</code>.</p>
+
+<p>You can change this by calling one of the following functions, directly after the import from <code>rituals.invoke_tasks</code>.</p>
+
+<ul>
+<li>
+<code>config.set_maven_layout()</code> – Changes locations to <code>src/main/python/‹packagename›</code> and <code>src/test/python</code>.</li>
+<li>
+<code>config.set_flat_layout()</code> – Changes locations to <code>‹packagename›</code> and <code>tests</code>.</li>
+</ul>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>To create a working directory for this project, call these commands:</p>
+
+<div class="highlight highlight-sh"><pre>git clone <span class="pl-s1"><span class="pl-pds">"</span>https://github.com/jhermann/rituals.git<span class="pl-pds">"</span></span>
+<span class="pl-s3">cd</span> rituals
+<span class="pl-s3">.</span> .env <span class="pl-c"># answer the prompt with (y)es</span>
+invoke build --docs</pre></div>
+
+<p>To use the source in this working directory within another project,
+change your current directory to <em>this</em> project,
+then call <code>bin/pip</code> from <em>that</em> project's virtualenv like so:</p>
+
+<pre><code>…/.venv/…/bin/pip install -e .
+</code></pre>
+
+<p>See <a href="https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> for more.</p>
+
+<h2>
+<a id="releasing" class="anchor" href="#releasing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Releasing</h2>
+
+<p>This is the process of releasing  <code>rituals</code> itself,
+projects that use it will have an identical to very similar sequence of commands.</p>
+
+<div class="highlight highlight-sh"><pre>inv release-prep
+inv dist --devpi <span class="pl-c"># local release + tox testing</span>
+
+git push <span class="pl-k">&amp;&amp;</span> git push --tags <span class="pl-c"># … and wait for Travis CI to do its thing</span>
+
+twine upload -r pypi dist/<span class="pl-k">*</span></pre></div>
+
+<p>If you have any pending changes, staged or unstaged, you'll get an error like this:</p>
+
+<p><img src="https://raw.githubusercontent.com/jhermann/rituals/master/docs/_static/img/invoke-release-prep-changes.png" alt="uncommitted changes"></p>
+
+<h2>
+<a id="related-projects" class="anchor" href="#related-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Related Projects</h2>
+
+<ul>
+<li><a href="https://github.com/Springerle/py-generic-project">Springerle/py-generic-project</a></li>
+<li><a href="https://github.com/pyinvoke/invoke">pyinvoke/invoke</a></li>
+<li>
+<a href="https://github.com/pyinvoke/invocations">pyinvoke/invocations</a> – A collection of reusable Invoke tasks and task modules.</li>
+</ul>
+
+<h2>
+<a id="acknowledgements" class="anchor" href="#acknowledgements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Acknowledgements</h2>
+
+<ul>
+<li>Logo elements from <a href="http://www.clker.com/">clker.com Free Clipart</a>.</li>
+<li>In case you wonder about the logo, <a href="http://youtu.be/9VDvgL58h_Y">watch this</a>.</li>
+</ul>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/jhermann">jhermann</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
