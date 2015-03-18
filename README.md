@@ -122,6 +122,7 @@ If you have any pending changes, staged or unstaged, you'll get an error like th
 ## Related Projects
 
 * [Springerle/py-generic-project](https://github.com/Springerle/py-generic-project)
+* [pyinvoke/invoke](https://github.com/pyinvoke/invoke)
 * [pyinvoke/invocations](https://github.com/pyinvoke/invocations) – A collection of reusable Invoke tasks and task modules.
 
 
