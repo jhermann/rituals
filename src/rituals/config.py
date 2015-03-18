@@ -47,7 +47,7 @@ def load():
     # TODO: override with contents of [rituals] section in setup.cfg
 
     try:
-        cfg.project_root = os.path.dirname(sys.modules['tasks'].__file__)
+        cfg.project_root = os.path.abspath(os.path.dirname(sys.modules['tasks'].__file__))
     except KeyError as exc:
         raise RuntimeError("No tasks module is imported, cannot determine project root ({0})".format(exc))
 
