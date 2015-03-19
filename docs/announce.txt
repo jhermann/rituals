@@ -25,8 +25,8 @@ Enjoy, Jürgen
 –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 Links:
   * https://pypi.python.org/pypi/rituals/0.2.0
-  * https://github.com/jhermann/rituals#rituals
-  * https://github.com/Springerle/py-generic-project#py-generic-project
+  * http://jhermann.github.io/rituals/
+  * http://springerle.github.io/py-generic-project/
 
 Detailed changes:
   * new: added 'release-prep' task
