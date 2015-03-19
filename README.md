@@ -1,4 +1,4 @@
-# rituals
+# Rituals
 
 Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and again.
 
@@ -13,7 +13,7 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
  [![Downloads](https://img.shields.io/pypi/dw/rituals.svg)](https://pypi.python.org/pypi/rituals/)
 
 
-## Common Tasks
+## Overview
 
 The following lists the common task implementations that the ``invoke_tasks`` module contains.
 See the next section on how to integrate them into your `tasks.py`.
