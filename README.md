@@ -97,7 +97,7 @@ then call `bin/pip` from *that* project's virtualenv like so:
 
     …/.venv/…/bin/pip install -e .
 
-See [CONTRIBUTING.md](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
+See [CONTRIBUTING](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
 
 
 ## Releasing
