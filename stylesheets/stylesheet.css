@@ -188,7 +188,7 @@ pre code {
   box-shadow: none;
 }
 
-p code, li code {
+p code, li code, h1 code, h2 code, h3 code, h4 code, h5 code {
   color: #339;
   background-color: #f2f2f2;
   box-shadow: none;
