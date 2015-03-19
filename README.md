@@ -31,7 +31,7 @@ low-level tasks for building and installing (via ``setup.py``)
 from high-level convenience tasks a developer uses (via ``invoke``).
 Invoke tasks can use Setuptools ones as building blocks,
 but never the other way 'round
-– this removes any bootstrapping headaches during package installations.
+– this avoids any bootstrapping headaches during package installations.
 
 Use ``inv -h ‹task›`` as usual to get details on the options of these tasks.
 Look at the [invoke_tasks](https://github.com/jhermann/rituals/blob/master/src/rituals/invoke_tasks.py) source
