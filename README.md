@@ -87,7 +87,7 @@ To create a working directory for this project, call these commands:
 ```sh
 git clone "https://github.com/jhermann/rituals.git"
 cd rituals
-. .env # answer the prompt with (y)es
+. .env --yes --develop
 invoke build --docs
 ```
 
