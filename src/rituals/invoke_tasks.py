@@ -168,7 +168,7 @@ def check(skip_tests=False, skip_root=False, reports=False):
             cmd += ' "{0}"'.format('" "'.join(root_py))
 
     cmd += ' --reports={0}'.format('y' if reports else 'n')
-    for cfgfile in ('.pylintrc', 'pylint.rc', 'pylint.cfg'):
+    for cfgfile in ('.pylintrc', 'pylint.rc', 'pylint.cfg', 'project.d/pylint.cfg'):
         if os.path.exists(cfgfile):
             cmd += ' --rcfile={0}'.format(cfgfile)
             break
