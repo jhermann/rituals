@@ -56,7 +56,7 @@ class RuntimeInvoke(Call):
                 raise TaskLookupError(self.name)
             else:
                 #from rituals.util import notify
-                #notify.warning("Delayed lookup of tasl '{}'".format(self.name))
+                #notify.warning("Delayed lookup of task '{}'".format(self.name))
                 pass
 
         return getattr(self.task, name)
