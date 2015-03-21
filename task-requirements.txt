@@ -7,3 +7,4 @@ pylint==1.4.1
 
 # test
 pytest==2.6.4
+pytest-spec==0.2.24
