@@ -27,13 +27,14 @@ from invoke import run as invoke_run
 from invoke import task, exceptions
 
 from rituals import config
+from rituals.acts import inv
 from rituals.acts.basic import clean
 from rituals.util import antglob, notify, scm, which
 from rituals.util.filesys import pushd
 
 
 __all__ = [
-    'config', 'pushd',
+    'config', 'inv', 'pushd',
     'help', 'clean', 'build', 'dist', 'test', 'check',
     'release_prep',
 ]
@@ -198,15 +199,23 @@ def check(skip_tests=False, skip_root=False, reports=False):
                 raise
 
 
-@task(name='release-prep', help=dict(
-    commit="Commit any automatic changes and tag the release",
-))
+@task(name='release-prep',
+    pre=[
+        # Fresh build
+        inv('clean', all=True),
+        inv('build', docs=True),
+
+        # Perform quality checks
+        inv('test'),
+        inv('check', reports=False),
+    ],
+    help=dict(
+        commit="Commit any automatic changes and tag the release",
+    ),
+) # pylint: disable=too-many-branches
 def release_prep(commit=True):
     """Prepare for a release."""
     cfg = config.load()
-
-    # Perform quality checks
-    run('inv test check', echo=notify.ECHO)
 
     # Check for uncommitted changes
     scm_type = None
