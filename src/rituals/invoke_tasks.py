@@ -29,10 +29,11 @@ from invoke import task, exceptions
 from rituals import config
 from rituals.acts.basic import clean
 from rituals.util import antglob, notify, scm, which
+from rituals.util.filesys import pushd
 
 
 __all__ = [
-    'config',
+    'config', 'pushd',
     'help', 'clean', 'build', 'dist', 'test', 'check',
     'release_prep',
 ]
