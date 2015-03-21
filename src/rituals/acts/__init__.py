@@ -49,7 +49,10 @@ class RuntimeInvoke(Call):
 
     def __getattr__(self, name):
         if self.task is None:
-            tasks_namespace = sys.modules['tasks']
+            try:
+                tasks_namespace = sys.modules['tasks']
+            except KeyError:
+                raise TaskLookupError("INTERNAL ERROR: 'task.py' bootstrap problem")
             try:
                 self.task = getattr(tasks_namespace, self.name)
             except AttributeError:
