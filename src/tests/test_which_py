@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=
-#
+"""Test suite for which.py."""
 # Imported v1.1.0 from https://code.google.com/p/which/ (2015-03-15, ZIP download)
 # Originally developed by Trent Mick <TrentM@ActiveState.com>
 #
@@ -24,8 +24,7 @@
 # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-"""Test suite for which.py."""
+from __future__ import absolute_import, unicode_literals, print_function
 
 import sys
 import os
@@ -118,7 +117,7 @@ class WhichTestCase(unittest.TestCase):
             "Two failures did not return 2: retval=%d" % retval)
 
     def _match(self, path1, path2):
-        #print "_match: %r =?= %r" % (path1, path2)
+        #print("_match: %r =?= %r" % (path1, path2))
         if sys.platform.startswith('win'):
             path1 = os.path.normpath(os.path.normcase(path1))
             path2 = os.path.normpath(os.path.normcase(path2))

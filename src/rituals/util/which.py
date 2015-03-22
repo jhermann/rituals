@@ -26,33 +26,34 @@
 # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+r"""
+    Find the full path to commands.
 
-r"""Find the full path to commands.
+    which(command, path=None, verbose=0, exts=None)
+        Return the full path to the first match of the given command on the
+        path.
 
-which(command, path=None, verbose=0, exts=None)
-    Return the full path to the first match of the given command on the
-    path.
+    whichall(command, path=None, verbose=0, exts=None)
+        Return a list of full paths to all matches of the given command on
+        the path.
 
-whichall(command, path=None, verbose=0, exts=None)
-    Return a list of full paths to all matches of the given command on
-    the path.
+    whichgen(command, path=None, verbose=0, exts=None)
+        Return a generator which will yield full paths to all matches of the
+        given command on the path.
 
-whichgen(command, path=None, verbose=0, exts=None)
-    Return a generator which will yield full paths to all matches of the
-    given command on the path.
+    By default the PATH environment variable is searched (as well as, on
+    Windows, the AppPaths key in the registry), but a specific 'path' list
+    to search may be specified as well.  On Windows, the PATHEXT environment
+    variable is applied as appropriate.
 
-By default the PATH environment variable is searched (as well as, on
-Windows, the AppPaths key in the registry), but a specific 'path' list
-to search may be specified as well.  On Windows, the PATHEXT environment
-variable is applied as appropriate.
-
-If "verbose" is true then a tuple of the form
-    (<fullpath>, <matched-where-description>)
-is returned for each match. The latter element is a textual description
-of where the match was found. For example:
-    from PATH element 0
-    from HKLM\SOFTWARE\...\perl.exe
+    If "verbose" is true then a tuple of the form
+        (<fullpath>, <matched-where-description>)
+    is returned for each match. The latter element is a textual description
+    of where the match was found. For example:
+        from PATH element 0
+        from HKLM\SOFTWARE\...\perl.exe
 """
+from __future__ import absolute_import, unicode_literals, print_function
 
 import os
 import sys

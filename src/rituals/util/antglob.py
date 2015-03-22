@@ -28,6 +28,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from __future__ import absolute_import, unicode_literals, print_function
 
 import os
 import re
@@ -137,7 +138,7 @@ class FileSet(object):
             if pattern.is_dir == is_dir and pattern.matches(path):
                 inclusive = pattern.inclusive
 
-        #print '+++' if inclusive else '---', path, pattern
+        #print('+++' if inclusive else '---', path, pattern)
         return inclusive
 
     def __iter__(self):

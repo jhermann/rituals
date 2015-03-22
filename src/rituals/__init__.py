@@ -20,6 +20,8 @@
     The full LICENSE file and source are available at
        https://github.com/jhermann/rituals
 """
+from __future__ import absolute_import, unicode_literals, print_function
+
 __url__             = 'http://jhermann.github.io/rituals/'
 __version__         = '0.3.0'
 __license__         = 'GPL v2'
