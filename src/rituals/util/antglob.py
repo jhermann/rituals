@@ -32,6 +32,8 @@
 import os
 import re
 
+from ._compat import string_types
+
 # TODO: allow '?'
 # TODO: matching for Windows? (need to canonize to forward slashes in 'root')
 
@@ -119,11 +121,7 @@ class FileSet(object):
     """
 
     def __init__(self, root, patterns):
-        try:
-            basestring
-        except NameError: # py3
-            basestring = str # pylint: disable=redefined-builtin
-        if isinstance(patterns, basestring):
+        if isinstance(patterns, string_types):
             patterns = [patterns]
 
         self.root = root
