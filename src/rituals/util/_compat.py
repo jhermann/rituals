@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=invalid-name, unused-import, missing-docstring, exec-used
 # pylint: disable=unused-argument, too-few-public-methods, redefined-builtin
-# pylint: disable=no-name-in-module, no-member
+# pylint: disable=no-name-in-module, no-member, undefined-variable
+# pylint: disable=import-error
 """
     rituals.util._compat
     ~~~~~~~~~~~~~~~~~~~~
