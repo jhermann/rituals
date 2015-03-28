@@ -30,13 +30,21 @@ __all__ = ['devpi_refresh']
 
 @task(name='devpi-refresh', help=dict(
     requirement="Refresh from the given requirements file (default: 'dev-requirements.txt')",
+    name="Refresh a specific package",
+    installed="Refresh all installed packages",
 ))
-def devpi_refresh(requirement='dev-requirements.txt'):
+def devpi_refresh(requirement='', name='', installed=False):
     """Refresh 'devpi' PyPI links for the given requirements file."""
     import requests
-    from pip.req.req_file import parse_requirements
+    from pip import get_installed_distributions
     from pip.download import PipSession
+    from pip.req.req_file import parse_requirements
 
+    # If no option at all is given, default to using 'dev-requirements.txt'
+    if not (requirement or name or installed):
+        requirement = 'dev-requirements.txt'
+
+    # Get currently used 'devpi' base URL
     cmd = 'devpi use --urls'
     lines = run(cmd, hide='out', echo=False).stdout.splitlines()
     for line in lines:
@@ -49,9 +57,18 @@ def devpi_refresh(requirement='dev-requirements.txt'):
             cmd, '\n    '.join(lines),
         ))
 
-    notify.banner("Refreshing devpi links for {}".format(base_url))
+    notify.banner("Refreshing devpi links on {}".format(base_url))
 
-    reqs = set(i.name for i in parse_requirements(requirement, session=PipSession()))
+    # Assemble requirements
+    reqs = set(('pip', 'setuptools', 'wheel'))  # always refresh basics
+    if requirement:
+        reqs |= set(i.name for i in parse_requirements(requirement, session=PipSession()))
+    if name:
+        reqs |= set([name])
+    if installed:
+        installed_pkgs = get_installed_distributions(local_only=True, skip=['python'])
+        reqs |= set(i.project_name for i in installed_pkgs)
+
     for req in sorted(reqs):
         url = "{}/{}/refresh".format(base_url, req)
         response = requests.post(url)
@@ -61,3 +78,8 @@ def devpi_refresh(requirement='dev-requirements.txt'):
             notify.info("{:>{width}}: {} {}".format(
                 req, response.status_code, response.reason, width=4 + max(len(i) for i in reqs),
             ))
+
+    lines = run('pip list --outdated', hide='out', echo=False).stdout.splitlines()
+    if lines:
+        notify.banner("Outdated packages")
+        notify.info('    ' + '\n    '.join(lines))
