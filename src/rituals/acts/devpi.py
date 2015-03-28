@@ -79,7 +79,7 @@ def devpi_refresh(requirement='', name='', installed=False):
                 req, response.status_code, response.reason, width=4 + max(len(i) for i in reqs),
             ))
 
-    lines = run('pip list --outdated', hide='out', echo=False).stdout.splitlines()
+    lines = run('pip list --local --outdated', hide='out', echo=False).stdout.splitlines()
     if lines:
         notify.banner("Outdated packages")
         notify.info('    ' + '\n    '.join(lines))
