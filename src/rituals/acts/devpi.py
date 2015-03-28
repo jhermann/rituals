@@ -68,10 +68,9 @@ def devpi_refresh(requirement='', name='', installed=False):
     if installed:
         installed_pkgs = get_installed_distributions(local_only=True, skip=['python'])
         reqs |= set(i.project_name for i in installed_pkgs)
+    reqs = [i for i in reqs if i]  # catch flukes
 
     for req in sorted(reqs):
-        if not req:  # catch flukes
-            continue
         url = "{}/{}/refresh".format(base_url, req)
         response = requests.post(url)
         if response.status_code not in (200, 302):
