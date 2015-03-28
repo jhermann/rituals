@@ -2,10 +2,10 @@
 # Development requirements
 #
 
-bpython==0.13.1
+bpython==0.14.1
 yolk3k==0.8.6
 
-tox==1.8.1
+tox==1.9.2
 twine==1.5.0
 
 -r task-requirements.txt

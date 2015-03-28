@@ -3,8 +3,11 @@
 #
 
 # check
-pylint==1.4.1
+pylint==1.4.3
 
 # test
-pytest==2.6.4
+pytest==2.7.0
 pytest-spec==0.2.24
+
+# devpi
+requests==2.6.0
