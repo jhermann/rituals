@@ -41,6 +41,14 @@ __all__ = [
 ]
 
 
+# Activate devpi tasks by default?
+if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
+    from rituals.acts.devpi import *
+    from rituals.acts.devpi import __all__ as _all
+    __all__.extend(_all)
+    del _all
+
+
 def run(cmd, **kw):
     """Run a command and flush its output."""
     if os.name == 'posix':
