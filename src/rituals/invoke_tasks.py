@@ -60,12 +60,13 @@ def run(cmd, **kw):
         sys.stderr.flush()
 
 
-def add_root2pypath(cfg):
-    """Add project root to PYTHONPATH, e.g. for pylint."""
+def add_dir2pypath(path):
+    """Add given directory to PYTHONPATH, e.g. for pylint."""
     py_path = os.environ.get('PYTHONPATH', '')
-    if cfg.project_root not in py_path.split(os.pathsep):
-        py_path = ''.join([cfg.project_root, os.pathsep if py_path else '', py_path])
+    if path not in py_path.split(os.pathsep):
+        py_path = ''.join([path, os.pathsep if py_path else '', py_path])
         os.environ['PYTHONPATH'] = py_path
+    # print('*** PYTHONPATH={}'.format(os.environ.get('PYTHONPATH', None)))
 
 
 @task(default=True)
@@ -134,7 +135,7 @@ def dist(devpi=False, egg=False, wheel=False, auto=True):
 def test():
     """Perform standard unittests."""
     cfg = config.load()
-    add_root2pypath(cfg)
+    add_dir2pypath(cfg.project_root)
 
     try:
         console = sys.stdin.isatty()
@@ -160,7 +161,9 @@ def test():
 def check(skip_tests=False, skip_root=False, reports=False):
     """Perform source code checks."""
     cfg = config.load()
-    add_root2pypath(cfg)
+    add_dir2pypath(cfg.project_root)
+    if not os.path.exists(cfg.testjoin('__init__.py')):
+        add_dir2pypath(cfg.testjoin())
 
     cmd = 'pylint'
     for package in cfg.project.packages:
