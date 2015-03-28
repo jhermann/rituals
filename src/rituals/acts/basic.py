@@ -21,14 +21,16 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
+import io
 import os
 import shlex
 import shutil
 
-from invoke import task
+from invoke import run, task
 
 from rituals import config
 from rituals.util import antglob, notify
+from rituals._compat import isodate
 
 
 @task(help=dict(
@@ -79,3 +81,16 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
             shutil.rmtree(os.path.join(cfg.project_root, name))
         else:
             os.unlink(os.path.join(cfg.project_root, name))
+
+
+@task(help=dict(
+    local="If in a virtualenv that has global access, do not output globally installed packages",
+))
+def freeze(local=False):
+    """Freeze currently instaleld requirements."""
+    cmd = 'pip freeze{}'.format(' --local' if local else '')
+    frozen = run(cmd, hide='out').stdout
+    with io.open('frozen-requirements.txt', 'w', encoding='ascii') as out:
+        out.write("# Requirements frozen by 'pip freeze' on {}\n".format(isodate()))
+        out.write(frozen)
+    notify.info("Frozen {} requirements.".format(len(frozen.splitlines()),))
