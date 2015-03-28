@@ -34,7 +34,7 @@ __all__ = ['devpi_refresh']
     installed="Refresh all installed packages",
 ))
 def devpi_refresh(requirement='', name='', installed=False):
-    """Refresh 'devpi' PyPI links for the given requirements file."""
+    """Refresh 'devpi' PyPI links."""
     import requests
     from pip import get_installed_distributions
     from pip.download import PipSession
