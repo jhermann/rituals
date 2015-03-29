@@ -39,6 +39,16 @@ DEFAULTS = dict(
 )
 
 
+def get_project_root():
+    """ Determine location of `tasks.py`."""
+    try:
+        tasks_py = sys.modules['tasks']
+    except KeyError:
+        return None
+    else:
+        return os.path.abspath(os.path.dirname(tasks_py.__file__))
+
+
 def load():
     """ Load and return configuration as a ``Bunch``.
 
@@ -47,10 +57,9 @@ def load():
     cfg = Bunch(DEFAULTS)
     # TODO: override with contents of [rituals] section in setup.cfg
 
-    try:
-        cfg.project_root = os.path.abspath(os.path.dirname(sys.modules['tasks'].__file__))
-    except KeyError as exc:
-        raise RuntimeError("No tasks module is imported, cannot determine project root ({0})".format(exc))
+    cfg.project_root = get_project_root()
+    if not cfg.project_root:
+        raise RuntimeError("No tasks module is imported, cannot determine project root")
 
     cfg.rootjoin = lambda *names: os.path.join(cfg.project_root, *names)
     cfg.srcjoin = lambda *names: cfg.rootjoin(cfg.srcdir, *names)

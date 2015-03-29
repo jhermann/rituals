@@ -33,6 +33,9 @@ from rituals.util import antglob, notify
 from rituals._compat import isodate
 
 
+__all__ = ['clean', 'freeze']
+
+
 @task(help=dict(
     docs="Also clean the documentation build area",
     backups="Also clean '*~' files etc.",
