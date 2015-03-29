@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, superfluous-parens, wildcard-import
+# pylint: disable=bad-continuation, superfluous-parens, wildcard-import, unused-wildcard-import
 """ Common tasks for invoke.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
@@ -29,17 +29,28 @@ from invoke import task, exceptions
 
 from rituals import config
 from rituals.acts import inv
-from rituals.acts.basic import clean, freeze
 from rituals.util import antglob, notify, scm, which
 from rituals.util.filesys import pushd
+
+from rituals.acts.basic import *
+from rituals.acts.basic import __all__ as _basic_all
+from rituals.acts.testing import *
+from rituals.acts.testing import __all__ as _testing_all
 
 
 __all__ = [
     'config', 'inv', 'pushd',
     'help', 'clean', 'freeze', 'build', 'dist', 'test', 'check',
     'release_prep',
-]
+] + _basic_all + _testing_all
 
+_PROJECT_ROOT = config.get_project_root()
+
+
+# Keep 'tox' tasks?
+if os.path.exists(os.path.join(_PROJECT_ROOT, 'tox.ini')):
+    del tox
+    __all__.remove('tox')
 
 # Activate devpi tasks by default?
 if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
@@ -232,7 +243,7 @@ def release_prep(commit=True):
     # Check for uncommitted changes
     scm_type = None
     if os.path.exists(cfg.rootjoin('.git', 'config')):
-        scm_type = 'git' # TODO repo = scm.Git() – abstract away SCM commands
+        scm_type = 'git' # TODO repo = scm.Git() - abstract away SCM commands
         if not scm.git_workdir_is_clean():
             notify.failure("You have uncommitted changes, please commit or stash them!")
     else:
