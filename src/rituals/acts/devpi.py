@@ -46,7 +46,7 @@ def get_devpi_url():
     requirement="Refresh from the given requirements file (default: 'dev-requirements.txt')",
     name="Refresh a specific package",
     installed="Refresh all installed packages",
-))
+))  # pylint: disable=too-many-locals
 def devpi_refresh(requirement='', name='', installed=False):
     """Refresh 'devpi' PyPI links."""
     import requests
