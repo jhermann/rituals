@@ -26,7 +26,7 @@ import sys
 from invoke.tasks import Call
 
 
-class TaskLookupError(KeyError):
+class TaskLookupError(LookupError):
     """Failed to find task definition in main `tasks` module."""
 
 
