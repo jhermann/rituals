@@ -264,7 +264,7 @@ def release_prep(commit=True):
                 handle.write(''.join(data))
             scm.add_file('setup.cfg')
         elif changed:
-            notify.warning("WOULD rewrite 'setup.cfg'")
+            notify.warning("WOULD rewrite 'setup.cfg', but --no-commit was passed")
     else:
         notify.warning("Cannot rewrite 'setup.cfg', none found!")
 
