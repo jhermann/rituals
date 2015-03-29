@@ -28,6 +28,20 @@ from rituals.util import notify
 __all__ = ['devpi_refresh']
 
 
+def get_devpi_url():
+    """Get currently used 'devpi' base URL."""
+    cmd = 'devpi use --urls'
+    lines = run(cmd, hide='out', echo=False).stdout.splitlines()
+    for line in lines:
+        line, base_url = line.split(':', 1)
+        if line.strip() == 'simpleindex':
+            return base_url.strip().rstrip('/')
+
+    raise KeyError("Cannot find simpleindex URL in '{}' output:\n    {}".format(
+        cmd, '\n    '.join(lines),
+    ))
+
+
 @task(name='devpi-refresh', help=dict(
     requirement="Refresh from the given requirements file (default: 'dev-requirements.txt')",
     name="Refresh a specific package",
@@ -44,19 +58,11 @@ def devpi_refresh(requirement='', name='', installed=False):
     if not (requirement or name or installed):
         requirement = 'dev-requirements.txt'
 
-    # Get currently used 'devpi' base URL
-    cmd = 'devpi use --urls'
-    lines = run(cmd, hide='out', echo=False).stdout.splitlines()
-    for line in lines:
-        line, base_url = line.split(':', 1)
-        if line.strip() == 'simpleindex':
-            base_url = base_url.strip().rstrip('/')
-            break
-    else:
-        notify.failure("Cannot find simpleindex URL in '{}' output:\n    {}".format(
-            cmd, '\n    '.join(lines),
-        ))
-
+    # Get 'devpi' URL
+    try:
+        base_url = get_devpi_url()
+    except KeyError as exc:
+        notify.failure(exc.message)
     notify.banner("Refreshing devpi links on {}".format(base_url))
 
     # Assemble requirements
