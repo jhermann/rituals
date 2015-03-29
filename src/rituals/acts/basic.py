@@ -28,9 +28,9 @@ import shutil
 
 from invoke import run, task
 
-from rituals import config
-from rituals.util import antglob, notify
-from rituals._compat import isodate
+from .. import config
+from ..util import antglob, notify
+from ..util._compat import isodate
 
 
 __all__ = ['clean', 'freeze']
