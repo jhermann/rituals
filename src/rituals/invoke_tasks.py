@@ -48,7 +48,7 @@ _PROJECT_ROOT = config.get_project_root()
 
 
 # Keep 'tox' tasks?
-if os.path.exists(os.path.join(_PROJECT_ROOT, 'tox.ini')):
+if not os.path.exists(os.path.join(_PROJECT_ROOT, 'tox.ini')):
     del tox
     __all__.remove('tox')
 
