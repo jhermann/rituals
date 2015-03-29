@@ -27,15 +27,16 @@ import sys
 from invoke import run as invoke_run
 from invoke import task, exceptions
 
-from rituals import config
-from rituals.acts import inv
-from rituals.util import antglob, notify, scm, which
-from rituals.util.filesys import pushd
+from . import config
+from .acts import inv
+from .util import antglob, notify, which
+from .util.scm import provider as scm_provider
+from .util.filesys import pushd
 
-from rituals.acts.basic import *
-from rituals.acts.basic import __all__ as _basic_all
-from rituals.acts.testing import *
-from rituals.acts.testing import __all__ as _testing_all
+from .acts.basic import *
+from .acts.basic import __all__ as _basic_all
+from .acts.testing import *
+from .acts.testing import __all__ as _testing_all
 
 
 __all__ = [
@@ -54,8 +55,8 @@ if not os.path.exists(os.path.join(_PROJECT_ROOT, 'tox.ini')):
 
 # Activate devpi tasks by default?
 if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
-    from rituals.acts.devpi import *
-    from rituals.acts.devpi import __all__ as _all
+    from .acts.devpi import *
+    from .acts.devpi import __all__ as _all
     __all__.extend(_all)
     del _all
 
@@ -239,15 +240,11 @@ def check(skip_tests=False, skip_root=False, reports=False):
 def release_prep(commit=True):
     """Prepare for a release."""
     cfg = config.load()
+    scm = scm_provider(cfg.project_root, commit=commit)
 
     # Check for uncommitted changes
-    scm_type = None
-    if os.path.exists(cfg.rootjoin('.git', 'config')):
-        scm_type = 'git' # TODO repo = scm.Git() - abstract away SCM commands
-        if not scm.git_workdir_is_clean():
-            notify.failure("You have uncommitted changes, please commit or stash them!")
-    else:
-        notify.warning("Unsupported SCM, make sure you have committed your work!")
+    if not scm.workdir_is_clean():
+        notify.failure("You have uncommitted changes, please commit or stash them!")
 
     # TODO Check that changelog entry carries the current date
 
@@ -265,8 +262,7 @@ def release_prep(commit=True):
             notify.info("Rewriting 'setup.cfg'...")
             with open(setup_cfg, 'w') as handle:
                 handle.write(''.join(data))
-            if scm_type == 'git':
-                run('git add setup.cfg')
+            scm.add_file('setup.cfg')
     else:
         notify.warning("Cannot rewrite 'setup.cfg', none found!")
 
@@ -281,14 +277,5 @@ def release_prep(commit=True):
                            " a pre-release one! [{}{}]".format(version, trailer))
 
     # Commit changes and tag the release
-    if commit:
-        perform = run
-    else:
-        notify.warning("Due to --no-commit, these commands were skipped:")
-        perform = notify.info
-
-    if scm_type == 'git':
-        perform('git commit -m ":package: Release v{}"'.format(version))
-        perform('git tag "v{}"'.format(version))
-    else:
-        notify.warning("Unsupported SCM, make sure you commit pending release changes!")
+    scm.commit(':package: Release v{}'.format(version))
+    scm.tag('v' + version)
