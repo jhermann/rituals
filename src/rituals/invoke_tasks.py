@@ -258,11 +258,13 @@ def release_prep(commit=True):
             if any(line.startswith(i) for i in ('tag_build', 'tag_date')):
                 data[i] = '#' + data[i]
                 changed = True
-        if changed:
+        if changed and commit:
             notify.info("Rewriting 'setup.cfg'...")
             with open(setup_cfg, 'w') as handle:
                 handle.write(''.join(data))
             scm.add_file('setup.cfg')
+        elif changed:
+            notify.warning("WOULD rewrite 'setup.cfg'")
     else:
         notify.warning("Cannot rewrite 'setup.cfg', none found!")
 
