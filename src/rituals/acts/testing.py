@@ -25,6 +25,10 @@ import os
 
 from invoke import run, task
 
+from .. import config
+from ..util import add_dir2pypath
+
+
 __all__ = ['tox']
 
 
@@ -36,6 +40,8 @@ __all__ = ['tox']
 })
 def tox(verbose=False, env_list='', opts='', pty=True):
     """Perform multi-environment tests."""
+    cfg = config.load()
+    add_dir2pypath(cfg.project_root)
     snakepits = ['/opt/pyenv/bin'] # TODO: config value
     cmd = []
 
