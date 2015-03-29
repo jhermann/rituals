@@ -29,7 +29,7 @@ from invoke import task, exceptions
 
 from . import config
 from .acts import inv
-from .util import antglob, notify, which
+from .util import antglob, notify, which, add_dir2pypath
 from .util.scm import provider as scm_provider
 from .util.filesys import pushd
 
@@ -72,23 +72,12 @@ def run(cmd, **kw):
         sys.stderr.flush()
 
 
-def add_dir2pypath(path):
-    """Add given directory to PYTHONPATH, e.g. for pylint."""
-    py_path = os.environ.get('PYTHONPATH', '')
-    if path not in py_path.split(os.pathsep):
-        py_path = ''.join([path, os.pathsep if py_path else '', py_path])
-        os.environ['PYTHONPATH'] = py_path
-    # print('*** PYTHONPATH={}'.format(os.environ.get('PYTHONPATH', None)))
-
-
 @task(default=True)
 def help(): # pylint: disable=redefined-builtin
     """Invoked with no arguments."""
     run("invoke --help")
     run("invoke --list")
     notify.info("Use 'invoke -h ‹taskname›' to get detailed help.")
-
-
 
 
 @task(help=dict(

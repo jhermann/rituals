@@ -34,3 +34,12 @@ def search_file_upwards(name, base=None):
         base = os.path.dirname(base)
 
     return None
+
+
+def add_dir2pypath(path):
+    """Add given directory to PYTHONPATH, e.g. for pylint."""
+    py_path = os.environ.get('PYTHONPATH', '')
+    if path not in py_path.split(os.pathsep):
+        py_path = ''.join([path, os.pathsep if py_path else '', py_path])
+        os.environ['PYTHONPATH'] = py_path
+    # print('*** PYTHONPATH={}'.format(os.environ.get('PYTHONPATH', None)))
