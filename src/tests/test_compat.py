@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=wildcard-import, missing-docstring, redefined-outer-name, invalid-name, no-self-use, bad-continuation
-""" Tests for `rituals._compat`.
+# pylint: disable=wildcard-import, unused-wildcard-import, missing-docstring
+# pylint: disable=invalid-name, no-self-use, bad-continuation, redefined-outer-name
+""" Tests for `rituals.util._compat`.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
 #
@@ -27,7 +28,7 @@ import datetime
 
 #import pytest
 
-from rituals._compat import *
+from rituals.util._compat import *  # pylint: disable=redefined-builtin
 
 
 def test_python_version_flags():

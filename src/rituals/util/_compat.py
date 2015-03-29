@@ -49,6 +49,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+import datetime
 
 PY2 = sys.version_info[0] == 2
 PYPY = hasattr(sys, 'pypy_translation_info')
@@ -85,7 +86,7 @@ if not PY2:
     encode_filename = _identity
     get_next = lambda x: x.__next__
 
-else:
+else:  # PY2
     unichr = unichr
     text_type = unicode
     range_type = xrange
@@ -147,3 +148,12 @@ try:
     from urllib.parse import quote_from_bytes as url_quote
 except ImportError:
     from urllib import quote as url_quote
+
+
+def isodate(datestamp=None, microseconds=False):
+    """Return current or given time formatted according to ISO-8601."""
+    datestamp = datestamp or datetime.datetime.now()
+    if not microseconds:
+        usecs = datetime.timedelta(microseconds=datestamp.microsecond)
+        datestamp = datestamp - usecs
+    return datestamp.isoformat(b' ' if PY2 else u' ')  # pylint: disable=no-member
