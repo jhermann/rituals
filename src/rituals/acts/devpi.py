@@ -37,7 +37,7 @@ def get_devpi_url():
         if line.strip() == 'simpleindex':
             return base_url.strip().rstrip('/')
 
-    raise KeyError("Cannot find simpleindex URL in '{}' output:\n    {}".format(
+    raise LookupError("Cannot find simpleindex URL in '{}' output:\n    {}".format(
         cmd, '\n    '.join(lines),
     ))
 
@@ -61,8 +61,8 @@ def devpi_refresh(requirement='', name='', installed=False):
     # Get 'devpi' URL
     try:
         base_url = get_devpi_url()
-    except KeyError as exc:
-        notify.failure(exc.message)
+    except LookupError as exc:
+        notify.failure(exc.args[0])
     notify.banner("Refreshing devpi links on {}".format(base_url))
 
     # Assemble requirements
