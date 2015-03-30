@@ -27,13 +27,13 @@ import re
 import sys
 from datetime import datetime
 
-from invoke import run as invoke_run
 from invoke import task, exceptions
 
 from . import config
 from .acts import inv
 from .util import antglob, notify, which, add_dir2pypath
 from .util.scm import provider as scm_provider
+from .util.shell import run, capture
 from .util.filesys import pushd
 
 from .acts.basic import *
@@ -62,45 +62,6 @@ if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
     from .acts.devpi import __all__ as _all
     __all__.extend(_all)
     del _all
-
-
-def capture(cmd, **kw):
-    """Run a command and return its stripped captured output."""
-    kw = kw.copy()
-    kw['hide'] = 'out'
-    if not kw.get('echo', False):
-        kw['echo'] = False
-    try:
-        return invoke_run(cmd, **kw).stdout.strip()
-    except exceptions.Failure as exc:
-        notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
-        raise
-
-
-def run(cmd, **kw):
-    """Run a command and flush its output."""
-    kw = kw.copy()
-    if 'warn' not in kw:
-        kw['warn'] = False  # make extra sure errors don't get silenced
-    if os.name == 'posix':
-        cmd += ' 2>&1'  # ensure ungarbled output
-
-    report_error = True
-    if 'report_error' in kw:
-        report_error = kw['report_error']
-        del kw['report_error']
-
-    try:
-        return invoke_run(cmd, **kw)
-    except exceptions.Failure as exc:
-        sys.stdout.flush()
-        sys.stderr.flush()
-        if report_error:
-            notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
-        raise
-    finally:
-        sys.stdout.flush()
-        sys.stderr.flush()
 
 
 @task(default=True)
