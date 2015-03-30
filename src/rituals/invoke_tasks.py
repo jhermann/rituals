@@ -64,6 +64,18 @@ if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
     del _all
 
 
+def capture(cmd, **kw):
+    """Run a command and return its stripped captured output."""
+    kw = kw.copy()
+    kw['hide'] = 'out'
+    kw['echo'] = False
+    try:
+        return invoke_run(cmd, **kw).stdout.strip()
+    except exceptions.Failure as exc:
+        notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
+        raise
+
+
 def run(cmd, **kw):
     """Run a command and flush its output."""
     if os.name == 'posix':
