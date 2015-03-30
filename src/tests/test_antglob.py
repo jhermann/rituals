@@ -44,40 +44,40 @@ from rituals.util.antglob import *
 
 class Glob2reTest(unittest.TestCase):
 
-    def test_star_import(self):
+    def test_antglob_star_import_does_not_include_glob2re(self):
         assert 'glob2re' not in globals()
 
-    def test_star(self):
+    def test_star_converts_to_non_slash_sequences(self):
         assert antglob.glob2re('a*b') == 'a[^/]*b'
         assert antglob.glob2re('a*b*') == 'a[^/]*b[^/]*'
 
-    def test_charset(self):
+    def test_charsets_are_left_intact(self):
         assert antglob.glob2re('[abc]') == '[abc]'
 
-    def test_escape(self):
+    def test_backslash_and_plus_are_properly_escaped(self):
         assert antglob.glob2re('\\') == r'\\'
         assert antglob.glob2re('+') == r'\+'
 
 
 class ParseGlobTest(unittest.TestCase):
 
-    def test_star_import(self):
+    def test_antglob_star_import_does_not_include_parse_glob(self):
         assert 'parse_glob' not in globals()
 
-    def test_empty(self):
+    def test_empty_inputs_create_an_empty_output(self):
         assert not list(antglob.parse_glob(None))
         assert not list(antglob.parse_glob(''))
 
-    def test_twinstar(self):
+    def test_twin_star_translates_to_null_match_or_non_empty_sequence_plus_slash(self):
         assert list(antglob.parse_glob('a/**/b')) == ['a/', '(|.+/)', 'b']
 
-    def test_trailing_slash(self):
+    def test_path_parts_have_a_trailing_slash(self):
         assert list(antglob.parse_glob('a/b/')) == ['a/', 'b/', '']
 
-    def test_path_glob(self):
+    def test_embedded_star_in_path_part_matches_non_slash_middle(self):
         assert list(antglob.parse_glob('a*b/c')) == ['a[^/]*b/', 'c']
 
-    def test_abspath(self):
+    def test_absolute_paths_emit_a_starting_slash(self):
         assert list(antglob.parse_glob('/root')) == ['/', 'root']
 
 
@@ -138,7 +138,7 @@ def check_glob(root, pattern, expected):
 
 ALL_THE_PIES = ["zero.py", "foo/one.py", "foo/bar/two.py", "foo/bar/baz/three.py"]
 
-def test_empty(root):
+def test_patterns_that_cause_an_empty_result(root):
     cases = (
         ("foo/blah/*.py", []),
         ("*.blah", []),
@@ -150,7 +150,7 @@ def test_empty(root):
         check_glob(root, pattern, results)
 
 
-def test_glob(root):
+def test_patterns_with_stars_and_twin_stars(root):
     cases = [
         ("*.py", ["zero.py"]),
         ("foo/*.py", ["foo/one.py"]),
@@ -162,7 +162,7 @@ def test_glob(root):
         check_glob(root, pattern, results)
 
 
-def test_twinstar_matches_root_files(root):
+def test_twin_star_pattern_matches_root_files(root):
     root_py = set(antglob.FileSet(root, [antglob.includes('*.py')]))
     all_py = set(antglob.FileSet(root, [antglob.includes('**/*.py')]))
     assert len(root_py) == 1
@@ -170,7 +170,7 @@ def test_twinstar_matches_root_files(root):
     assert root_py <= all_py
 
 
-def test_exact(root):
+def test_direct_matches_for_plain_filenames_and_paths(root):
     cases = [
         ("zero.py", ["zero.py"]),
         ("foo/bar/baz/three.py", ["foo/bar/baz/three.py"]),
@@ -180,7 +180,7 @@ def test_exact(root):
         check_glob(root, pattern, results)
 
 
-def test_recursive(root):
+def test_recursive_patterns_using_twin_stars_once_or_twice(root):
     cases = (
         ("**/...", ["foo/bar/baz/..."]),
         ("**/*.py", ALL_THE_PIES),
@@ -191,7 +191,7 @@ def test_recursive(root):
         check_glob(root, pattern, results)
 
 
-def test_multi(root):
+def test_multiple_combinations_of_includes_and_excludes(root):
     a = FileSet(root, [
         includes("*.py"),
         includes("*/*.py"),
@@ -239,7 +239,7 @@ def test_multi(root):
         assert_sets_equal(result, expected)
 
 
-def test_set(root):
+def test_drivers_fileset_operator_combinations(root):
     a = FileSet(root, [
         includes("**/*.py")
     ])
@@ -265,7 +265,7 @@ def test_set(root):
         assert_sets_equal(result, expected)
 
 
-def test_dir_match(root):
+def test_directory_patterns_return_matches(root):
     assert_sets_equal(antglob.FileSet(root, "foo/"), ["foo/"])
     assert_sets_equal(antglob.FileSet(root, "**/baz/"), ["foo/bar/baz/"])
     assert_sets_equal(antglob.FileSet(root, "**/b*/"), ["foo/bar/", "foo/bar/baz/"])
@@ -275,11 +275,19 @@ def test_dir_match(root):
     assert_sets_equal(antglob.FileSet(root, "*/*/*/"), ["foo/bar/.hidden/", "foo/bar/baz/"])
 
 
-def test_charsets(root):
+def test_glob_patterns_with_normal_char_sets(root):
+    assert_sets_equal(antglob.FileSet(root, "**/bar/[.b]*/"), ["foo/bar/.hidden/", "foo/bar/baz/"])
+
+
+def test_glob_patterns_with_inverted_char_sets(root):
     assert_sets_equal(antglob.FileSet(root, "**/baz/[^.]*"), ["foo/bar/baz/three", "foo/bar/baz/three.py"])
     assert_sets_equal(antglob.FileSet(root, "**/baz/[^t]*"), ["foo/bar/baz/..."])
 
 
-def test_string_pattern(root):
+def test_string_patterns_are_inclusive_by_default(root):
     assert list(antglob.FileSet(root, "*.py")) == ["zero.py"]
+
+
+def test_lists_of_string_patterns_are_combined(root):
     assert list(antglob.FileSet(root, ["*.py"])) == ["zero.py"]
+    assert list(antglob.FileSet(root, ["*.py", "foo/bar/tw*", "foo/bar/*.py"])) == ["zero.py", "foo/bar/two", "foo/bar/two.py"]

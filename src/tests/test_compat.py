@@ -31,7 +31,7 @@ import datetime
 from rituals.util._compat import *  # pylint: disable=redefined-builtin
 
 
-def test_python_version_flags():
+def test_python_version_flags_are_consistent():
     if PYPY:
         assert not PY2
     if PY2:

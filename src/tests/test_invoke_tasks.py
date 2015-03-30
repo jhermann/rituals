@@ -31,12 +31,12 @@ import tasks
 from rituals import invoke_tasks
 
 
-def test_task_py_path_has_setup_py():
+def test_tasks_module_directory_contains_a_setup_sibling():
     """Check that imported `tasks` module is the correct one."""
     assert os.path.exists(os.path.join(os.path.dirname(tasks.__file__), "setup.py"))
 
 
-def test_all_tasks_are_exported():
+def test_all_defaulted_tasks_are_exported():
     """Check that all defined tasks are also exported."""
     defined_tasks = set(k
         for k, v in vars(invoke_tasks).items()
@@ -44,6 +44,6 @@ def test_all_tasks_are_exported():
     assert defined_tasks - set(invoke_tasks.__all__) == set()
 
 
-def test_config_is_exported():
+def test_config_module_is_exported_together_with_the_default_tasks():
     """Check that `config` is exported."""
     assert 'config' in invoke_tasks.__all__
