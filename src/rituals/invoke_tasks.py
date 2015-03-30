@@ -89,8 +89,24 @@ def bump():
     cfg = config.load()
 
     # TODO: Put into scm package
+    # PEP 386 format is N.N[.N]+[{a|b|c|rc}N[.N]+][.postN][.devN]
     now = '{:%Y%m%d-%H%M}'.format(datetime.now())
-    desc = run("git describe --long --tags --dirty=-{}".format(now), hide='out', echo=False).stdout.strip()
+    desc = run("git describe --long --tags --dirty=-{}".format(now), hide='out', echo=False).stdout.strip().split('-')
+    if len(desc) >= 3:
+        if desc[0].startswith('v') and desc[0][1:].replace('.', '').isdigit():
+            desc[0] = desc[0][1:]
+        if desc[2].startswith('g') and desc[2][1:].isalnum():
+            try:
+                short_hash = int(desc[2][1:], 16)
+            except (TypeError, ValueError) as exc:
+                notify.warning("Bad GIT short hash '{}'".format(desc[2]))
+            else:
+                desc[2] = "{:09d}".format(short_hash)
+
+    # Append (Jenkins) build number if present, and make PEP-386 version
+    if os.environ.get('BUILD_NUMBER', 'x').isdigit():
+        desc.append(os.environ['BUILD_NUMBER'])
+    pep386 = 'a' + '.'.join(desc)
 
     # Rewrite 'setup.cfg'  TODO: refactor to helper, see also release-prep
     # with util.rewrite_file(cfg.rootjoin('setup.cfg')) as lines:
@@ -103,7 +119,7 @@ def bump():
         for i, line in enumerate(data):
             if re.match(r"#? *tag_build *= *.*", line):
                 verb, _ = data[i].split('=', 1)
-                data[i] = '{}= dev-{}\n'.format(verb, desc)
+                data[i] = '{}= {}\n'.format(verb, pep386)
                 changed = True
 
         if changed:
