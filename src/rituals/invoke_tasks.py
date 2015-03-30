@@ -25,7 +25,6 @@ import io
 import os
 import re
 import sys
-from datetime import datetime
 
 from invoke import task, exceptions
 
@@ -78,49 +77,20 @@ def help(): # pylint: disable=redefined-builtin
 def bump(verbose=False):
     """Bump a development version."""
     cfg = config.load()
-    version = capture("python setup.py --version", echo=verbose)
-    if verbose:
-        notify.info("setuptools version = '{}'".format(version))
+    scm = scm_provider(cfg.project_root, commit=False)
 
-    # TODO: Put into scm package
-    now = '{:%Y%m%d!%H%M}'.format(datetime.now())
-    tag = capture("git describe --long --dirty='!{}'".format(now), echo=verbose)
-    if verbose:
-        notify.info("git describe = '{}'".format(tag))
-    try:
-        tag, date, time = tag.split('!')
-    except ValueError:
-        date = time = ''
-    tag, commits, short_hash = tag.rsplit('-', 3)
-    label = tag
-    if re.match(r"v[0-9]+(\.[0-9]+)*", label):
-        label = label[1:]
+    # Check for uncommitted changes
+    if not scm.workdir_is_clean():
+        notify.warning("You have uncommitted changes, will create a time-stamped version!")
 
-    # Make a PEP-440 version appendix, the format is:
-    # [N!]N(.N)*[{a|b|rc}N][.postN][.devN][+<local version label>]
-    if commits == '0' and label == version:
-        pep440 = None
-    else:
-        local_part = [
-            re.sub(r"[^a-zA-Z0-9]+", '.', label).strip('.'),  # reduce to alphanum and dots
-            short_hash,
-            date + ('T' + time if time else ''),
-        ]
-        build_number = os.environ.get('BUILD_NUMBER', 'n/a')
-        if build_number.isdigit():
-            local_part.extend(['ci', build_number])
-            if verbose:
-                notify.info("Adding CI build ID #{} to version".format(build_number))
-
-        local_part = [i for i in local_part if i]
-        pep440 = '.dev{}+{}'.format(commits, '.'.join(local_part).strip('.'))
+    pep440 = scm.pep440_dev_version(verbose=verbose)
 
     # Rewrite 'setup.cfg'  TODO: refactor to helper, see also release-prep
     # with util.rewrite_file(cfg.rootjoin('setup.cfg')) as lines:
     #     ...
     setup_cfg = cfg.rootjoin('setup.cfg')
     if not pep440:
-        notify.info("Working directory contains a release version '{}'".format(tag))
+        notify.info("Working directory contains a release version!")
     elif os.path.exists(setup_cfg):
         with io.open(setup_cfg, encoding='utf-8') as handle:
             data = handle.readlines()
