@@ -103,15 +103,21 @@ def help(): # pylint: disable=redefined-builtin
     notify.info("Use 'invoke -h ‹taskname›' to get detailed help.")
 
 
-@task
-def bump():
+@task(help=dict(
+    verbose="Print version information as it is collected.",
+))
+def bump(verbose=False):
     """Bump a development version."""
     cfg = config.load()
-    version = run("python setup.py --version", hide='out', echo=False).stdout.strip()
+    version = capture("python setup.py --version")
+    if verbose:
+        notify.info("setuptools version = '{}'".format(version))
 
     # TODO: Put into scm package
     now = '{:%Y%m%d!%H%M}'.format(datetime.now())
-    tag = run("git describe --long --dirty='!{}'".format(now), hide='out', echo=False).stdout.strip()
+    tag = capture("git describe --long --dirty='!{}'".format(now))
+    if verbose:
+        notify.info("git describe = '{}'".format(tag))
     try:
         tag, date, time = tag.split('!')
     except ValueError:
@@ -164,7 +170,7 @@ def bump():
 
     if os.path.exists(setup_cfg):
         # Update metadata and print version
-        egg_info = run("python setup.py egg_info", hide='out', echo=False).stdout.strip()
+        egg_info = capture("python setup.py egg_info")
         for line in egg_info.splitlines():
             if line.endswith('PKG-INFO'):
                 pkg_info_file = line.split(None, 1)[1]
@@ -376,7 +382,7 @@ def release_prep(commit=True):
         notify.warning("Cannot rewrite 'setup.cfg', none found!")
 
     # Build a clean dist and check version number
-    version = run('python setup.py --version').stdout.strip()
+    version = capture('python setup.py --version')
     run('invoke clean --all build --docs dist')
     for distfile in os.listdir('dist'):
         trailer = distfile.split('-' + version)[1]
