@@ -30,7 +30,7 @@ from rituals.invoke_tasks import clean
 from rituals.acts import *
 
 
-def test_task_lookup_error_is_a_lookup_error():
+def test_task_lookup_error_is_indeed_a_lookup_error():
     with pytest.raises(LookupError):
         raise TaskLookupError("tilt!")
 
