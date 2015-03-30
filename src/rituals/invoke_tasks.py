@@ -180,7 +180,7 @@ def bump(verbose=False):
                 pkg_info_file = line.split(None, 1)[1]
                 with io.open(pkg_info_file, encoding='utf-8') as handle:
                     notify.info('\n'.join(i for i in handle.readlines() if i.startswith('Version:')).strip())
-        run("python setup.py -q develop", echo=notify.ECHO)
+        run("python setup.py -q develop", echo=notify.ECHO or verbose)
 
 
 @task(help=dict(
