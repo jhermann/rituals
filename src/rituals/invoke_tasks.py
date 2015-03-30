@@ -84,12 +84,19 @@ def run(cmd, **kw):
         kw['warn'] = False  # make extra sure errors don't get silenced
     if os.name == 'posix':
         cmd += ' 2>&1'  # ensure ungarbled output
+
+    report_error = True
+    if 'report_error' in kw:
+        report_error = kw['report_error']
+        del kw['report_error']
+
     try:
         return invoke_run(cmd, **kw)
     except exceptions.Failure as exc:
         sys.stdout.flush()
         sys.stderr.flush()
-        notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
+        if report_error:
+            notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
         raise
     finally:
         sys.stdout.flush()
@@ -316,7 +323,7 @@ def check(skip_tests=False, skip_root=False, reports=False):
             cmd += ' --rcfile={0}'.format(cfgfile)
             break
     try:
-        run(cmd, echo=notify.ECHO)
+        run(cmd, echo=notify.ECHO, report_error=False)
         notify.info("OK - No problems found by pylint.")
     except exceptions.Failure as exc:
         # Check bit flags within pylint return code
