@@ -79,6 +79,7 @@ class GitProvider(ProviderBase):
         self.run_elective('git commit -m "{}"'.format(message))
 
 
-    def tag(self, label):
+    def tag(self, label, message=None):
         """Tag the current workdir state."""
-        self.run_elective('git tag "{}"'.format(label))
+        options = ' -m "{}" -a'.format(message) if message else ''
+        self.run_elective('git tag{} "{}"'.format(options, label))
