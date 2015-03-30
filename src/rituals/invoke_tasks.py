@@ -142,13 +142,15 @@ def bump():
     else:
         notify.warning("Cannot rewrite 'setup.cfg', none found!")
 
-    # Update metadata and print version
-    egg_info = run("python setup.py egg_info", hide='out', echo=False).stdout.strip()
-    for line in egg_info.splitlines():
-        if line.endswith('PKG-INFO'):
-            pkg_info_file = line.split(None, 1)[1]
-            with io.open(pkg_info_file, encoding='utf-8') as handle:
-                notify.info('\n'.join(i for i in handle.readlines() if i.startswith('Version:')).strip())
+    if os.path.exists(setup_cfg):
+        # Update metadata and print version
+        egg_info = run("python setup.py egg_info", hide='out', echo=False).stdout.strip()
+        for line in egg_info.splitlines():
+            if line.endswith('PKG-INFO'):
+                pkg_info_file = line.split(None, 1)[1]
+                with io.open(pkg_info_file, encoding='utf-8') as handle:
+                    notify.info('\n'.join(i for i in handle.readlines() if i.startswith('Version:')).strip())
+        run("python setup.py -q develop", echo=notify.ECHO)
 
 
 @task(help=dict(
