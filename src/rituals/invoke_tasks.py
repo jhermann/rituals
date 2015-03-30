@@ -87,39 +87,50 @@ def help(): # pylint: disable=redefined-builtin
 def bump():
     """Bump a development version."""
     cfg = config.load()
+    version = run("python setup.py --version", hide='out', echo=False).stdout.strip()
 
     # TODO: Put into scm package
-    # PEP 386 format is N.N[.N]+[{a|b|c|rc}N[.N]+][.postN][.devN]
-    now = '{:%Y%m%d-%H%M}'.format(datetime.now())
-    desc = run("git describe --long --tags --dirty=-{}".format(now), hide='out', echo=False).stdout.strip().split('-')
-    if len(desc) >= 3:
-        if desc[0].startswith('v') and desc[0][1:].replace('.', '').isdigit():
-            desc[0] = desc[0][1:]
-        if desc[2].startswith('g') and desc[2][1:].isalnum():
-            try:
-                short_hash = int(desc[2][1:], 16)
-            except (TypeError, ValueError) as exc:
-                notify.warning("Bad GIT short hash '{}'".format(desc[2]))
-            else:
-                desc[2] = "{:09d}".format(short_hash)
+    now = '{:%Y%m%d!%H%M}'.format(datetime.now())
+    tag = run("git describe --long --tags --dirty='!{}'".format(now), hide='out', echo=False).stdout.strip()
+    try:
+        tag, date, time = tag.split('!')
+    except ValueError:
+        date = time = ''
+    tag, commits, short_hash = tag.rsplit('-', 3)
+    label = tag
+    if re.match(r"v[0-9]+(\.[0-9]+)*", label):
+        label = label[1:]
 
-    # Append (Jenkins) build number if present, and make PEP-386 version
-    if os.environ.get('BUILD_NUMBER', 'x').isdigit():
-        desc.append(os.environ['BUILD_NUMBER'])
-    pep386 = 'a' + '.'.join(desc)
+    # Make a PEP-440 version appendix, the format is:
+    # [N!]N(.N)*[{a|b|rc}N][.postN][.devN][+<local version label>]
+    if commits == '0' and label == version:
+        pep440 = None
+    else:
+        local_part = [
+            re.sub(r"[^a-zA-Z0-9]+", '.', label).strip('.'),  # reduce to alphanum and dots
+            short_hash,
+            date + ('T' + time if time else ''),
+        ]
+        if os.environ.get('BUILD_NUMBER', 'x').isdigit():
+            local_part.extend(['ci', os.environ['BUILD_NUMBER']])
+
+        local_part = [i for i in local_part if i]
+        pep440 = '.dev{}+{}'.format(commits, '.'.join(local_part).strip('.'))
 
     # Rewrite 'setup.cfg'  TODO: refactor to helper, see also release-prep
     # with util.rewrite_file(cfg.rootjoin('setup.cfg')) as lines:
     #     ...
     setup_cfg = cfg.rootjoin('setup.cfg')
-    if os.path.exists(setup_cfg):
+    if not pep440:
+        notify.info("Working directory contains release version '{}'".format(tag))
+    elif os.path.exists(setup_cfg):
         with io.open(setup_cfg, encoding='utf-8') as handle:
             data = handle.readlines()
         changed = False
         for i, line in enumerate(data):
             if re.match(r"#? *tag_build *= *.*", line):
                 verb, _ = data[i].split('=', 1)
-                data[i] = '{}= {}\n'.format(verb, pep386)
+                data[i] = '{}= {}\n'.format(verb, pep440)
                 changed = True
 
         if changed:
