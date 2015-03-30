@@ -23,8 +23,10 @@ See the next section on how to integrate them into your `tasks.py`.
 * ``build`` –   Build the project.
 * ``test`` –    Perform standard unittests.
 * ``check`` –   Perform source code checks.
+* ``bump`` –    Bump a development version.
 * ``dist`` –    Distribute the project.
 * ``release-prep`` – Prepare for a release (perform QA checks, and switch to non-dev versioning).
+* … and *many* more, see `inv -l` for a complete list.
 
 The guiding principle for these tasks is to strictly separate
 low-level tasks for building and installing (via ``setup.py``)
