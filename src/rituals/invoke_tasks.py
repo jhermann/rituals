@@ -78,10 +78,18 @@ def capture(cmd, **kw):
 
 def run(cmd, **kw):
     """Run a command and flush its output."""
+    kw = kw.copy()
+    if 'warn' not in kw:
+        kw['warn'] = False  # make extra sure errors don't get silenced
     if os.name == 'posix':
-        cmd += ' 2>&1' # ensure ungarbled output
+        cmd += ' 2>&1'  # ensure ungarbled output
     try:
         return invoke_run(cmd, **kw)
+    except exceptions.Failure as exc:
+        sys.stdout.flush()
+        sys.stderr.flush()
+        notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
+        raise
     finally:
         sys.stdout.flush()
         sys.stderr.flush()
