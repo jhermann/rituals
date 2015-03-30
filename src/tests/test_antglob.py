@@ -289,5 +289,6 @@ def test_string_patterns_are_inclusive_by_default(root):
 
 
 def test_lists_of_string_patterns_are_combined(root):
-    assert list(antglob.FileSet(root, ["*.py"])) == ["zero.py"]
-    assert list(antglob.FileSet(root, ["*.py", "foo/bar/tw*", "foo/bar/*.py"])) == ["zero.py", "foo/bar/two", "foo/bar/two.py"]
+    patterns = ["*.py", "foo/bar/tw*", "foo/bar/*.py"]
+    assert set(antglob.FileSet(root, patterns[:1])) == set(["zero.py"])
+    assert set(antglob.FileSet(root, patterns)) == set(["zero.py", "foo/bar/two", "foo/bar/two.py"])
