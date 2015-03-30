@@ -21,8 +21,11 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
+import io
 import os
+import re
 import sys
+from datetime import datetime
 
 from invoke import run as invoke_run
 from invoke import task, exceptions
@@ -41,7 +44,7 @@ from .acts.testing import __all__ as _testing_all
 
 __all__ = [
     'config', 'inv', 'pushd',
-    'help', 'clean', 'freeze', 'build', 'dist', 'test', 'check',
+    'help', 'clean', 'freeze', 'bump', 'build', 'dist', 'test', 'check',
     'release_prep',
 ] + _basic_all + _testing_all
 
@@ -78,6 +81,47 @@ def help(): # pylint: disable=redefined-builtin
     run("invoke --help")
     run("invoke --list")
     notify.info("Use 'invoke -h ‹taskname›' to get detailed help.")
+
+
+@task
+def bump():
+    """Bump a development version."""
+    cfg = config.load()
+
+    # TODO: Put into scm package
+    now = '{:%Y%m%d-%H%M}'.format(datetime.now())
+    desc = run("git describe --long --tags --dirty=-{}".format(now), hide='out', echo=False).stdout.strip()
+
+    # Rewrite 'setup.cfg'  TODO: refactor to helper, see also release-prep
+    # with util.rewrite_file(cfg.rootjoin('setup.cfg')) as lines:
+    #     ...
+    setup_cfg = cfg.rootjoin('setup.cfg')
+    if os.path.exists(setup_cfg):
+        with io.open(setup_cfg, encoding='utf-8') as handle:
+            data = handle.readlines()
+        changed = False
+        for i, line in enumerate(data):
+            if re.match(r"#? *tag_build *= *.*", line):
+                verb, _ = data[i].split('=', 1)
+                data[i] = '{}= dev-{}\n'.format(verb, desc)
+                changed = True
+
+        if changed:
+            notify.info("Rewriting 'setup.cfg'...")
+            with io.open(setup_cfg, 'w', encoding='utf-8') as handle:
+                handle.write(''.join(data))
+        else:
+            notify.warning("No 'tag_build' setting found in 'setup.cfg'!")
+    else:
+        notify.warning("Cannot rewrite 'setup.cfg', none found!")
+
+    # Update metadata and print version
+    egg_info = run("python setup.py egg_info", hide='out', echo=False).stdout.strip()
+    for line in egg_info.splitlines():
+        if line.endswith('PKG-INFO'):
+            pkg_info_file = line.split(None, 1)[1]
+            with io.open(pkg_info_file, encoding='utf-8') as handle:
+                notify.info('\n'.join(i for i in handle.readlines() if i.startswith('Version:')).strip())
 
 
 @task(help=dict(
@@ -240,7 +284,7 @@ def release_prep(commit=True):
     # Rewrite 'setup.cfg'
     setup_cfg = cfg.rootjoin('setup.cfg')
     if os.path.exists(setup_cfg):
-        with open(setup_cfg) as handle:
+        with io.open(setup_cfg, encoding='utf-8') as handle:
             data = handle.readlines()
         changed = False
         for i, line in enumerate(data):
@@ -249,7 +293,7 @@ def release_prep(commit=True):
                 changed = True
         if changed and commit:
             notify.info("Rewriting 'setup.cfg'...")
-            with open(setup_cfg, 'w') as handle:
+            with io.open(setup_cfg, 'w', encoding='utf-8') as handle:
                 handle.write(''.join(data))
             scm.add_file('setup.cfg')
         elif changed:
