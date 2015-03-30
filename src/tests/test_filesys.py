@@ -25,15 +25,29 @@ import os
 import tempfile
 #import unittest
 
-#import pytest
+import pytest
 
 from rituals.util.filesys import pushd
 
 
-def test_pushd():
+@pytest.fixture(scope='module')
+def tmpdir():
+    return tempfile.gettempdir()
+
+
+def test_pushd_changes_cwd_to_passed_parameter(tmpdir):
+    with pushd(tmpdir):
+        assert os.getcwd() == tmpdir
+
+
+def test_pushd_puts_old_cwd_into_context_var(tmpdir):
     cwd = os.getcwd()
-    tmp = tempfile.gettempdir()
-    with pushd(tmp) as saved:
+    with pushd(tmpdir) as saved:
         assert saved == cwd
-        assert os.getcwd() == tmp
+
+
+def test_pushd_restores_old_cwd(tmpdir):
+    cwd = os.getcwd()
+    with pushd(tmpdir):
+        assert os.getcwd() != cwd
     assert os.getcwd() == cwd

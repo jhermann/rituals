@@ -31,20 +31,20 @@ from rituals import util
 
 class SearchFileUpwardsTest(unittest.TestCase):
 
-    def test_not_found_terminates(self):
+    def test_searching_for_a_missing_file_terminates(self):
         assert util.search_file_upwards('only_crazies_would_name_a_file_like_this') is None
 
-    def test_setup_py(self):
+    def test_we_can_find_our_own_setup_and_tasks_modules(self):
         home = os.path.dirname(__file__)
         root = util.search_file_upwards('setup.py', base=home)
         assert os.path.exists(os.path.join(root, 'tasks.py'))
 
-    def test_same_dir(self):
+    def test_file_is_found_when_located_in_the_base_dir(self):
         home = os.path.dirname(__file__)
         root = util.search_file_upwards('conftest.py', base=home)
         assert root == home
 
-    def test_cwd(self):
+    def test_search_starts_in_cwd_by_default(self):
         home = os.path.dirname(__file__)
         cwd = os.getcwd()
         try:
