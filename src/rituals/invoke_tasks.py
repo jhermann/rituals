@@ -205,10 +205,13 @@ def dist(devpi=False, egg=False, wheel=False, auto=True):
         run("devpi upload dist/*", echo=notify.ECHO)
 
 
-@task
-def test():
+@task(help={
+    'opts': "Extra flags for test runner",
+})
+def test(opts=''):
     """Perform standard unittests."""
     cfg = config.load()
+    setup_cfg = cfg.rootjoin('setup.cfg')
     add_dir2pypath(cfg.project_root)
 
     try:
@@ -222,9 +225,31 @@ def test():
         pytest = None
 
     if pytest:
-        run('{}{} "{}"'.format(pytest, ' --color=yes' if console else '', cfg.testdir), echo=notify.ECHO)
+        cmd = [pytest,
+            '--color=yes' if console else '',
+            '-c', setup_cfg,
+        ]
+
+        try:
+            import pytest_cov
+        except ImportError:
+            pass
+        else:
+            for package in cfg.project.packages:
+                if '.' not in package:
+                    cmd.extend(['--cov', package,])
+            for dirname in ('.', 'project.d'):
+                if os.path.exists(cfg.rootjoin(dirname, 'coverage.cfg')):
+                    cmd.extend(['--cov-config', cfg.rootjoin(dirname, 'coverage.cfg'),])
+                    break
+            cmd.extend(['--cov-report=term', '--cov-report=html', '--cov-report=xml',])
+
+        if opts:
+            cmd.append(opts)
+        cmd.append(cfg.testdir)
+        run(' '.join(cmd), echo=notify.ECHO)
     else:
-        run('python setup.py test', echo=notify.ECHO)
+        run('python setup.py test' + (' ' + opts if opts else ''), echo=notify.ECHO)
 
 
 @task(help=dict(
