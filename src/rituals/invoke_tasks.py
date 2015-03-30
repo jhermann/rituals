@@ -91,7 +91,7 @@ def bump():
 
     # TODO: Put into scm package
     now = '{:%Y%m%d!%H%M}'.format(datetime.now())
-    tag = run("git describe --long --tags --dirty='!{}'".format(now), hide='out', echo=False).stdout.strip()
+    tag = run("git describe --long --dirty='!{}'".format(now), hide='out', echo=False).stdout.strip()
     try:
         tag, date, time = tag.split('!')
     except ValueError:
@@ -340,4 +340,4 @@ def release_prep(commit=True):
 
     # Commit changes and tag the release
     scm.commit(':package: Release v{}'.format(version))
-    scm.tag('v' + version)
+    scm.tag('v' + version, 'Release v{}'.format(version))
