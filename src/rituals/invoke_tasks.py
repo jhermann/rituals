@@ -231,7 +231,7 @@ def test(opts=''):
         ]
 
         try:
-            import pytest_cov
+            import pytest_cov as _
         except ImportError:
             pass
         else:
