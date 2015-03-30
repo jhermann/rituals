@@ -68,7 +68,8 @@ def capture(cmd, **kw):
     """Run a command and return its stripped captured output."""
     kw = kw.copy()
     kw['hide'] = 'out'
-    kw['echo'] = False
+    if not kw.get('echo', False):
+        kw['echo'] = False
     try:
         return invoke_run(cmd, **kw).stdout.strip()
     except exceptions.Failure as exc:
@@ -109,13 +110,13 @@ def help(): # pylint: disable=redefined-builtin
 def bump(verbose=False):
     """Bump a development version."""
     cfg = config.load()
-    version = capture("python setup.py --version")
+    version = capture("python setup.py --version", echo=verbose)
     if verbose:
         notify.info("setuptools version = '{}'".format(version))
 
     # TODO: Put into scm package
     now = '{:%Y%m%d!%H%M}'.format(datetime.now())
-    tag = capture("git describe --long --dirty='!{}'".format(now))
+    tag = capture("git describe --long --dirty='!{}'".format(now), echo=verbose)
     if verbose:
         notify.info("git describe = '{}'".format(tag))
     try:
@@ -137,8 +138,11 @@ def bump(verbose=False):
             short_hash,
             date + ('T' + time if time else ''),
         ]
-        if os.environ.get('BUILD_NUMBER', 'x').isdigit():
-            local_part.extend(['ci', os.environ['BUILD_NUMBER']])
+        build_number = os.environ.get('BUILD_NUMBER', 'n/a')
+        if build_number.isdigit():
+            local_part.extend(['ci', build_number])
+            if verbose:
+                notify.info("Adding CI build ID #{} to version".format(build_number))
 
         local_part = [i for i in local_part if i]
         pep440 = '.dev{}+{}'.format(commits, '.'.join(local_part).strip('.'))
@@ -148,7 +152,7 @@ def bump(verbose=False):
     #     ...
     setup_cfg = cfg.rootjoin('setup.cfg')
     if not pep440:
-        notify.info("Working directory contains release version '{}'".format(tag))
+        notify.info("Working directory contains a release version '{}'".format(tag))
     elif os.path.exists(setup_cfg):
         with io.open(setup_cfg, encoding='utf-8') as handle:
             data = handle.readlines()
@@ -170,7 +174,7 @@ def bump(verbose=False):
 
     if os.path.exists(setup_cfg):
         # Update metadata and print version
-        egg_info = capture("python setup.py egg_info")
+        egg_info = capture("python setup.py egg_info", echo=verbose)
         for line in egg_info.splitlines():
             if line.endswith('PKG-INFO'):
                 pkg_info_file = line.split(None, 1)[1]
