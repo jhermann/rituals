@@ -89,8 +89,8 @@ def prep(ctx, commit=True):
                            " a pre-release one! [{}{}]".format(version, trailer))
 
     # Commit changes and tag the release
-    scm.commit(ctx.commit.message.format(version=version))
-    scm.tag(ctx.tag.name.format(version=version), ctx.tag.message.format(version=version))
+    scm.commit(ctx.release.commit.message.format(version=version))
+    scm.tag(ctx.release.tag.name.format(version=version), ctx.release.tag.message.format(version=version))
 
 namespace = Collection.from_module(sys.modules[__name__], name='release', config=dict(
     release = dict(
