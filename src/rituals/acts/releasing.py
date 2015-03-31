@@ -78,6 +78,13 @@ def prep(ctx, commit=True):
     else:
         notify.warning("Cannot rewrite 'setup.cfg', none found!")
 
+    # Update metadata and command stubs
+    cmd = 'python setup.py -q develop -U'
+    if commit:
+        ctx.run(cmd)
+    else:
+        notify.warning("WOULD RUN: {}".format(cmd))
+
     # Build a clean dist and check version number
     version = capture('python setup.py --version')
     ctx.run('invoke clean --all build --docs dist')
