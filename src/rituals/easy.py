@@ -32,6 +32,9 @@ from .util.filesys import pushd
 from . import invoke_tasks as _
 namespace = Collection.from_module(_, name='')  # pylint: disable=invalid-name
 
+from .acts.testing import namespace as _
+namespace.add_collection(_)
+
 # Activate devpi tasks by default?
 if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
     from .acts.devpi import namespace as _
@@ -41,5 +44,6 @@ if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
 __all__ = ['Collection', 'task', 'namespace', 'pushd']
 
 for _ in namespace.task_names:
-    __all__.append(_.replace('-', '_'))
-    globals()[_.replace('-', '_')] = namespace.task_with_config(_)[0]
+    _name = _.replace('-', '_').replace('.', '_')
+    __all__.append(_name)
+    globals()[_name] = namespace.task_with_config(_)[0]

@@ -27,23 +27,13 @@ import re
 import sys
 
 from invoke import task, exceptions
-from invoke.tasks import call
 
 from . import config
-from .util import antglob, notify, which, add_dir2pypath
+from .util import antglob, notify, add_dir2pypath
 from .util.scm import provider as scm_provider
 from .util.shell import run, capture
 
 from .acts.basic import *
-from .acts.testing import *
-
-
-_PROJECT_ROOT = config.get_project_root()
-
-
-# Keep 'tox' tasks?
-if _PROJECT_ROOT and not os.path.exists(os.path.join(_PROJECT_ROOT, 'tox.ini')):
-    del tox
 
 
 @task(default=True)
@@ -154,53 +144,6 @@ def dist(devpi=False, egg=False, wheel=False, auto=True):
     run(' '.join(cmd), echo=notify.ECHO)
     if devpi:
         run("devpi upload dist/*", echo=notify.ECHO)
-
-
-@task(help={
-    'opts': "Extra flags for test runner",
-})
-def test(opts=''):
-    """Perform standard unittests."""
-    cfg = config.load()
-    setup_cfg = cfg.rootjoin('setup.cfg')
-    add_dir2pypath(cfg.project_root)
-
-    try:
-        console = sys.stdin.isatty()
-    except AttributeError:
-        console = False
-
-    try:
-        pytest = which.which("py.test").replace(cfg.project_root + os.sep, '')
-    except which.WhichError:
-        pytest = None
-
-    if pytest:
-        cmd = [pytest,
-            '--color=yes' if console else '',
-            '-c', setup_cfg,
-        ]
-
-        try:
-            import pytest_cov as _
-        except ImportError:
-            pass
-        else:
-            for package in cfg.project.packages:
-                if '.' not in package:
-                    cmd.extend(['--cov', package,])
-            for dirname in ('.', 'project.d'):
-                if os.path.exists(cfg.rootjoin(dirname, 'coverage.cfg')):
-                    cmd.extend(['--cov-config', cfg.rootjoin(dirname, 'coverage.cfg'),])
-                    break
-            cmd.extend(['--cov-report=term', '--cov-report=html', '--cov-report=xml',])
-
-        if opts:
-            cmd.append(opts)
-        cmd.append(cfg.testdir)
-        run(' '.join(cmd), echo=notify.ECHO)
-    else:
-        run('python setup.py test' + (' ' + opts if opts else ''), echo=notify.ECHO)
 
 
 @task(help=dict(
