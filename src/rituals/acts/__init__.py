@@ -57,7 +57,11 @@ class RuntimeInvoke(Call):
             try:
                 self.task = getattr(tasks_namespace, self.name)
             except AttributeError:
-                raise TaskLookupError(self.name)
+                invoke_ns = getattr(tasks_namespace, 'namespace', getattr(tasks_namespace, 'ns', None))
+                if invoke_ns:
+                    self.task, _ = invoke_ns.task_with_config(self.name)
+                else:
+                    raise TaskLookupError(self.name)
             else:
                 #from rituals.util import notify
                 #notify.warning("Delayed lookup of task '{}'".format(self.name))
