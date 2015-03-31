@@ -33,7 +33,7 @@ from ..util import notify, which, add_dir2pypath
 @task(default=True, help={
     'opts': "Extra flags for test runner",
 })
-def test(_, opts=''):
+def pytest(_, opts=''):
     """Perform standard unittests."""
     cfg = config.load()
     setup_cfg = cfg.rootjoin('setup.cfg')

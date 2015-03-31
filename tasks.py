@@ -9,13 +9,13 @@ from rituals.easy import *
 
 
 @task(pre=[
-    clean, build, test_test, check, # pylint: disable=undefined-variable
+    clean, build, test_pytest, check, # pylint: disable=undefined-variable
     #call(clean, all=True),
     #call(build, docs=True),
     #call(test),
     #call(check, reports=True),
 ]) # pylint: disable=invalid-name
-def ci(ctx):
+def ci(_):
     """Perform continuous integration tasks."""
 
 namespace.add_task(ci)
