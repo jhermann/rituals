@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, superfluous-parens, wildcard-import
+# pylint: disable=bad-continuation, bad-whitespace
 """ 'devpi' tasks.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
@@ -21,11 +21,14 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
-from invoke import run, task
+import sys
+
+from invoke import run, Collection, ctask as task
 
 from rituals.util import notify
 
-__all__ = ['devpi_refresh']
+
+DEFAULT_REQUIREMENTS = 'dev-requirements.txt'
 
 
 def get_devpi_url():
@@ -42,12 +45,12 @@ def get_devpi_url():
     ))
 
 
-@task(name='devpi-refresh', help=dict(
-    requirement="Refresh from the given requirements file (default: 'dev-requirements.txt')",
+@task(help=dict(
+    requirement="Refresh from the given requirements file (default: {})".format(DEFAULT_REQUIREMENTS),
     name="Refresh a specific package",
     installed="Refresh all installed packages",
 ))  # pylint: disable=too-many-locals
-def devpi_refresh(requirement='', name='', installed=False):
+def refresh(ctx, requirement='', name='', installed=False):
     """Refresh 'devpi' PyPI links."""
     import requests
     from pip import get_installed_distributions
@@ -56,7 +59,7 @@ def devpi_refresh(requirement='', name='', installed=False):
 
     # If no option at all is given, default to using 'dev-requirements.txt'
     if not (requirement or name or installed):
-        requirement = 'dev-requirements.txt'
+        requirement = ctx.devpi.requirements or DEFAULT_REQUIREMENTS
 
     # Get 'devpi' URL
     try:
@@ -86,7 +89,15 @@ def devpi_refresh(requirement='', name='', installed=False):
                 req, response.status_code, response.reason, width=4 + max(len(i) for i in reqs),
             ))
 
-    lines = run('pip list --local --outdated', hide='out', echo=False).stdout.splitlines()
+    lines = ctx.run('pip list --local --outdated', hide='out', echo=False).stdout.splitlines()
     if lines:
         notify.banner("Outdated packages")
         notify.info('    ' + '\n    '.join(lines))
+
+
+namespace = Collection.from_module(sys.modules[__name__])  # pylint: disable=invalid-name
+namespace.configure(dict(
+    devpi = dict(
+        requirements = DEFAULT_REQUIREMENTS,
+    ),
+))

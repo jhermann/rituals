@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=wildcard-import, missing-docstring, redefined-outer-name, invalid-name, no-self-use
+# pylint: disable=wildcard-import, unused-wildcard-import, missing-docstring
+# pylint: disable=redefined-outer-name, invalid-name, no-self-use
 """ Tests for `rituals.util.notify`.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
@@ -22,7 +23,7 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
 import re
-import unittest
+#import unittest
 
 import pytest
 from invoke import exceptions

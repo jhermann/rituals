@@ -3,15 +3,19 @@
 """ Project automation for Invoke.
 """
 
-from invoke import run, task
-from rituals.invoke_tasks import * # pylint: disable=redefined-builtin
+from invoke.tasks import call
+from rituals.easy import *
+#from rituals.invoke_tasks import clean, build, test, check
 
 
 @task(pre=[
-    inv('clean', all=True),
-    inv('build', docs=True),
-    inv('test'),
-    inv('check', reports=True),
+    clean, build, test, check, # pylint: disable=undefined-variable
+    #call(clean, all=True),
+    #call(build, docs=True),
+    #call(test),
+    #call(check, reports=True),
 ]) # pylint: disable=invalid-name
-def ci():
+def ci(ctx):
     """Perform continuous integration tasks."""
+
+namespace.add_task(ci)

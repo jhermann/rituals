@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=wildcard-import, missing-docstring, redefined-outer-name, invalid-name, no-self-use, bad-continuation
-""" Tests for `rituals.invoke_tasks`.
+# pylint: disable=bad-continuation
+""" Default namespace for convenient wildcard import in task definition modules.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
 #
@@ -22,13 +22,24 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
 import os
-#import unittest
 
-#import pytest
+from invoke import Collection, ctask as task
 
-import tasks
+from .util.filesys import pushd
 
 
-def test_tasks_module_directory_contains_a_setup_sibling():
-    """Check that imported `tasks` module is the correct one."""
-    assert os.path.exists(os.path.join(os.path.dirname(tasks.__file__), "setup.py"))
+# Build root namespace
+from . import invoke_tasks as _
+namespace = Collection.from_module(_, name='')  # pylint: disable=invalid-name
+
+# Activate devpi tasks by default?
+if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
+    from .acts.devpi import namespace as _
+    namespace.add_collection(_)
+
+
+__all__ = ['Collection', 'task', 'namespace', 'pushd']
+
+for _ in namespace.task_names:
+    __all__.append(_.replace('-', '_'))
+    globals()[_.replace('-', '_')] = namespace.task_with_config(_)[0]

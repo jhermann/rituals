@@ -27,40 +27,23 @@ import re
 import sys
 
 from invoke import task, exceptions
+from invoke.tasks import call
 
 from . import config
-from .acts import inv
 from .util import antglob, notify, which, add_dir2pypath
 from .util.scm import provider as scm_provider
 from .util.shell import run, capture
-from .util.filesys import pushd
 
 from .acts.basic import *
-from .acts.basic import __all__ as _basic_all
 from .acts.testing import *
-from .acts.testing import __all__ as _testing_all
 
-
-__all__ = [
-    'config', 'inv', 'pushd',
-    'help', 'clean', 'freeze', 'bump', 'build', 'dist', 'test', 'check',
-    'release_prep',
-] + _basic_all + _testing_all
 
 _PROJECT_ROOT = config.get_project_root()
 
 
 # Keep 'tox' tasks?
-if not os.path.exists(os.path.join(_PROJECT_ROOT, 'tox.ini')):
+if _PROJECT_ROOT and not os.path.exists(os.path.join(_PROJECT_ROOT, 'tox.ini')):
     del tox
-    __all__.remove('tox')
-
-# Activate devpi tasks by default?
-if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
-    from .acts.devpi import *
-    from .acts.devpi import __all__ as _all
-    __all__.extend(_all)
-    del _all
 
 
 @task(default=True)
@@ -279,15 +262,15 @@ def check(skip_tests=False, skip_root=False, reports=False):
 
 
 @task(name='release-prep',
-    pre=[
-        # Fresh build
-        inv('clean', all=True),
-        inv('build', docs=True),
+    #pre=[
+    #    # Fresh build
+    #    call(clean, all=True),
+    #    call(build, docs=True),
 
         # Perform quality checks
-        inv('test'),
-        inv('check', reports=False),
-    ],
+    #    call(test),
+    #    call(check, reports=False),
+    #],
     help=dict(
         commit="Commit any automatic changes and tag the release",
     ),
