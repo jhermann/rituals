@@ -30,7 +30,7 @@ from rituals.util import notify
 @task(name='gh-sync-readme')
 def gh_sync_readme():
     """Update GH pages from project's README."""
-    cfg = config.load()
+    _ = config.load()
     notify.banner("Syncing GH pages with 'README.md'...")
 
     notify.failure("Not implemented yet!")
