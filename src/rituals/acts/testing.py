@@ -45,12 +45,12 @@ def pytest(_, opts=''):
         console = False
 
     try:
-        pytest = which.which("py.test").replace(cfg.project_root + os.sep, '')
+        pytest_cmd = which.which("py.test").replace(cfg.project_root + os.sep, '')
     except which.WhichError:
-        pytest = None
+        pytest_cmd = None
 
-    if pytest:
-        cmd = [pytest,
+    if pytest_cmd:
+        cmd = [pytest_cmd,
             '--color=yes' if console else '',
             '-c', setup_cfg,
         ]
