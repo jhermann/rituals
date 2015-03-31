@@ -95,8 +95,7 @@ def refresh(ctx, requirement='', name='', installed=False):
         notify.info('    ' + '\n    '.join(lines))
 
 
-namespace = Collection.from_module(sys.modules[__name__])  # pylint: disable=invalid-name
-namespace.configure(dict(
+namespace = Collection.from_module(sys.modules[__name__], config=dict(
     devpi = dict(
         requirements = DEFAULT_REQUIREMENTS,
     ),
