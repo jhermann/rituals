@@ -23,6 +23,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 
 import os
 import sys
+import shutil
 
 from invoke import run, Collection, ctask as task
 
@@ -84,11 +85,12 @@ def pytest(_, opts=''):
 
 @task(help={
     'verbose': "Make 'tox' more talkative",
+    'clean': "Remove '.tox' first",
     'env-list': "Override list of environments to use (e.g. 'py27,py34')",
     'opts': "Extra flags for tox",
     'pty': "Whether to run tox under a pseudo-tty",
 })
-def tox(ctx, verbose=False, env_list='', opts='', pty=True):
+def tox(ctx, verbose=False, clean=False, env_list='', opts='', pty=True):
     """Perform multi-environment tests."""
     cfg = config.load()
     add_dir2pypath(cfg.project_root)
@@ -98,6 +100,9 @@ def tox(ctx, verbose=False, env_list='', opts='', pty=True):
     snakepits = [i for i in snakepits if os.path.isdir(i)]
     if snakepits:
         cmd += ['PATH="{}:$PATH"'.format(os.pathsep.join(snakepits),)]
+
+    if clean and os.path.exists(cfg.rootjoin('.tox')):
+        shutil.rmtree(cfg.rootjoin('.tox'))
 
     cmd += ['tox']
     if verbose:
