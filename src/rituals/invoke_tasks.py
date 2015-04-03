@@ -46,8 +46,9 @@ def help(): # pylint: disable=redefined-builtin
 
 @task(help=dict(
     verbose="Print version information as it is collected.",
+    pypi="Do not create a local part for the PEP-440 version.",
 ))
-def bump(verbose=False):
+def bump(verbose=False, pypi=False):
     """Bump a development version."""
     cfg = config.load()
     scm = scm_provider(cfg.project_root, commit=False)
@@ -56,7 +57,7 @@ def bump(verbose=False):
     if not scm.workdir_is_clean():
         notify.warning("You have uncommitted changes, will create a time-stamped version!")
 
-    pep440 = scm.pep440_dev_version(verbose=verbose)
+    pep440 = scm.pep440_dev_version(verbose=verbose, non_local=pypi)
 
     # Rewrite 'setup.cfg'  TODO: refactor to helper, see also release-prep
     # with util.rewrite_file(cfg.rootjoin('setup.cfg')) as lines:

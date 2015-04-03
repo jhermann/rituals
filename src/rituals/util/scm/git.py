@@ -90,8 +90,12 @@ class GitProvider(ProviderBase):
         self.run_elective('git tag{} "{}"'.format(options, label))
 
 
-    def pep440_dev_version(self, verbose=False):
-        """Return a PEP-440 dev version appendix to the main version number."""
+    def pep440_dev_version(self, verbose=False, non_local=False):
+        """ Return a PEP-440 dev version appendix to the main version number.
+
+            Result is ``None`` if the workdir is in a release-ready state
+            (i.e. clean and properly tagged).
+        """
         version = capture("python setup.py --version", echo=verbose)
         if verbose:
             notify.info("setuptools version = '{}'".format(version))
@@ -127,5 +131,7 @@ class GitProvider(ProviderBase):
 
             local_part = [i for i in local_part if i]
             pep440 = '.dev{}+{}'.format(commits, '.'.join(local_part).strip('.'))
+            if non_local:
+                pep440, _ = pep440.split('+', 1)
 
         return pep440
