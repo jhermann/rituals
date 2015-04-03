@@ -105,6 +105,8 @@ then call `bin/pip` from *that* project's virtualenv like so:
 
 See [CONTRIBUTING](https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md) for more.
 
+[![Throughput Graph](https://graphs.waffle.io/jhermann/rituals/throughput.svg)](https://waffle.io/jhermann/rituals/metrics)
+
 
 ## Releasing
 
