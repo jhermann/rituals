@@ -25,7 +25,7 @@ See the next section on how to integrate them into your `tasks.py`.
 * ``check`` –   Perform source code checks.
 * ``bump`` –    Bump a development version.
 * ``dist`` –    Distribute the project.
-* ``release-prep`` – Prepare for a release (perform QA checks, and switch to non-dev versioning).
+* ``release.prep`` – Prepare for a release (perform QA checks, and switch to non-dev versioning).
 * … and *many* more, see `inv -l` for a complete list.
 
 The guiding principle for these tasks is to strictly separate
