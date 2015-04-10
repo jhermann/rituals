@@ -46,18 +46,15 @@ def capture(cmd, **kw):
 def run(cmd, **kw):
     """Run a command and flush its output."""
     kw = kw.copy()
-    if 'warn' not in kw:
-        kw['warn'] = False  # make extra sure errors don't get silenced
+    kw.setdefault('warn', False)  # make extra sure errors don't get silenced
     if os.name == 'posix':
         cmd += ' 2>&1'  # ensure ungarbled output
 
-    report_error = True
-    if 'report_error' in kw:
-        report_error = kw['report_error']
-        del kw['report_error']
+    report_error = kw.pop('report_error', True)
+    runner = kw.pop('runner', invoke_run)
 
     try:
-        return invoke_run(cmd, **kw)
+        return runner(cmd, **kw)
     except exceptions.Failure as exc:
         sys.stdout.flush()
         sys.stderr.flush()

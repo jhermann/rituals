@@ -50,7 +50,7 @@ from ..util.shell import capture
 def prep(ctx, commit=True):
     """Prepare for a release."""
     cfg = config.load()
-    scm = scm_provider(cfg.project_root, commit=commit)
+    scm = scm_provider(cfg.project_root, commit=commit, ctx=ctx)
 
     # Check for uncommitted changes
     if not scm.workdir_is_clean():

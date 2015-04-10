@@ -21,9 +21,8 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
-from invoke import run
-
 from .. import notify
+from ..shell import run
 
 
 class ProviderBase(object):
@@ -31,16 +30,23 @@ class ProviderBase(object):
 
 
     def __init__(self, workdir, commit=True, **kwargs):  # pylint: disable=unused-argument
+        self.ctx = kwargs.pop('ctx', None)
         self.workdir = workdir
         self._commit = commit
+
+
+    def run(self, cmd, *args, **kwargs):
+        """Run a command."""
+        runner = self.ctx.run if self.ctx else None
+        return run(cmd, runner=runner, *args, **kwargs)
 
 
     def run_elective(self, cmd, *args, **kwargs):
         """Run a command, or just echo it, depending on `commit`."""
         if self._commit:
-            return run(cmd, *args, **kwargs)
+            return self.run(cmd, *args, **kwargs)
         else:
             notify.warning("WOULD RUN: {}".format(cmd))
             kwargs = kwargs.copy()
             kwargs['echo'] = False
-            return run('true', *args, **kwargs)
+            return self.run('true', *args, **kwargs)

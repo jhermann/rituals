@@ -29,7 +29,7 @@ from invoke import exceptions
 
 from .. import notify
 from .base import ProviderBase
-from ..shell import run, capture
+from ..shell import capture
 
 
 RUN_KWARGS = dict()
@@ -50,33 +50,33 @@ class GitProvider(ProviderBase):
             Inspired by http://stackoverflow.com/questions/3878624/.
         """
         # Update the index
-        run('git update-index -q --ignore-submodules --refresh', **RUN_KWARGS)
+        self.run('git update-index -q --ignore-submodules --refresh', **RUN_KWARGS)
         unchanged = True
 
         # Disallow unstaged changes in the working tree
         try:
-            run('git diff-files --quiet --ignore-submodules --', report_error=False, **RUN_KWARGS)
+            self.run('git diff-files --quiet --ignore-submodules --', report_error=False, **RUN_KWARGS)
         except exceptions.Failure:
             unchanged = False
             if not quiet:
                 notify.warning('You have unstaged changes!')
-                run('git diff-files --name-status -r --ignore-submodules -- >&2', **RUN_KWARGS)
+                self.run('git diff-files --name-status -r --ignore-submodules -- >&2', **RUN_KWARGS)
 
         # Disallow uncommitted changes in the index
         try:
-            run('git diff-index --cached --quiet HEAD --ignore-submodules --', report_error=False, **RUN_KWARGS)
+            self.run('git diff-index --cached --quiet HEAD --ignore-submodules --', report_error=False, **RUN_KWARGS)
         except exceptions.Failure:
             unchanged = False
             if not quiet:
                 notify.warning('Your index contains uncommitted changes!')
-                run('git diff-index --cached --name-status -r --ignore-submodules HEAD -- >&2', **RUN_KWARGS)
+                self.run('git diff-index --cached --name-status -r --ignore-submodules HEAD -- >&2', **RUN_KWARGS)
 
         return unchanged
 
 
     def add_file(self, filename):
         """Stage a file for committing."""
-        run('git add "{}"'.format(filename), **RUN_KWARGS)
+        self.run('git add "{}"'.format(filename), **RUN_KWARGS)
 
 
     def commit(self, message):

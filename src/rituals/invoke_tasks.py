@@ -26,7 +26,7 @@ import os
 import re
 import sys
 
-from invoke import task, exceptions
+from invoke import ctask as task, exceptions
 
 from . import config
 from .util import antglob, notify, add_dir2pypath
@@ -37,7 +37,7 @@ from .acts.basic import *
 
 
 @task(default=True)
-def help(): # pylint: disable=redefined-builtin
+def help(ctx): # pylint: disable=redefined-builtin
     """Invoked with no arguments."""
     run("invoke --help")
     run("invoke --list")
@@ -48,10 +48,10 @@ def help(): # pylint: disable=redefined-builtin
     verbose="Print version information as it is collected.",
     pypi="Do not create a local part for the PEP-440 version.",
 ))
-def bump(verbose=False, pypi=False):
+def bump(ctx, verbose=False, pypi=False):
     """Bump a development version."""
     cfg = config.load()
-    scm = scm_provider(cfg.project_root, commit=False)
+    scm = scm_provider(cfg.project_root, commit=False, ctx=ctx)
 
     # Check for uncommitted changes
     if not scm.workdir_is_clean():
@@ -98,7 +98,7 @@ def bump(verbose=False, pypi=False):
 @task(help=dict(
     docs="Also build the documentation (with Sphinx)",
 ))
-def build(docs=False):
+def build(ctx, docs=False):
     """Build the project."""
     cfg = config.load()
     run("python setup.py build", echo=notify.ECHO)
@@ -122,7 +122,7 @@ def build(docs=False):
     wheel="Also create a WHL",
     auto="Create EGG for Python2, and WHL whenever possible",
 ))
-def dist(devpi=False, egg=False, wheel=False, auto=True):
+def dist(ctx, devpi=False, egg=False, wheel=False, auto=True):
     """Distribute the project."""
     config.load()
     cmd = ["python", "setup.py", "sdist"]
@@ -152,7 +152,7 @@ def dist(devpi=False, egg=False, wheel=False, auto=True):
     skip_root="Do not check scripts in project root",
     reports="Create extended report?",
 ))
-def check(skip_tests=False, skip_root=False, reports=False):
+def check(ctx, skip_tests=False, skip_root=False, reports=False):
     """Perform source code checks."""
     cfg = config.load()
     add_dir2pypath(cfg.project_root)
