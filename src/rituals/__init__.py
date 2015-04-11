@@ -1,6 +1,29 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=bad-whitespace
-""" rituals – Common tasks for 'Invoke' that are needed again and again.
+"""
+    Common tasks for 'Invoke' that are needed again and again.
+
+    The ``rituals`` package provides PyInvoke tasks that work for any
+    project, based on its project metadata, to automate common
+    developer chores like 'clean', 'build', 'dist', 'test', 'check',
+    and 'release-prep' (for the moment).
+
+    The guiding principle for these tasks is to strictly separate
+    low-level tasks for building and installing (via ``setup.py``) from
+    high-level convenience tasks a developer uses (via ``tasks.py``).
+    Invoke tasks can use Setuptools ones as building blocks, but
+    never the other way 'round – this avoids bootstrapping head-
+    aches during package installations using ``pip``.
+
+    The easiest way to get a working project based on ``rituals`` is
+    the ``py-generic-project`` cookiecutter template. That way you have
+    a working project skeleton within minutes that is fully equipped,
+    with all aspects of bootstrapping, building, testing, quality
+    checks, continuous integration, documentation, and releasing
+    covered. See here for more:
+
+        https://github.com/Springerle/py-generic-project
+
 
     Copyright ⓒ  2015 Jürgen Hermann
 
