@@ -22,3 +22,7 @@ install:
 
 # command to run tests
 script: invoke ci
+
+# report to coveralls.io
+after_success:
+    - coveralls --rcfile project.d/coverage.cfg
