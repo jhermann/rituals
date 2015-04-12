@@ -4,6 +4,7 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
 
 ![GINOSAJI](https://raw.githubusercontent.com/jhermann/rituals/master/static/img/symbol-200.png) … and again and again.
 
+ [![Groups](https://img.shields.io/badge/Google_groups-rituals--dev-orange.svg)](https://groups.google.com/forum/#!forum/rituals-dev)
  [![Travis CI](https://api.travis-ci.org/jhermann/rituals.svg)](https://travis-ci.org/jhermann/rituals)
  [![Coveralls](https://img.shields.io/coveralls/jhermann/rituals.svg)](https://coveralls.io/r/jhermann/rituals)
  [![GitHub Issues](https://img.shields.io/github/issues/jhermann/rituals.svg)](https://github.com/jhermann/rituals/issues)
@@ -12,7 +13,6 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
  [![Latest Version](https://img.shields.io/pypi/v/rituals.svg)](https://pypi.python.org/pypi/rituals/)
  [![Download format](https://pypip.in/format/rituals/badge.svg)](https://pypi.python.org/pypi/rituals/)
  [![Downloads](https://img.shields.io/pypi/dw/rituals.svg)](https://pypi.python.org/pypi/rituals/)
-
 
 ## Overview
 
