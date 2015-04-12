@@ -23,8 +23,6 @@ from __future__ import absolute_import, unicode_literals, print_function
 
 import sys
 
-from invoke import task
-
 from invoke import Collection, ctask as task
 
 from rituals import config
@@ -32,7 +30,7 @@ from rituals.util import notify
 
 
 @task(name='sync-readme')
-def sync_readme():
+def sync_readme(_dummy_ctx):
     """Update GH pages from project's README."""
     _ = config.load()
     notify.banner("Syncing GH pages with 'README.md'...")

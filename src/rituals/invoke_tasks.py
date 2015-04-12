@@ -29,18 +29,17 @@ import sys
 from invoke import ctask as task, exceptions
 
 from . import config
-from .util import antglob, notify, add_dir2pypath
+from .util import antglob, notify, shell, add_dir2pypath
 from .util.scm import provider as scm_provider
-from .util.shell import run, capture
 
 from .acts.basic import *
 
 
 @task(default=True)
-def help(ctx): # pylint: disable=redefined-builtin
+def help(_dummy_ctx): # pylint: disable=redefined-builtin
     """Invoked with no arguments."""
-    run("invoke --help")
-    run("invoke --list")
+    shell.run("invoke --help")
+    shell.run("invoke --list")
     notify.info("Use 'invoke -h ‹taskname›' to get detailed help.")
 
 
@@ -86,13 +85,13 @@ def bump(ctx, verbose=False, pypi=False):
 
     if os.path.exists(setup_cfg):
         # Update metadata and print version
-        egg_info = capture("python setup.py egg_info", echo=verbose)
+        egg_info = shell.capture("python setup.py egg_info", echo=True if verbose else None)
         for line in egg_info.splitlines():
             if line.endswith('PKG-INFO'):
                 pkg_info_file = line.split(None, 1)[1]
                 with io.open(pkg_info_file, encoding='utf-8') as handle:
                     notify.info('\n'.join(i for i in handle.readlines() if i.startswith('Version:')).strip())
-        run("python setup.py -q develop", echo=notify.ECHO or verbose)
+        ctx.run("python setup.py -q develop", echo=True if verbose else None)
 
 
 @task(help=dict(
@@ -101,7 +100,7 @@ def bump(ctx, verbose=False, pypi=False):
 def build(ctx, docs=False):
     """Build the project."""
     cfg = config.load()
-    run("python setup.py build", echo=notify.ECHO)
+    ctx.run("python setup.py build")
 
     if docs:
         for doc_path in ('docs', 'doc'):
@@ -111,7 +110,7 @@ def build(ctx, docs=False):
             doc_path = None
 
         if doc_path:
-            run("sphinx-build {0} {0}/_build".format(doc_path), echo=notify.ECHO)
+            ctx.run("sphinx-build {0} {0}/_build".format(doc_path))
         else:
             notify.warning("Cannot find either a 'docs' or 'doc' Sphinx directory!")
 
@@ -141,10 +140,10 @@ def dist(ctx, devpi=False, egg=False, wheel=False, auto=True):
     if wheel:
         cmd.append("bdist_wheel")
 
-    run("invoke clean --all build --docs test check", echo=notify.ECHO)
-    run(' '.join(cmd), echo=notify.ECHO)
+    ctx.run("invoke clean --all build --docs test check")
+    ctx.run(' '.join(cmd))
     if devpi:
-        run("devpi upload dist/*", echo=notify.ECHO)
+        ctx.run("devpi upload dist/*")
 
 
 @task(help=dict(
@@ -181,7 +180,7 @@ def check(ctx, skip_tests=False, skip_root=False, reports=False):
             cmd += ' --rcfile={0}'.format(cfgfile)
             break
     try:
-        run(cmd, echo=notify.ECHO, report_error=False)
+        shell.run(cmd, report_error=False, runner=ctx.run)
         notify.info("OK - No problems found by pylint.")
     except exceptions.Failure as exc:
         # Check bit flags within pylint return code

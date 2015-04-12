@@ -95,6 +95,7 @@ def prep(ctx, commit=True):
     scm.commit(ctx.release.commit.message.format(version=version))
     scm.tag(ctx.release.tag.name.format(version=version), ctx.release.tag.message.format(version=version))
 
+
 namespace = Collection.from_module(sys.modules[__name__], name='release', config=dict(
     release = dict(
         commit = dict(message = ':package: Release v{version}'),

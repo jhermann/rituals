@@ -21,7 +21,6 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
-import os
 import sys
 
 from invoke import run as invoke_run
@@ -47,8 +46,6 @@ def run(cmd, **kw):
     """Run a command and flush its output."""
     kw = kw.copy()
     kw.setdefault('warn', False)  # make extra sure errors don't get silenced
-    if os.name == 'posix':
-        cmd += ' 2>&1'  # ensure ungarbled output
 
     report_error = kw.pop('report_error', True)
     runner = kw.pop('runner', invoke_run)

@@ -26,7 +26,7 @@ import os
 import shlex
 import shutil
 
-from invoke import run, task
+from invoke import ctask as task
 
 from .. import config
 from ..util import antglob, notify
@@ -45,7 +45,7 @@ __all__ = ['clean', 'freeze']
     venv="Include an existing virtualenv (in '.' or in '.venv')",
     extra="Any extra patterns, space-separated and possibly quoted",
 ))
-def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disable=redefined-outer-name
+def clean(_dummy_ctx, docs=False, backups=False, bytecode=False, dist=False, # pylint: disable=redefined-outer-name
         all=False, venv=False, extra=''): # pylint: disable=redefined-builtin
     """Perform house-keeping."""
     cfg = config.load()
@@ -91,10 +91,10 @@ def clean(docs=False, backups=False, bytecode=False, dist=False, # pylint: disab
 @task(help=dict(
     local="If in a virtualenv that has global access, do not output globally installed packages",
 ))
-def freeze(local=False):
+def freeze(ctx, local=False):
     """Freeze currently instaleld requirements."""
     cmd = 'pip freeze{}'.format(' --local' if local else '')
-    frozen = run(cmd, hide='out').stdout
+    frozen = ctx.run(cmd, hide='out').stdout
     with io.open('frozen-requirements.txt', 'w', encoding='ascii') as out:
         out.write("# Requirements frozen by 'pip freeze' on {}\n".format(isodate()))
         out.write(frozen)

@@ -23,7 +23,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 
 import sys
 
-from invoke import run, Collection, ctask as task
+from invoke import Collection, ctask as task
 
 from rituals.util import notify
 
@@ -31,10 +31,10 @@ from rituals.util import notify
 DEFAULT_REQUIREMENTS = 'dev-requirements.txt'
 
 
-def get_devpi_url():
+def get_devpi_url(ctx):
     """Get currently used 'devpi' base URL."""
     cmd = 'devpi use --urls'
-    lines = run(cmd, hide='out', echo=False).stdout.splitlines()
+    lines = ctx.run(cmd, hide='out', echo=False).stdout.splitlines()
     for line in lines:
         line, base_url = line.split(':', 1)
         if line.strip() == 'simpleindex':
@@ -63,7 +63,7 @@ def refresh(ctx, requirement='', name='', installed=False):
 
     # Get 'devpi' URL
     try:
-        base_url = get_devpi_url()
+        base_url = get_devpi_url(ctx)
     except LookupError as exc:
         notify.failure(exc.args[0])
     notify.banner("Refreshing devpi links on {}".format(base_url))

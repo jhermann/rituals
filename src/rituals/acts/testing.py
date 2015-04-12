@@ -25,16 +25,16 @@ import os
 import sys
 import shutil
 
-from invoke import run, Collection, ctask as task
+from invoke import Collection, ctask as task
 
 from .. import config
-from ..util import notify, which, add_dir2pypath
+from ..util import which, add_dir2pypath
 
 
 @task(default=True, help={
     'opts': "Extra flags for test runner",
 })
-def pytest(_, opts=''):
+def pytest(ctx, opts=''):
     """Perform standard unittests."""
     cfg = config.load()
     setup_cfg = cfg.rootjoin('setup.cfg')
@@ -73,9 +73,9 @@ def pytest(_, opts=''):
         if opts:
             cmd.append(opts)
         cmd.append(cfg.testdir)
-        run(' '.join(cmd), echo=notify.ECHO)
+        ctx.run(' '.join(cmd))
     else:
-        run('python setup.py test' + (' ' + opts if opts else ''), echo=notify.ECHO)
+        ctx.run('python setup.py test' + (' ' + opts if opts else ''))
 
 
 #_PROJECT_ROOT = config.get_project_root()
@@ -88,9 +88,8 @@ def pytest(_, opts=''):
     'clean': "Remove '.tox' first",
     'env-list': "Override list of environments to use (e.g. 'py27,py34')",
     'opts': "Extra flags for tox",
-    'pty': "Whether to run tox under a pseudo-tty",
 })
-def tox(ctx, verbose=False, clean=False, env_list='', opts='', pty=True):
+def tox(ctx, verbose=False, clean=False, env_list='', opts=''):
     """Perform multi-environment tests."""
     cfg = config.load()
     add_dir2pypath(cfg.project_root)
@@ -110,8 +109,7 @@ def tox(ctx, verbose=False, clean=False, env_list='', opts='', pty=True):
     if env_list:
         cmd += ['-e', env_list]
     cmd += opts
-    cmd += ['2>&1']
-    run(' '.join(cmd), echo=True, pty=pty)
+    ctx.run(' '.join(cmd))
 
 
 namespace = Collection.from_module(sys.modules[__name__], name='test', config=dict(
