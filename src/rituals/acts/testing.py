@@ -52,8 +52,8 @@ def pytest(ctx, opts=''):
 
     if pytest_cmd:
         cmd = [pytest_cmd,
-            '--color=yes' if console else '',
             '-c', setup_cfg,
+            '--color=yes' if console else '',
         ]
 
         try:
