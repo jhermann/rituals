@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=too-few-public-methods, invalid-name
+# pylint: disable=
 """ rituals.acts – Task building blocks.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
@@ -20,7 +20,3 @@
 # The full LICENSE file and source are available at
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
-
-import sys
-
-from invoke.tasks import Call
