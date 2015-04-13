@@ -29,11 +29,19 @@ import shutil
 from invoke import ctask as task
 
 from .. import config
-from ..util import antglob, notify
+from ..util import antglob, notify, shell
 from ..util._compat import isodate
 
 
-__all__ = ['clean', 'freeze']
+__all__ = ['help', 'clean', 'build', 'freeze']
+
+
+@task(default=True)
+def help(_dummy_ctx): # pylint: disable=redefined-builtin
+    """Invoked with no arguments."""
+    shell.run("invoke --help")
+    shell.run("invoke --list")
+    notify.info("Use 'invoke -h ‹taskname›' to get detailed help.")
 
 
 @task(help=dict(
@@ -86,6 +94,27 @@ def clean(_dummy_ctx, docs=False, backups=False, bytecode=False, dist=False, # p
             shutil.rmtree(os.path.join(cfg.project_root, name))
         else:
             os.unlink(os.path.join(cfg.project_root, name))
+
+
+@task(help=dict(
+    docs="Also build the documentation (with Sphinx)",
+))
+def build(ctx, docs=False):
+    """Build the project."""
+    cfg = config.load()
+    ctx.run("python setup.py build")
+
+    if docs:
+        for doc_path in ('docs', 'doc'):
+            if os.path.exists(cfg.rootjoin(doc_path, 'conf.py')):
+                break
+        else:
+            doc_path = None
+
+        if doc_path:
+            ctx.run("sphinx-build {0} {0}/_build".format(doc_path))
+        else:
+            notify.warning("Cannot find either a 'docs' or 'doc' Sphinx directory!")
 
 
 @task(help=dict(

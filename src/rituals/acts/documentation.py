@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation
-""" Default namespace for convenient wildcard import in task definition modules.
+# pylint: disable=bad-continuation, bad-whitespace
+""" 'docs' tasks.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
 #
@@ -21,35 +21,20 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
-import os
+import sys
 
 from invoke import Collection, ctask as task
 
-from .util.filesys import pushd
+
+@task(default=True)
+def sphinx(_dummy_ctx):
+    """Build Sphinx docs."""
+    raise NotImplementedError("No sphinx yet!")
 
 
-# Build root namespace
-from .acts import basic
-namespace = Collection.from_module(basic, name='')  # pylint: disable=invalid-name
-
-from .acts.testing import namespace as _
-namespace.add_collection(_)
-
-from .acts.inspection import namespace as _
-namespace.add_collection(_)
-
-from .acts.releasing import namespace as _
-namespace.add_collection(_)
-
-# Activate devpi tasks by default?
-if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
-    from .acts.devpi import namespace as _
-    namespace.add_collection(_)
-
-
-__all__ = ['Collection', 'task', 'namespace', 'pushd']
-
-for _ in namespace.task_names:
-    _name = _.replace('-', '_').replace('.', '_')
-    __all__.append(_name)
-    globals()[_name] = namespace.task_with_config(_)[0]
+namespace = Collection.from_module(sys.modules[__name__], name='docs', config=dict(
+    test = dict(
+        docs_dir = 'docs',
+        build_dir = '_build',
+    ),
+))

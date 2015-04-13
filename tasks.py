@@ -9,7 +9,7 @@ from rituals.easy import *
 
 
 @task(pre=[
-    clean, build, test_pytest, check, # pylint: disable=undefined-variable
+    clean, build, test_pytest, check_pylint, # pylint: disable=undefined-variable
     #call(clean, all=True),
     #call(build, docs=True),
     #call(test),
