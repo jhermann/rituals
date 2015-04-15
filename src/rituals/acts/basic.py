@@ -121,7 +121,7 @@ def build(ctx, docs=False):
     local="If in a virtualenv that has global access, do not output globally installed packages",
 ))
 def freeze(ctx, local=False):
-    """Freeze currently instaleld requirements."""
+    """Freeze currently installed requirements."""
     cmd = 'pip freeze{}'.format(' --local' if local else '')
     frozen = ctx.run(cmd, hide='out').stdout
     with io.open('frozen-requirements.txt', 'w', encoding='ascii') as out:
