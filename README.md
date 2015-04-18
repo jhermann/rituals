@@ -16,7 +16,11 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
 
 ## Overview
 
-The following lists the common task implementations that the ``invoke_tasks`` module contains.
+“Rituals” is a task library for [Invoke](http://www.pyinvoke.org/) that keeps the
+most common tasks you always need out of your project, and makes the centrally maintained.
+This leaves your `tasks.py` small and to the point,
+with only things specific to the project at hand.
+The following lists the common task implementations that the ``rituals.easy`` module offers.
 See the next section on how to integrate them into your `tasks.py`.
 
 * ``help`` –    Default task, when invoked with no task names.
@@ -24,8 +28,8 @@ See the next section on how to integrate them into your `tasks.py`.
 * ``build`` –   Build the project.
 * ``test`` –    Perform standard unittests.
 * ``check`` –   Perform source code checks.
-* ``bump`` –    Bump a development version.
-* ``dist`` –    Distribute the project.
+* ``release.bump`` – Bump a development version.
+* ``release.dist`` – Distribute the project.
 * ``release.prep`` – Prepare for a release (perform QA checks, and switch to non-dev versioning).
 * … and *many* more, see `inv -l` for a complete list.
 
@@ -37,7 +41,7 @@ but never the other way 'round
 – this avoids any bootstrapping headaches during package installations.
 
 Use ``inv -h ‹task›`` as usual to get details on the options of these tasks.
-Look at the [invoke_tasks](https://github.com/jhermann/rituals/blob/master/src/rituals/invoke_tasks.py) source
+Look at the modules in [acts](https://github.com/jhermann/rituals/blob/master/src/rituals/acts)
 if you want to know what these tasks do exactly.
 
 :bulb: | The easiest way to get a working project using `rituals` is the [py-generic-project](https://github.com/Springerle/py-generic-project) cookiecutter archetype. That way you have a working project skeleton within minutes that is fully equipped, with all aspects of building, testing, quality checks, continuous integration, documentation, and releasing covered.
