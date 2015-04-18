@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=wildcard-import, missing-docstring, redefined-outer-name, invalid-name, no-self-use, bad-continuation
-""" Tests for `rituals.invoke_tasks`.
+# pylint: disable=wildcard-import, unused-wildcard-import, missing-docstring
+# pylint: disable=redefined-outer-name, invalid-name, no-self-use
+""" Tests for `rituals.acts.inspection`.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
 #
@@ -21,14 +22,9 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
-import os
 #import unittest
 
 #import pytest
 
-import tasks
-
-
-def test_tasks_module_directory_contains_a_setup_sibling():
-    """Check that imported `tasks` module is the correct one."""
-    assert os.path.exists(os.path.join(os.path.dirname(tasks.__file__), "setup.py"))
+import tasks  # pylint: disable=unused-import
+from rituals.acts import inspection
