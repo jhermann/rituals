@@ -21,6 +21,7 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
+import os
 import sys
 
 from invoke import Collection, ctask as task
@@ -60,6 +61,8 @@ def refresh(ctx, requirement='', name='', installed=False):
     # If no option at all is given, default to using 'dev-requirements.txt'
     if not (requirement or name or installed):
         requirement = ctx.devpi.requirements or DEFAULT_REQUIREMENTS
+        if not os.path.exists(requirement):
+            requirement = 'requirements.txt'
 
     # Get 'devpi' URL
     try:
