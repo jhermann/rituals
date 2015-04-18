@@ -17,7 +17,7 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
 ## Overview
 
 “Rituals” is a task library for [Invoke](http://www.pyinvoke.org/) that keeps the
-most common tasks you always need out of your project, and makes the centrally maintained.
+most common tasks you always need out of your project, and makes them centrally maintained.
 This leaves your `tasks.py` small and to the point,
 with only things specific to the project at hand.
 The following lists the common task implementations that the ``rituals.easy`` module offers.
