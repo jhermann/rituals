@@ -22,9 +22,49 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
-#import unittest
+import unittest
 
 #import pytest
+from bunch import Bunch
+from invoke.context import Context
 
 import tasks  # pylint: disable=unused-import
 from rituals.acts import inspection
+
+
+class FakeContext(Context):
+    def __init__(self, taskname):
+        Context.__init__(self, config=inspection.namespace.configuration(taskname))
+        self.memo = Bunch(cmd='')
+
+    def run(self, command, **kwargs):
+        self.memo.cmd = command
+
+
+class PylintTest(unittest.TestCase):
+
+    def call_pylint(self, **kwargs):
+        ctx = FakeContext('pylint')
+        inspection.pylint(ctx, **kwargs)
+        return ctx.memo.cmd.split()
+
+    def test_pylint_command_is_called(self):
+        parts = self.call_pylint()
+        assert parts, "checking command is not empty"
+        assert parts[0] == 'pylint', "pylint is actually called"
+        assert '--reports=n' in parts, "no pylint reports by default"
+        assert '--rcfile=project.d/pylint.cfg' in parts, "pylint config is loaded"
+        assert any(i.endswith('/src/tests/conftest.py"') for i in parts), "test files in pylint command: " + repr(parts)
+        assert '"setup.py"' in parts, "root files in pylint command: " + repr(parts)
+
+    def test_pylint_can_skip_test_files(self):
+        parts = self.call_pylint(skip_tests=True)
+        assert not any(i.endswith('/src/tests/conftest.py"') for i in parts), "no test files in pylint command: " + repr(parts)
+
+    def test_pylint_can_skip_root_files(self):
+        parts = self.call_pylint(skip_root=True)
+        assert '"setup.py"' not in parts, "no root files in pylint command: " + repr(parts)
+
+    def test_pylint_report_can_be_activated(self):
+        parts = self.call_pylint(reports=True)
+        assert '--reports=y' in parts, "no pylint reports by default"
