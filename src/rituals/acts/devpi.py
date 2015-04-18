@@ -37,8 +37,8 @@ def get_devpi_url(ctx):
     lines = ctx.run(cmd, hide='out', echo=False).stdout.splitlines()
     for line in lines:
         line, base_url = line.split(':', 1)
-        if line.strip() == 'simpleindex':
-            return base_url.strip().rstrip('/')
+        if line.split()[-1].strip() == 'simpleindex':
+            return base_url.split('\x1b')[0].strip().rstrip('/')
 
     raise LookupError("Cannot find simpleindex URL in '{}' output:\n    {}".format(
         cmd, '\n    '.join(lines),
