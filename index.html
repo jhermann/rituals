@@ -33,7 +33,9 @@
       <section id="main_content" class="inner">
         <p><img src="https://raw.githubusercontent.com/jhermann/rituals/master/static/img/symbol-200.png" alt="GINOSAJI"> … and again and again.</p>
 
-<p> <a href="https://travis-ci.org/jhermann/rituals"><img src="https://api.travis-ci.org/jhermann/rituals.svg" alt="Travis CI"></a>
+<p> <a href="https://groups.google.com/forum/#!forum/rituals-dev"><img src="https://img.shields.io/badge/Google_groups-rituals--dev-orange.svg" alt="Groups"></a>
+ <a href="https://travis-ci.org/jhermann/rituals"><img src="https://api.travis-ci.org/jhermann/rituals.svg" alt="Travis CI"></a>
+ <a href="https://coveralls.io/r/jhermann/rituals"><img src="https://img.shields.io/coveralls/jhermann/rituals.svg" alt="Coveralls"></a>
  <a href="https://github.com/jhermann/rituals/issues"><img src="https://img.shields.io/github/issues/jhermann/rituals.svg" alt="GitHub Issues"></a>
  <a href="https://github.com/jhermann/rituals/blob/master/LICENSE"><img src="https://img.shields.io/pypi/l/rituals.svg" alt="License"></a>
  <a href="https://pypi.python.org/pypi/rituals/"><img src="https://pypip.in/status/rituals/badge.svg" alt="Development Status"></a>
@@ -42,9 +44,13 @@
  <a href="https://pypi.python.org/pypi/rituals/"><img src="https://img.shields.io/pypi/dw/rituals.svg" alt="Downloads"></a></p>
 
 <h2>
-<a id="common-tasks" class="anchor" href="#common-tasks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Common Tasks</h2>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
 
-<p>The following lists the common task implementations that the <code>invoke_tasks</code> module contains.
+<p>“Rituals” is a task library for <a href="http://www.pyinvoke.org/">Invoke</a> that keeps the
+most common tasks you always need out of your project, and makes them centrally maintained.
+This leaves your <code>tasks.py</code> small and to the point,
+with only things specific to the project at hand.
+The following lists the common task implementations that the <code>rituals.easy</code> module offers.
 See the next section on how to integrate them into your <code>tasks.py</code>.</p>
 
 <ul>
@@ -59,9 +65,12 @@ See the next section on how to integrate them into your <code>tasks.py</code>.</
 <li>
 <code>check</code> –   Perform source code checks.</li>
 <li>
-<code>dist</code> –    Distribute the project.</li>
+<code>release.bump</code> – Bump a development version.</li>
 <li>
-<code>release-prep</code> – Prepare for a release (perform QA checks, and switch to non-dev versioning).</li>
+<code>release.dist</code> – Distribute the project.</li>
+<li>
+<code>release.prep</code> – Prepare for a release (perform QA checks, and switch to non-dev versioning).</li>
+<li>… and <em>many</em> more, see <code>inv -l</code> for a complete list.</li>
 </ul>
 
 <p>The guiding principle for these tasks is to strictly separate
@@ -69,10 +78,10 @@ low-level tasks for building and installing (via <code>setup.py</code>)
 from high-level convenience tasks a developer uses (via <code>invoke</code>).
 Invoke tasks can use Setuptools ones as building blocks,
 but never the other way 'round
-– this removes any bootstrapping headaches during package installations.</p>
+– this avoids any bootstrapping headaches during package installations.</p>
 
 <p>Use <code>inv -h ‹task›</code> as usual to get details on the options of these tasks.
-Look at the <a href="https://github.com/jhermann/rituals/blob/master/src/rituals/invoke_tasks.py">invoke_tasks</a> source
+Look at the modules in <a href="https://github.com/jhermann/rituals/blob/master/src/rituals/acts">acts</a>
 if you want to know what these tasks do exactly.</p>
 
 <table>
@@ -87,6 +96,30 @@ if you want to know what these tasks do exactly.</p>
 </table>
 
 <h2>
+<a id="some-practical-examples" class="anchor" href="#some-practical-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Some Practical Examples</h2>
+
+<p>In projects that include <em>Rituals</em> in their <code>tasks.py</code> (e.g. this one), the following commands can be used.</p>
+
+<table>
+<thead>
+<tr>
+<th align="right">Command</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right"><code>inv test.tox --clean -e py34</code></td>
+<td align="left">Run <code>tox</code> for Python 3.4 with a clean status, i.e. an empty <code>.tox</code> directory.</td>
+</tr>
+<tr>
+<td align="right"><code>inv bump</code></td>
+<td align="left">Set the <code>tag_build</code> value in <code>setup.cfg</code> to something like <code>0.3.0.dev117+0.2.0.g993edd3.20150408t1747</code>, uniquely identifying dev builds, even in dirty working directories.</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <h3>
@@ -97,9 +130,13 @@ if you want to know what these tasks do exactly.</p>
 or add it to <code>setup_requires</code> in your <code>setup.py</code>.
 Then at the start of your <code>tasks.py</code>, use the following statement to define <em>all</em> tasks that are considered standard:</p>
 
-<div class="highlight highlight-py"><pre><span class="pl-k">from</span> rituals.invoke_tasks <span class="pl-k">import</span> <span class="pl-k">*</span></pre></div>
+<div class="highlight highlight-py"><pre><span class="pl-k">from</span> rituals.easy <span class="pl-k">import</span> <span class="pl-k">*</span></pre></div>
 
-<p>Of course, you can also do more selective imports, or remove specific tasks from the standard set via <code>del</code>.</p>
+<p>Note that this defines Invoke's <code>Collection</code> and <code>task</code> identifiers,
+the root <code>namespace</code>with Ritual's default tasks, and some common helpers
+(see the documentation for details).
+Of course, you can also do more selective imports,
+or build your own Invoke namespaces with the specific tasks you need.</p>
 
 <table>
 <thead>
@@ -131,14 +168,19 @@ Then at the start of your <code>tasks.py</code>, use the following statement to 
 <code>config.set_flat_layout()</code> – Changes locations to <code>‹packagename›</code> and <code>tests</code>.</li>
 </ul>
 
+<h3>
+<a id="change-default-project-configuration" class="anchor" href="#change-default-project-configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Change default project configuration</h3>
+
+<p><strong>TODO</strong></p>
+
 <h2>
 <a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
 
 <p>To create a working directory for this project, call these commands:</p>
 
-<div class="highlight highlight-sh"><pre>git clone <span class="pl-s1"><span class="pl-pds">"</span>https://github.com/jhermann/rituals.git<span class="pl-pds">"</span></span>
-<span class="pl-s3">cd</span> rituals
-<span class="pl-s3">.</span> .env <span class="pl-c"># answer the prompt with (y)es</span>
+<div class="highlight highlight-sh"><pre>git clone <span class="pl-s"><span class="pl-pds">"</span>https://github.com/jhermann/rituals.git<span class="pl-pds">"</span></span>
+<span class="pl-c1">cd</span> rituals
+<span class="pl-c1">.</span> .env --yes --develop
 invoke build --docs</pre></div>
 
 <p>To use the source in this working directory within another project,
@@ -148,7 +190,9 @@ then call <code>bin/pip</code> from <em>that</em> project's virtualenv like so:<
 <pre><code>…/.venv/…/bin/pip install -e .
 </code></pre>
 
-<p>See <a href="https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> for more.</p>
+<p>See <a href="https://github.com/jhermann/rituals/blob/master/CONTRIBUTING.md">CONTRIBUTING</a> for more.</p>
+
+<p><a href="https://waffle.io/jhermann/rituals/metrics"><img src="https://graphs.waffle.io/jhermann/rituals/throughput.svg" alt="Throughput Graph"></a></p>
 
 <h2>
 <a id="releasing" class="anchor" href="#releasing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Releasing</h2>
@@ -156,7 +200,7 @@ then call <code>bin/pip</code> from <em>that</em> project's virtualenv like so:<
 <p>This is the process of releasing  <code>rituals</code> itself,
 projects that use it will have an identical to very similar sequence of commands.</p>
 
-<div class="highlight highlight-sh"><pre>inv release-prep
+<div class="highlight highlight-sh"><pre>inv release.prep
 inv dist --devpi <span class="pl-c"># local release + tox testing</span>
 
 git push <span class="pl-k">&amp;&amp;</span> git push --tags <span class="pl-c"># … and wait for Travis CI to do its thing</span>
