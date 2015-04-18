@@ -41,6 +41,27 @@ class FakeContext(Context):
         self.memo.cmd = command
 
 
+class PytestTest(unittest.TestCase):
+
+    def call_pytest(self, **kwargs):
+        ctx = FakeContext('pytest')
+        testing.pytest(ctx, **kwargs)
+        return ctx.memo.cmd.split()
+
+    def test_pytest_command_is_called(self):
+        parts = self.call_pytest()
+        assert parts, "testing command is not empty"
+        assert parts[0].endswith('py.test'), "py.test is actually called"
+
+    def test_pytest_task_takes_options(self):
+        parts = self.call_pytest(opts='--verbose')
+        assert '--verbose' in parts[-2:], "py.test option is added"
+
+    def test_pytest_task_detects_coverage(self):
+        parts = self.call_pytest(opts='--verbose')
+        assert '--cov' in parts, "py.test option is added"
+
+
 class ToxTest(unittest.TestCase):
 
     def test_tox_command_is_called(self):
@@ -50,7 +71,7 @@ class ToxTest(unittest.TestCase):
         assert parts, "tox command is not empty"
         assert 'tox' in parts[:2], "tox is actually called"
 
-    def test_tox_tasks_takes_environment(self):
+    def test_tox_task_takes_environment(self):
         ctx = FakeContext('tox')
         testing.tox(ctx, env_list='py34')
         assert '-e py34' in ctx.memo.cmd, "tox environment is selected"
