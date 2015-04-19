@@ -21,7 +21,7 @@ install:
     - "python setup.py develop -U"
 
 # command to run tests
-script: invoke ci
+script: invoke --echo --pty ci
 
 # report to coveralls.io
 after_success:
