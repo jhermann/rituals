@@ -23,6 +23,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 
 import os
 import sys
+import warnings
 
 from invoke import Collection, ctask as task
 
@@ -58,44 +59,47 @@ def refresh(ctx, requirement='', name='', installed=False):
     from pip.download import PipSession
     from pip.req.req_file import parse_requirements
 
-    # If no option at all is given, default to using 'dev-requirements.txt'
-    if not (requirement or name or installed):
-        requirement = ctx.devpi.requirements or DEFAULT_REQUIREMENTS
-        if not os.path.exists(requirement):
-            requirement = 'requirements.txt'
+    with warnings.catch_warnings():
+        warnings.simplefilter('once')
 
-    # Get 'devpi' URL
-    try:
-        base_url = get_devpi_url(ctx)
-    except LookupError as exc:
-        notify.failure(exc.args[0])
-    notify.banner("Refreshing devpi links on {}".format(base_url))
+        # If no option at all is given, default to using 'dev-requirements.txt'
+        if not (requirement or name or installed):
+            requirement = ctx.devpi.requirements or DEFAULT_REQUIREMENTS
+            if not os.path.exists(requirement):
+                requirement = 'requirements.txt'
 
-    # Assemble requirements
-    reqs = set(('pip', 'setuptools', 'wheel'))  # always refresh basics
-    if requirement:
-        reqs |= set(i.name for i in parse_requirements(requirement, session=PipSession()))
-    if name:
-        reqs |= set([name])
-    if installed:
-        installed_pkgs = get_installed_distributions(local_only=True, skip=['python'])
-        reqs |= set(i.project_name for i in installed_pkgs)
-    reqs = [i for i in reqs if i]  # catch flukes
+        # Get 'devpi' URL
+        try:
+            base_url = get_devpi_url(ctx)
+        except LookupError as exc:
+            notify.failure(exc.args[0])
+        notify.banner("Refreshing devpi links on {}".format(base_url))
 
-    for req in sorted(reqs):
-        url = "{}/{}/refresh".format(base_url, req)
-        response = requests.post(url)
-        if response.status_code not in (200, 302):
-            notify.warning("Failed to refresh {}: {} {}".format(url, response.status_code, response.reason))
-        else:
-            notify.info("{:>{width}}: {} {}".format(
-                req, response.status_code, response.reason, width=4 + max(len(i) for i in reqs),
-            ))
+        # Assemble requirements
+        reqs = set(('pip', 'setuptools', 'wheel'))  # always refresh basics
+        if requirement:
+            reqs |= set(i.name for i in parse_requirements(requirement, session=PipSession()))
+        if name:
+            reqs |= set([name])
+        if installed:
+            installed_pkgs = get_installed_distributions(local_only=True, skip=['python'])
+            reqs |= set(i.project_name for i in installed_pkgs)
+        reqs = [i for i in reqs if i]  # catch flukes
 
-    lines = ctx.run('pip list --local --outdated', hide='out', echo=False).stdout.splitlines()
-    if lines:
-        notify.banner("Outdated packages")
-        notify.info('    ' + '\n    '.join(lines))
+        for req in sorted(reqs):
+            url = "{}/{}/refresh".format(base_url, req)
+            response = requests.post(url)
+            if response.status_code not in (200, 302):
+                notify.warning("Failed to refresh {}: {} {}".format(url, response.status_code, response.reason))
+            else:
+                notify.info("{:>{width}}: {} {}".format(
+                    req, response.status_code, response.reason, width=4 + max(len(i) for i in reqs),
+                ))
+
+        lines = ctx.run('pip list --local --outdated', hide='out', echo=False).stdout.splitlines()
+        if lines:
+            notify.banner("Outdated packages")
+            notify.info('    ' + '\n    '.join(lines))
 
 
 namespace = Collection.from_module(sys.modules[__name__], config=dict(
