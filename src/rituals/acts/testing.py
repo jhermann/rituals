@@ -24,17 +24,19 @@ from __future__ import absolute_import, unicode_literals, print_function
 import os
 import sys
 import shutil
+import webbrowser
 
 from invoke import Collection, ctask as task
 
 from .. import config
-from ..util import which, add_dir2pypath
+from ..util import notify, which, add_dir2pypath
 
 
 @task(default=True, help={
+    'coverage': "Open coverage report in browser tab",
     'opts': "Extra flags for test runner",
 })
-def pytest(ctx, opts=''):
+def pytest(ctx, coverage=False, opts=''):
     """Perform standard unittests."""
     cfg = config.load()
     setup_cfg = cfg.rootjoin('setup.cfg')
@@ -76,6 +78,14 @@ def pytest(ctx, opts=''):
         ctx.run(' '.join(cmd))
     else:
         ctx.run('python setup.py test' + (' ' + opts if opts else ''))
+
+    if coverage:
+        # TODO: Read from "coverage.cfg [html] directory"
+        cov_html = os.path.join("build/coverage_html_report", "index.html")
+        if os.path.exists(cov_html):
+            webbrowser.open_new_tab(cov_html)
+        else:
+            notify.warning('No coverage report found at "{}"!'.format(cov_html))
 
 
 #_PROJECT_ROOT = config.get_project_root()
