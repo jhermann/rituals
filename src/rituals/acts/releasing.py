@@ -166,7 +166,7 @@ def prep(ctx, commit=True):
 
     # Build a clean dist and check version number
     version = capture('python setup.py --version')
-    ctx.run('invoke clean --all build --docs dist')
+    ctx.run('invoke clean --all build --docs release.dist')
     for distfile in os.listdir('dist'):
         trailer = distfile.split('-' + version)[1]
         trailer, _ = os.path.splitext(trailer)
