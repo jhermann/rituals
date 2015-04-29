@@ -205,11 +205,13 @@ def pex(ctx, upload=False, opts=''):
                 env_id.append(k)
                 env_id.extend(v)
             env_id = '-'.join(env_id)
-            new_pex_file = pex_file.replace('.pex', '-{}.pex'.format(env_id))
-            notify.info("Renamed PEX to '{}'".format(os.path.basename(new_pex_file)))
-            os.rename(pex_file, new_pex_file)
-            pex_file = new_pex_file
+        else:
+            env_id = 'py2.py3-none-any'
 
+        new_pex_file = pex_file.replace('.pex', '-{}.pex'.format(env_id))
+        notify.info("Renamed PEX to '{}'".format(os.path.basename(new_pex_file)))
+        os.rename(pex_file, new_pex_file)
+        pex_file = new_pex_file
         pex_files.append(pex_file)
 
     if not pex_files:
