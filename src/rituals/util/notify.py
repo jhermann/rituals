@@ -66,4 +66,5 @@ def error(msg):
 def failure(msg):
     """Emit a fatal message and exit."""
     error(msg)
-    raise exceptions.Exit(1)
+    sys.exit(1)
+    #raise exceptions.Exit(1)
