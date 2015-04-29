@@ -28,6 +28,7 @@ import sys
 import zipfile
 from contextlib import closing
 
+import requests
 from invoke import Collection, ctask as task
 from bunch import Bunch
 
@@ -214,7 +215,20 @@ def pex(ctx, upload=False, opts=''):
     if not pex_files:
         notify.warning("No entry points found in project configuration!")
     elif upload:
-        pass  # TODO: implement upload
+        baseurl = ctx.release.upload.baseurl.rstrip('/')
+        if not baseurl:
+            notify.failure("No base URL provided for uploading!")
+
+        for pex_file in pex_files:
+            url = baseurl + '/' + ctx.release.upload.path.lstrip('/').format(
+                name=cfg.project.name, version=cfg.project.version, filename=os.path.basename(pex_file))
+            notify.info("Uploading to '{}'...".format(url))
+            with io.open(pex_file, 'rb') as handle:
+                reply = requests.put(url, data=handle.read())
+                if reply.status_code in range(200, 300):
+                    notify.info("{status_code} {reason}".format(**vars(reply)))
+                else:
+                    notify.warning("{status_code} {reason}".format(**vars(reply)))
 
 
 @task(
@@ -284,5 +298,6 @@ namespace = Collection.from_module(sys.modules[__name__], name='release', config
     release = dict(
         commit = dict(message = ':package: Release v{version}'),
         tag = dict(name = 'v{version}', message = 'Release v{version}'),
+        upload = dict(baseurl = '', path='{name}/{version}/{filename}'),
     ),
 ))
