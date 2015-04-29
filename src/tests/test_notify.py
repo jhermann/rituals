@@ -68,7 +68,7 @@ def test_output_an_error_to_stderr(capsys):
 
 
 def test_output_a_failure_message_to_stderr_and_exit(capsys):
-    with pytest.raises(exceptions.Exit):
+    with pytest.raises(SystemExit):
         failure(SAID)
     silence, text = capsys.readouterr()
     assert repr(no_ansi(text.replace(SAID, '~'))) == repr('ERROR: ~\n')
