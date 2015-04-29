@@ -189,8 +189,8 @@ def pex(ctx, upload=False, opts=''):
 
         # Warn about non-portable stuff
         non_universal = set()
-        with closing(zipfile.ZipFile(pex_file, mode="r")) as pex:
-            for pex_name in pex.namelist():
+        with closing(zipfile.ZipFile(pex_file, mode="r")) as pex_contents:
+            for pex_name in pex_contents.namelist():
                 if pex_name.endswith('WHEEL') and '-py2.py3-none-any.whl' not in pex_name:
                     non_universal.add(pex_name.split('.whl')[0].split('/')[-1])
         if non_universal:
