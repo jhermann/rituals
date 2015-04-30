@@ -35,6 +35,9 @@ namespace = Collection.from_module(basic, name='')  # pylint: disable=invalid-na
 from .acts.testing import namespace as _
 namespace.add_collection(_)
 
+from .acts.documentation import namespace as _
+namespace.add_collection(_)
+
 from .acts.inspection import namespace as _
 namespace.add_collection(_)
 

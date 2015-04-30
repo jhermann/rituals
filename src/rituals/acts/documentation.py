@@ -21,20 +21,48 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
+import os
 import sys
+import webbrowser
 
 from invoke import Collection, ctask as task
 
+from .. import config
+from ..util.filesys import pushd
 
-@task(default=True)
-def sphinx(_dummy_ctx):
+
+@task(default=True, help={
+    'browse': "Open index page in browser tab",
+    'opts': "Extra flags for Sphinx builder",
+})
+def sphinx(ctx, browse=False, opts=''):
     """Build Sphinx docs."""
-    raise NotImplementedError("No sphinx yet!")
+    cfg = config.load()
+
+    # Build API docs
+    cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
+    for package in cfg.project.packages:
+        if '.' not in package:
+            cmd.append(cfg.srcjoin(package))
+    with pushd(ctx.docs.sources):
+        ctx.run(' '.join(cmd))
+
+    # Build docs
+    cmd = ['sphinx-build', '-b', 'html']
+    if opts:
+        cmd.append(opts)
+    cmd.extend(['.', ctx.docs.build])
+    with pushd(ctx.docs.sources):
+        ctx.run(' '.join(cmd))
+
+    # Open in browser?
+    if browse:
+        webbrowser.open_new_tab(os.path.join(ctx.docs.sources, ctx.docs.build, 'index.html'))
 
 
 namespace = Collection.from_module(sys.modules[__name__], name='docs', config=dict(
-    test = dict(
-        docs_dir = 'docs',
-        build_dir = '_build',
+    docs = dict(
+        sources = 'docs',
+        build = '_build',
     ),
 ))
