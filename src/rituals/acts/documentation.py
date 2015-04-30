@@ -40,15 +40,17 @@ def sphinx(ctx, browse=False, opts=''):
     """Build Sphinx docs."""
     cfg = config.load()
 
-    # Convert README, if applicable
-    readme_md = cfg.rootjoin('README.md')
-    if os.path.exists(readme_md):
-        try:
-            import pypandoc
-        except ImportError as exc:
-            notify.warning("Can't import 'pandoc' ({})".format(exc))
-        else:
-            pypandoc.convert(readme_md, 'rst', outputfile=os.path.join(ctx.docs.sources, 'README.rst'))
+    # Convert markdown files, if applicable
+    for basename in ('README', 'CONTRIBUTING'):
+        markdown = cfg.rootjoin(basename + '.md')
+        if os.path.exists(markdown):
+            try:
+                import pypandoc
+            except ImportError as exc:
+                notify.warning("Can't import 'pandoc' ({})".format(exc))
+                break
+            else:
+                pypandoc.convert(markdown, 'rst', outputfile=os.path.join(ctx.docs.sources, basename + '.rst'))
 
     # Build API docs
     cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
