@@ -21,6 +21,7 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
+import io
 import os
 import sys
 import webbrowser
@@ -51,6 +52,27 @@ def sphinx(ctx, browse=False, opts=''):
                 break
             else:
                 pypandoc.convert(markdown, 'rst', outputfile=os.path.join(ctx.docs.sources, basename + '.rst'))
+
+    # LICENSE file
+    if os.path.exists('LICENSE'):
+        with io.open('LICENSE', 'r') as inp:
+            license_text = inp.read()
+            _, copyright_text = cfg.project['long_description'].split('Copyright', 1)
+            with io.open(os.path.join(ctx.docs.sources, 'LICENSE.rst'), 'w') as out:
+                out.write(
+                    'Software License\n'
+                    '================\n'
+                    '\n'
+                    '    Copyright {}\n'
+                    '\n'
+                    'Full License Text\n'
+                    '-----------------\n'
+                    '\n'
+                    '::\n'
+                    '\n'
+                    .format(copyright_text)
+                )
+                out.write(license_text)
 
     # Build API docs
     cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
