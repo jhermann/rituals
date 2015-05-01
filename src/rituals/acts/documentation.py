@@ -24,13 +24,37 @@ from __future__ import absolute_import, unicode_literals, print_function
 import io
 import os
 import sys
+import shutil
+import tempfile
 import webbrowser
 
+try:
+    from configparser import ConfigParser, Error as ConfigError
+except ImportError:
+    from ConfigParser import RawConfigParser as ConfigParser, Error as ConfigError
+
+import requests
 from invoke import Collection, ctask as task
 
 from .. import config
 from ..util import notify
 from ..util.filesys import pushd
+
+PYPI_URL = 'https://pypi.python.org/pypi'
+
+
+def get_pypi_auth(configfile='~/.pypirc'):
+    """Read auth from pip config."""
+    pypi_cfg = ConfigParser()
+    if pypi_cfg.read(os.path.expanduser(configfile)):
+        try:
+            user = pypi_cfg.get('pypi', 'username')
+            pwd = pypi_cfg.get('pypi', 'password')
+            return user, pwd
+        except ConfigError:
+            notify.warning("No PyPI credentials in '{}',"
+                           " will fall back to '~/.netrc'...".format(configfile))
+    return None
 
 
 @task(default=True, help={
@@ -93,6 +117,49 @@ def sphinx(ctx, browse=False, opts=''):
     # Open in browser?
     if browse:
         webbrowser.open_new_tab(os.path.join(ctx.docs.sources, ctx.docs.build, 'index.html'))
+
+
+@task(help={
+    'browse': "Open index page on successful upload",
+    'pypi': "Upload to {}".format(PYPI_URL),
+})
+def upload(ctx, browse=False, pypi=True):
+    """Upload built Sphinx docs."""
+    cfg = config.load()
+
+    if not pypi:
+        notify.failure("I have no target to upload to!")
+    html_dir = os.path.join(ctx.docs.sources, ctx.docs.build)
+    if not os.path.isdir(html_dir):
+        notify.failure("No HTML docs dir found at '{}'!".format(html_dir))
+
+    if pypi:
+        with pushd(html_dir):
+            with tempfile.NamedTemporaryFile(prefix='pythonhosted-', delete=False) as ziphandle:
+                pass
+            zip_name = shutil.make_archive(ziphandle.name, 'zip')
+
+        notify.info("Uploading {:.1f} MiB from '{}'..."
+                    .format(os.path.getsize(zip_name) / 1024.0, zip_name))
+        with io.open(zip_name, 'rb') as zipread:
+            try:
+                reply = requests.post(PYPI_URL, auth=get_pypi_auth(), allow_redirects=False,
+                              files=dict(content=(cfg.project.name + '.zip', zipread, 'application/zip')),
+                              data={':action': 'doc_upload', 'name': cfg.project.name})
+                if reply.status_code in range(200, 300):
+                    notify.info("{status_code} {reason}".format(**vars(reply)))
+                elif reply.status_code == 301:
+                    url = reply.headers['location']
+                    notify.info("Uploaded docs to '{url}'!".format(url=url))
+
+                    # Open in browser?
+                    if browse:
+                        webbrowser.open_new_tab(url)
+                else:
+                    notify.error("{status_code} {reason}".format(**vars(reply)))
+
+            finally:
+                pass #os.remove(ziphandle.name)
 
 
 namespace = Collection.from_module(sys.modules[__name__], name='docs', config=dict(

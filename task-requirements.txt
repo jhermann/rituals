@@ -2,6 +2,9 @@
 # Task requirements
 #
 
+# devpi / docs
+requests==2.6.0
+
 # check
 pylint==1.4.3
 
@@ -11,5 +14,5 @@ pytest-spec==0.2.24
 pytest-cov==1.8.1
 coveralls==0.5
 
-# devpi
-requests==2.6.0
+# docs
+sphinx==1.3
