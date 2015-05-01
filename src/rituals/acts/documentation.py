@@ -31,7 +31,7 @@ import webbrowser
 try:
     from configparser import ConfigParser, Error as ConfigError
 except ImportError:
-    from ConfigParser import RawConfigParser as ConfigParser, Error as ConfigError
+    from ConfigParser import RawConfigParser as ConfigParser, Error as ConfigError  # pylint: disable=import-error
 
 import requests
 from invoke import Collection, ctask as task
