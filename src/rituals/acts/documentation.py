@@ -99,12 +99,13 @@ def sphinx(ctx, browse=False, opts=''):
                 out.write(license_text)
 
     # Build API docs
-    cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
-    for package in cfg.project.packages:
-        if '.' not in package:
-            cmd.append(cfg.srcjoin(package))
-    with pushd(ctx.docs.sources):
-        ctx.run(' '.join(cmd))
+    if cfg.project.packages:
+        cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
+        for package in cfg.project.packages:
+            if '.' not in package:
+                cmd.append(cfg.srcjoin(package))
+        with pushd(ctx.docs.sources):
+            ctx.run(' '.join(cmd))
 
     # Build docs
     cmd = ['sphinx-build', '-b', 'html']
