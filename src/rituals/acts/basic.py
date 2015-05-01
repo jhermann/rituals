@@ -112,7 +112,7 @@ def build(ctx, docs=False):
             doc_path = None
 
         if doc_path:
-            ctx.run("sphinx-build {0} {0}/_build".format(doc_path))
+            ctx.run("invoke docs")
         else:
             notify.warning("Cannot find either a 'docs' or 'doc' Sphinx directory!")
 
