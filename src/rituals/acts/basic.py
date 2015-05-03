@@ -51,10 +51,11 @@ def help(_dummy_ctx): # pylint: disable=redefined-builtin
     dist="Also clean the 'dist' dir",
     all="The same as --backups --bytecode --dist --docs",
     venv="Include an existing virtualenv (in '.' or in '.venv')",
+    tox="Include '.tox' directory",
     extra="Any extra patterns, space-separated and possibly quoted",
 ))
 def clean(_dummy_ctx, docs=False, backups=False, bytecode=False, dist=False, # pylint: disable=redefined-outer-name
-        all=False, venv=False, extra=''): # pylint: disable=redefined-builtin
+        all=False, venv=False, tox=False, extra=''): # pylint: disable=redefined-builtin
     """Perform house-keeping."""
     cfg = config.load()
     notify.banner("Cleaning up project files")
@@ -62,7 +63,7 @@ def clean(_dummy_ctx, docs=False, backups=False, bytecode=False, dist=False, # p
     # Add patterns based on given parameters
     venv_dirs = ['bin', 'include', 'lib', 'share', 'local', '.venv']
     patterns = ['build/', 'pip-selfcheck.json']
-    excludes = []
+    excludes = ['.git/', '.hg/', '.svn/']
     if docs or all:
         patterns.append('docs/_build/')
     if dist or all:
@@ -74,9 +75,12 @@ def clean(_dummy_ctx, docs=False, backups=False, bytecode=False, dist=False, # p
             '**/*.py[co]', '**/__pycache__/', '*.egg-info/',
             cfg.srcjoin('*.egg-info/')[len(cfg.project_root)+1:],
         ])
-        excludes.append('.tox/')
     if venv:
         patterns.extend([i + '/' for i in venv_dirs])
+    if tox:
+        patterns.append('.tox/')
+    else:
+        excludes.append('.tox/')
     if extra:
         patterns.extend(shlex.split(extra))
 
