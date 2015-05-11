@@ -59,11 +59,15 @@ def get_pypi_auth(configfile='~/.pypirc'):
 
 @task(default=True, help={
     'browse': "Open index page in browser tab",
+    'clean': "Start with a clean build area",
     'opts': "Extra flags for Sphinx builder",
 })
-def sphinx(ctx, browse=False, opts=''):
+def sphinx(ctx, browse=False, clean=False, opts=''):
     """Build Sphinx docs."""
     cfg = config.load()
+
+    if clean:
+        ctx.run("invoke clean --docs")
 
     # Convert markdown files, if applicable
     for basename in ('README', 'CONTRIBUTING'):
