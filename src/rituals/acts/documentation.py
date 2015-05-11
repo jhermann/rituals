@@ -26,6 +26,7 @@ import os
 import sys
 import shutil
 import tempfile
+import textwrap
 import webbrowser
 
 try:
@@ -100,7 +101,9 @@ def sphinx(ctx, browse=False, clean=False, opts=''):
                     '\n'
                     .format(copyright_text)
                 )
-                out.write(license_text)
+                license_text = textwrap.dedent(license_text)
+                license_text = '\n    '.join(license_text.splitlines())
+                out.write('    {}\n'.format(license_text))
 
     # Build API docs
     if cfg.project.packages:
