@@ -35,11 +35,13 @@ def capture(cmd, **kw):
     kw['hide'] = 'out'
     if not kw.get('echo', False):
         kw['echo'] = False
+    ignore_failures = kw.pop('ignore_failures', False)
     try:
         return invoke_run(cmd, **kw).stdout.strip()
     except exceptions.Failure as exc:
-        notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
-        raise
+        if not ignore_failures:
+            notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
+            raise
 
 
 def run(cmd, **kw):
