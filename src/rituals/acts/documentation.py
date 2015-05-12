@@ -99,7 +99,8 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
     cfg = config.load()
 
     if kill or status:
-        watchdogctl(ctx, kill=kill)
+        if not watchdogctl(ctx, kill=kill):
+            notify.info("No process bound to port {}".format(ctx.docs.watchdog.port))
         return
 
     if clean:
