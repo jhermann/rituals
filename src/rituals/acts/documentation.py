@@ -24,6 +24,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import io
 import os
 import sys
+import time
 import shutil
 import tempfile
 import textwrap
@@ -40,6 +41,7 @@ from invoke import Collection, ctask as task
 from .. import config
 from ..util import notify
 from ..util.filesys import pushd
+from ..util.shell import capture
 
 PYPI_URL = 'https://pypi.python.org/pypi'
 
@@ -58,14 +60,47 @@ def get_pypi_auth(configfile='~/.pypirc'):
     return None
 
 
+def watchdogctl(ctx, kill=False, verbose=True):
+    """Control / check a running Sphinx autobuild process."""
+    tries = 40 if kill else 0
+    cmd = 'lsof -i TCP:{} -s TCP:LISTEN -S -Fp'.format(ctx.docs.watchdog.port)
+
+    pid = capture(cmd, ignore_failures=True)
+    while pid:
+        assert pid.startswith('p'), "Standard lsof output expected"
+        pid = int(pid[1:], 10)
+        if verbose:
+            ctx.run("ps uw {}".format(pid), echo=False)
+            verbose = False
+
+        tries -= 1
+        if tries > 0:
+            notify.info("Killing PID {}".format(pid))
+            ctx.run("kill {}".format(pid), echo=False)
+            time.sleep(.25)
+        else:
+            break
+
+        pid = capture(cmd, ignore_failures=True)
+
+    return pid or 0
+
+
 @task(default=True, help={
     'browse': "Open index page in browser tab",
     'clean': "Start with a clean build area",
+    'watchdog': "Start autobuild watchdog?",
+    'kill': "Stop autobuild watchdog (and do nothing else)",
+    'status': "Show autobuild watchdog process state",
     'opts': "Extra flags for Sphinx builder",
 })
-def sphinx(ctx, browse=False, clean=False, opts=''):
+def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=False, opts=''):
     """Build Sphinx docs."""
     cfg = config.load()
+
+    if kill or status:
+        watchdogctl(ctx, kill=kill)
+        return
 
     if clean:
         ctx.run("invoke clean --docs")
@@ -114,17 +149,44 @@ def sphinx(ctx, browse=False, clean=False, opts=''):
         with pushd(ctx.docs.sources):
             ctx.run(' '.join(cmd))
 
-    # Build docs
+    # Auto build?
     cmd = ['sphinx-build', '-b', 'html']
     if opts:
         cmd.append(opts)
     cmd.extend(['.', ctx.docs.build])
+    index_url = os.path.join(ctx.docs.sources, ctx.docs.build, 'index.html')
+    if watchdog:
+        watchdogctl(ctx, kill=True)
+        cmd[0:1] = ['nohup', 'sphinx-autobuild']
+        cmd.extend([
+               '-H', ctx.docs.watchdog.host,
+               '-p', '{}'.format(ctx.docs.watchdog.port),
+               "-i'{}'".format('*~'),
+               "-i'{}'".format('.*'),
+               "-i'{}'".format('*.log'),
+               ">watchdog.log", "2>&1", "&",
+        ])
+        index_url = "http://{}:{}/".format(ctx.docs.watchdog.host, ctx.docs.watchdog.port)
+
+    # Build docs
+    notify.info("Starting Sphinx {}build...".format('auto' if watchdog else ''))
     with pushd(ctx.docs.sources):
         ctx.run(' '.join(cmd))
 
+    # Wait for watchdog to bind to listening port
+    if watchdog:
+        for i in range(60):
+            sys.stdout.write(' {}\r'.format(r'\|/-'[i % 4]))
+            sys.stdout.flush()
+            if watchdogctl(ctx):
+                break
+            time.sleep(1)
+        with open(os.path.join(ctx.docs.sources, 'index.rst'), 'a'):
+            pass
+
     # Open in browser?
     if browse:
-        webbrowser.open_new_tab(os.path.join(ctx.docs.sources, ctx.docs.build, 'index.html'))
+        webbrowser.open_new_tab(index_url)
 
 
 @task(help={
@@ -174,5 +236,9 @@ namespace = Collection.from_module(sys.modules[__name__], name='docs', config=di
     docs = dict(
         sources = 'docs',
         build = '_build',
+        watchdog = dict(
+            host = '127.0.0.1',
+            port = 8840,
+        ),
     ),
 ))
