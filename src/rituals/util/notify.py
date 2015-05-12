@@ -23,8 +23,6 @@ from __future__ import absolute_import, unicode_literals, print_function
 
 import sys
 
-from invoke import exceptions
-
 ECHO = True
 
 
@@ -67,4 +65,3 @@ def failure(msg):
     """Emit a fatal message and exit."""
     error(msg)
     sys.exit(1)
-    #raise exceptions.Exit(1)
