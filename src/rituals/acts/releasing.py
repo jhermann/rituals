@@ -25,6 +25,8 @@ import io
 import os
 import re
 import sys
+import shutil
+import tarfile
 import zipfile
 from contextlib import closing
 
@@ -35,7 +37,9 @@ from bunch import Bunch
 from .. import config
 from ..util import notify, shell
 from ..util.scm import provider as scm_provider
+from ..util.filesys import url_as_file
 from ..util.shell import capture
+from ..util._compat import parse_qsl
 
 PKG_INFO_MULTIKEYS = ('Classifier',)
 
@@ -160,10 +164,11 @@ def dist(ctx, devpi=False, egg=False, wheel=False, auto=True):
 
 
 @task(help=dict(
+    pyrun="Create installer including an eGenix PyRun runtime",
     upload="Upload the created archive to a WebDAV repository",
     opts="Extra flags for PEX",
 ))
-def pex(ctx, upload=False, opts=''):
+def pex(ctx, pyrun='', upload=False, opts=''):
     """Package the project with PEX."""
     cfg = config.load()
 
@@ -216,21 +221,43 @@ def pex(ctx, upload=False, opts=''):
 
     if not pex_files:
         notify.warning("No entry points found in project configuration!")
-    elif upload:
-        baseurl = ctx.rituals.release.upload.baseurl.rstrip('/')
-        if not baseurl:
-            notify.failure("No base URL provided for uploading!")
+    else:
+        if pyrun:
+            if pyrun.startswith('http:') or pyrun.startswith('https:'):
+                pyrun_url = pyrun
+            else:
+                namespace = dict(ctx.rituals.pyrun)
+                namespace.update(parse_qsl(pyrun.replace(os.pathsep, '&')))
+                pyrun_url = namespace['url'].format(**namespace)
+            print(pyrun_url)
+            with url_as_file(pyrun_url, ext='tgz') as pyrun_tarball:
+                pyrun_tar = tarfile.TarFile.gzopen(pyrun_tarball)
+                for pex_file in pex_files[:]:
+                    pyrun_exe = pyrun_tar.extractfile('./bin/pyrun')
+                    with open(pex_file, 'rb') as pex_handle:
+                        pyrun_pex_file = pex_file[:-4] + pyrun_url.rsplit('/egenix')[-1] + '.pex'
+                        with open(pyrun_pex_file, 'wb') as pyrun_pex:
+                            # TODO: prepend install bash
+                            shutil.copyfileobj(pyrun_exe, pyrun_pex)
+                            shutil.copyfileobj(pex_handle, pyrun_pex)
+                        shutil.copystat(pex_file, pyrun_pex_file)
+                        pex_files.append(pyrun_pex_file)
 
-        for pex_file in pex_files:
-            url = baseurl + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
-                name=cfg.project.name, version=cfg.project.version, filename=os.path.basename(pex_file))
-            notify.info("Uploading to '{}'...".format(url))
-            with io.open(pex_file, 'rb') as handle:
-                reply = requests.put(url, data=handle.read())
-                if reply.status_code in range(200, 300):
-                    notify.info("{status_code} {reason}".format(**vars(reply)))
-                else:
-                    notify.warning("{status_code} {reason}".format(**vars(reply)))
+        if upload:
+            baseurl = ctx.rituals.release.upload.baseurl.rstrip('/')
+            if not baseurl:
+                notify.failure("No base URL provided for uploading!")
+
+            for pex_file in pex_files:
+                url = baseurl + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
+                    name=cfg.project.name, version=cfg.project.version, filename=os.path.basename(pex_file))
+                notify.info("Uploading to '{}'...".format(url))
+                with io.open(pex_file, 'rb') as handle:
+                    reply = requests.put(url, data=handle.read())
+                    if reply.status_code in range(200, 300):
+                        notify.info("{status_code} {reason}".format(**vars(reply)))
+                    else:
+                        notify.warning("{status_code} {reason}".format(**vars(reply)))
 
 
 @task(
@@ -302,5 +329,13 @@ namespace = Collection.from_module(sys.modules[__name__], name='release', config
         commit = dict(message = ':package: Release v{version}'),
         tag = dict(name = 'v{version}', message = 'Release v{version}'),
         upload = dict(baseurl = '', path='{name}/{version}/{filename}'),
+    ),
+    pyrun = dict(
+        version = '2.1.0',
+        python = '2.7',  # 2.6, 2.7, 3.4
+        ucs = 'ucs4',  # ucs2, ucs4
+        platform = 'macosx-10.5-x86_64' if sys.platform == 'darwin' else 'linux-x86_64',
+        # linux-i686, linux-x86_64, macosx-10.5-x86_64
+        url = 'https://downloads.egenix.com/python/egenix-pyrun-{version}-py{python}_{ucs}-{platform}.tgz',
     ),
 )})
