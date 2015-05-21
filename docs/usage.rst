@@ -23,3 +23,14 @@ User's Manual
 =============
 
 **TODO**
+
+
+Building Sphinx Documentation
+-----------------------------
+
+*Rituals* provides automatic process management of a ``sphinx-autobuild``
+daemon, which means you easily get a live-reload preview in your browser.
+To start the build watchdog, use ``inv docs -w -b``
+– the ``-b`` means to open a new browser tab,
+after the server process is ready.
+To kill the server, call the ``inv docs -k`` command.
