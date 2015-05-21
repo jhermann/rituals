@@ -74,7 +74,7 @@ Documentation Contents
     customize
     api-reference
     CONTRIBUTING
-    LICENSE
+    copyright
 
 
 References
