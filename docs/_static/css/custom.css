@@ -1,0 +1,10 @@
+/* Custom styles */
+
+@import url("theme.css");
+
+code, .rst-content tt, .rst-content code {
+    font-size: 95%;
+}
+.note p code {
+    background-color: #E7F2FC;
+}

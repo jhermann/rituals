@@ -9,5 +9,7 @@ tox==1.9.2
 twine==1.5.0
 
 -r task-requirements.txt
+sphinx-rtd-theme==0.1.8
+
 -r requirements.txt
 -e .
