@@ -43,6 +43,35 @@ from ..util._compat import parse_qsl
 
 PKG_INFO_MULTIKEYS = ('Classifier',)
 
+INSTALLER_BASH = """#!/usr/bin/env bash
+set -e
+target="${1:?You need to provide a target location to install to}"
+script=$(cd $(dirname "${BASH_SOURCE}") && pwd)/$(basename "${BASH_SOURCE}")
+
+test -d $(dirname "$target")"/.pex" || mkdir $(dirname "$target")"/.pex"
+cd $(dirname "$target")
+target=$(basename "$target")
+pex_target=".pex/$target"
+
+cat >"$target" <<.
+#!/usr/bin/env bash
+pex=\$(dirname "\$0")"/.pex/"\$(basename "\$0")
+"\$pex" "\$pex" "\$@"
+.
+echo -n "" >"$pex_target"
+chmod +x "$target" "$pex_target"
+
+if test -n "${BASH_SOURCE}"; then
+    # Called as a script, stored locally
+    tail -c +00000 "$script" >>"$pex_target"
+    "./$target" --version
+    exit 0
+fi
+
+# Called in a 'curl | bash -s' pipe
+cat <&0 >>"$pex_target" && "./$target" --version
+"""
+
 
 def get_egg_info(cfg, verbose=False):
     """Call 'setup egg_info' and return the parsed meta-data."""
@@ -229,15 +258,16 @@ def pex(ctx, pyrun='', upload=False, opts=''):
                 namespace = dict(ctx.rituals.pyrun)
                 namespace.update(parse_qsl(pyrun.replace(os.pathsep, '&')))
                 pyrun_url = namespace['url'].format(**namespace)
-            print(pyrun_url)
+
             with url_as_file(pyrun_url, ext='tgz') as pyrun_tarball:
                 pyrun_tar = tarfile.TarFile.gzopen(pyrun_tarball)
                 for pex_file in pex_files[:]:
                     pyrun_exe = pyrun_tar.extractfile('./bin/pyrun')
                     with open(pex_file, 'rb') as pex_handle:
-                        pyrun_pex_file = pex_file[:-4] + pyrun_url.rsplit('/egenix')[-1] + '.pex'
+                        pyrun_pex_file = '{}{}-installer.sh'.format(
+                            pex_file[:-4], pyrun_url.rsplit('/egenix')[-1][:-4])
                         with open(pyrun_pex_file, 'wb') as pyrun_pex:
-                            # TODO: prepend install bash
+                            pyrun_pex.write(INSTALLER_BASH.replace('00000', '{:<5d}'.format(len(INSTALLER_BASH) + 1)))
                             shutil.copyfileobj(pyrun_exe, pyrun_pex)
                             shutil.copyfileobj(pex_handle, pyrun_pex)
                         shutil.copystat(pex_file, pyrun_pex_file)
