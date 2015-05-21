@@ -37,7 +37,7 @@ from bunch import Bunch
 from .. import config
 from ..util import notify, shell
 from ..util.scm import provider as scm_provider
-from ..util.filesys import url_as_file
+from ..util.filesys import url_as_file, pretty_path
 from ..util.shell import capture
 from ..util._compat import parse_qsl
 
@@ -252,13 +252,15 @@ def pex(ctx, pyrun='', upload=False, opts=''):
         notify.warning("No entry points found in project configuration!")
     else:
         if pyrun:
-            if pyrun.startswith('http:') or pyrun.startswith('https:'):
+            if any(pyrun.startswith(i) for i in ('http://', 'https://', 'file://')):
                 pyrun_url = pyrun
             else:
                 namespace = dict(ctx.rituals.pyrun)
                 namespace.update(parse_qsl(pyrun.replace(os.pathsep, '&')))
-                pyrun_url = namespace['url'].format(**namespace)
+                pyrun_url = (namespace['base_url'] + '/' +
+                             namespace['archive']).format(**namespace)
 
+            notify.info("Getting PyRun from '{}'...".format(pyrun_url))
             with url_as_file(pyrun_url, ext='tgz') as pyrun_tarball:
                 pyrun_tar = tarfile.TarFile.gzopen(pyrun_tarball)
                 for pex_file in pex_files[:]:
@@ -271,6 +273,7 @@ def pex(ctx, pyrun='', upload=False, opts=''):
                             shutil.copyfileobj(pyrun_exe, pyrun_pex)
                             shutil.copyfileobj(pex_handle, pyrun_pex)
                         shutil.copystat(pex_file, pyrun_pex_file)
+                        notify.info("Wrote PEX installer to '{}'".format(pretty_path(pyrun_pex_file)))
                         pex_files.append(pyrun_pex_file)
 
         if upload:
@@ -366,6 +369,7 @@ namespace = Collection.from_module(sys.modules[__name__], name='release', config
         ucs = 'ucs4',  # ucs2, ucs4
         platform = 'macosx-10.5-x86_64' if sys.platform == 'darwin' else 'linux-x86_64',
         # linux-i686, linux-x86_64, macosx-10.5-x86_64
-        url = 'https://downloads.egenix.com/python/egenix-pyrun-{version}-py{python}_{ucs}-{platform}.tgz',
+        archive = 'egenix-pyrun-{version}-py{python}_{ucs}-{platform}.tgz',
+        base_url = 'https://downloads.egenix.com/python',
     ),
 )})
