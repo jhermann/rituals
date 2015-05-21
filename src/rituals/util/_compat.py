@@ -86,6 +86,13 @@ if not PY2:
     encode_filename = _identity
     get_next = lambda x: x.__next__
 
+    def decode_filename(filename):
+        if isinstance(filename, bytes):
+            filename = filename.decode(sys.getfilesystemencoding(), 'replace')
+        else:
+            filename = filename.encode('utf-8', 'surrogateescape').decode('utf-8', 'replace')
+        return filename
+
 else:  # PY2
     unichr = unichr
     text_type = unicode
@@ -121,6 +128,11 @@ else:  # PY2
     def encode_filename(filename):
         if isinstance(filename, unicode):
             return filename.encode('utf-8')
+        return filename
+
+    def decode_filename(filename):
+        if isinstance(filename, bytes):
+            filename = filename.decode(sys.getfilesystemencoding(), 'replace')
         return filename
 
 
