@@ -22,12 +22,21 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
 import os
+import re
 import tempfile
 from contextlib import contextmanager
 
 import requests
 
-from ._compat import urlparse
+from ._compat import urlparse, decode_filename
+
+
+
+def pretty_path(path, _home_re=re.compile('^' + re.escape(os.path.expanduser('~') + os.sep))):
+    """Prettify path for humans, and make it Unicode."""
+    path = decode_filename(path)
+    path = _home_re.sub('~' + os.sep, path)
+    return path
 
 
 @contextmanager
