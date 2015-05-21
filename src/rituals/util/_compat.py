@@ -146,8 +146,10 @@ def with_metaclass(meta, *bases):
 
 try:
     from urllib.parse import quote_from_bytes as url_quote
+    from urllib.parse import urlparse, parse_qs, parse_qsl
 except ImportError:
     from urllib import quote as url_quote
+    from urlparse import urlparse, parse_qs, parse_qsl
 
 
 def isodate(datestamp=None, microseconds=False):
