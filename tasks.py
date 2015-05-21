@@ -5,7 +5,10 @@
 
 from invoke.tasks import call
 from rituals.easy import *
-#from rituals.invoke_tasks import clean, build, test, check
+
+# Example for selective import
+#from rituals.acts.documentation import namespace as _
+#namespace.add_collection(_)
 
 
 @task(pre=[
