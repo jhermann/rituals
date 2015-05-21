@@ -22,4 +22,21 @@
 Configuration Reference
 =======================
 
-**TODO**
+
+.. _customize-release:
+
+Options for 'release'
+---------------------
+
+The ``release.pex`` tasks has an ``--upload`` option to upload the created archive
+to a WebDAV repository, e.g. a local `Artifactory`_ server or to `Bintray`_.
+The best way to make this usable in each of your projects is to insert the base URL
+of your Python repository into your shell environment as follows:
+
+.. code:: sh
+
+    export INVOKE_RITUALS_RELEASE_UPLOAD_BASEURL="http://repo.example.com/artifactory/pypi-releases-local/"
+
+
+.. _`Artifactory`: http://www.jfrog.com/open-source/#os-arti
+.. _`Bintray`: https://bintray.com/
