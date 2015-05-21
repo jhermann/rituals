@@ -2,7 +2,7 @@
 
 Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and again.
 
-![GINOSAJI](https://raw.githubusercontent.com/jhermann/rituals/master/static/img/symbol-200.png) … and again and again.
+![GINOSAJI](https://raw.githubusercontent.com/jhermann/rituals/master/docs/_static/img/symbol-200.png) … and again and again.
 
  [![Groups](https://img.shields.io/badge/Google_groups-rituals--dev-orange.svg)](https://groups.google.com/forum/#!forum/rituals-dev)
  [![Travis CI](https://api.travis-ci.org/jhermann/rituals.svg)](https://travis-ci.org/jhermann/rituals)
