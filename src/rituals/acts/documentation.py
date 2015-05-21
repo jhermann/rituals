@@ -63,7 +63,7 @@ def get_pypi_auth(configfile='~/.pypirc'):
 def watchdogctl(ctx, kill=False, verbose=True):
     """Control / check a running Sphinx autobuild process."""
     tries = 40 if kill else 0
-    cmd = 'lsof -i TCP:{} -s TCP:LISTEN -S -Fp'.format(ctx.docs.watchdog.port)
+    cmd = 'lsof -i TCP:{} -s TCP:LISTEN -S -Fp'.format(ctx.rituals.docs.watchdog.port)
 
     pid = capture(cmd, ignore_failures=True)
     while pid:
@@ -100,7 +100,7 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
 
     if kill or status:
         if not watchdogctl(ctx, kill=kill):
-            notify.info("No process bound to port {}".format(ctx.docs.watchdog.port))
+            notify.info("No process bound to port {}".format(ctx.rituals.docs.watchdog.port))
         return
 
     if clean:
@@ -116,14 +116,14 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
                 notify.warning("Can't import 'pandoc' ({})".format(exc))
                 break
             else:
-                pypandoc.convert(markdown, 'rst', outputfile=os.path.join(ctx.docs.sources, basename + '.rst'))
+                pypandoc.convert(markdown, 'rst', outputfile=os.path.join(ctx.rituals.docs.sources, basename + '.rst'))
 
     # LICENSE file
     if os.path.exists('LICENSE'):
         with io.open('LICENSE', 'r') as inp:
             license_text = inp.read()
             _, copyright_text = cfg.project['long_description'].split('Copyright', 1)
-            with io.open(os.path.join(ctx.docs.sources, 'LICENSE.rst'), 'w') as out:
+            with io.open(os.path.join(ctx.rituals.docs.sources, 'LICENSE.rst'), 'w') as out:
                 out.write(
                     'Software License\n'
                     '================\n'
@@ -147,31 +147,31 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
         for package in cfg.project.packages:
             if '.' not in package:
                 cmd.append(cfg.srcjoin(package))
-        with pushd(ctx.docs.sources):
+        with pushd(ctx.rituals.docs.sources):
             ctx.run(' '.join(cmd))
 
     # Auto build?
     cmd = ['sphinx-build', '-b', 'html']
     if opts:
         cmd.append(opts)
-    cmd.extend(['.', ctx.docs.build])
-    index_url = os.path.join(ctx.docs.sources, ctx.docs.build, 'index.html')
+    cmd.extend(['.', ctx.rituals.docs.build])
+    index_url = os.path.join(ctx.rituals.docs.sources, ctx.rituals.docs.build, 'index.html')
     if watchdog:
         watchdogctl(ctx, kill=True)
         cmd[0:1] = ['nohup', 'sphinx-autobuild']
         cmd.extend([
-               '-H', ctx.docs.watchdog.host,
-               '-p', '{}'.format(ctx.docs.watchdog.port),
+               '-H', ctx.rituals.docs.watchdog.host,
+               '-p', '{}'.format(ctx.rituals.docs.watchdog.port),
                "-i'{}'".format('*~'),
                "-i'{}'".format('.*'),
                "-i'{}'".format('*.log'),
                ">watchdog.log", "2>&1", "&",
         ])
-        index_url = "http://{}:{}/".format(ctx.docs.watchdog.host, ctx.docs.watchdog.port)
+        index_url = "http://{}:{}/".format(ctx.rituals.docs.watchdog.host, ctx.rituals.docs.watchdog.port)
 
     # Build docs
     notify.info("Starting Sphinx {}build...".format('auto' if watchdog else ''))
-    with pushd(ctx.docs.sources):
+    with pushd(ctx.rituals.docs.sources):
         ctx.run(' '.join(cmd))
 
     # Wait for watchdog to bind to listening port
@@ -182,7 +182,7 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
             if watchdogctl(ctx):
                 break
             time.sleep(1)
-        with open(os.path.join(ctx.docs.sources, 'index.rst'), 'a'):
+        with open(os.path.join(ctx.rituals.docs.sources, 'index.rst'), 'a'):
             pass
 
     # Open in browser?
@@ -200,7 +200,7 @@ def upload(ctx, browse=False, pypi=True):
 
     if not pypi:
         notify.failure("I have no target to upload to!")
-    html_dir = os.path.join(ctx.docs.sources, ctx.docs.build)
+    html_dir = os.path.join(ctx.rituals.docs.sources, ctx.rituals.docs.build)
     if not os.path.isdir(html_dir):
         notify.failure("No HTML docs dir found at '{}'!".format(html_dir))
 
@@ -233,7 +233,7 @@ def upload(ctx, browse=False, pypi=True):
                 pass #os.remove(ziphandle.name)
 
 
-namespace = Collection.from_module(sys.modules[__name__], name='docs', config=dict(
+namespace = Collection.from_module(sys.modules[__name__], name='docs', config={'rituals': dict(
     docs = dict(
         sources = 'docs',
         build = '_build',
@@ -242,4 +242,4 @@ namespace = Collection.from_module(sys.modules[__name__], name='docs', config=di
             port = 8840,
         ),
     ),
-))
+)})

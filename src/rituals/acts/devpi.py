@@ -68,7 +68,7 @@ def refresh(ctx, requirement='', name='', installed=False):
 
         # If no option at all is given, default to using 'dev-requirements.txt'
         if not (requirement or name or installed):
-            requirement = ctx.devpi.requirements or DEFAULT_REQUIREMENTS
+            requirement = ctx.rituals.devpi.requirements or DEFAULT_REQUIREMENTS
             if not os.path.exists(requirement):
                 requirement = 'requirements.txt'
 
@@ -106,8 +106,8 @@ def refresh(ctx, requirement='', name='', installed=False):
             notify.info('    ' + '\n    '.join(lines))
 
 
-namespace = Collection.from_module(sys.modules[__name__], config=dict(
+namespace = Collection.from_module(sys.modules[__name__], config={'rituals': dict(
     devpi = dict(
         requirements = DEFAULT_REQUIREMENTS,
     ),
-))
+)})

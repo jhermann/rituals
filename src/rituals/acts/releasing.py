@@ -217,12 +217,12 @@ def pex(ctx, upload=False, opts=''):
     if not pex_files:
         notify.warning("No entry points found in project configuration!")
     elif upload:
-        baseurl = ctx.release.upload.baseurl.rstrip('/')
+        baseurl = ctx.rituals.release.upload.baseurl.rstrip('/')
         if not baseurl:
             notify.failure("No base URL provided for uploading!")
 
         for pex_file in pex_files:
-            url = baseurl + '/' + ctx.release.upload.path.lstrip('/').format(
+            url = baseurl + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
                 name=cfg.project.name, version=cfg.project.version, filename=os.path.basename(pex_file))
             notify.info("Uploading to '{}'...".format(url))
             with io.open(pex_file, 'rb') as handle:
@@ -292,14 +292,15 @@ def prep(ctx, commit=True):
                            " a pre-release one! [{}{}]".format(version, trailer))
 
     # Commit changes and tag the release
-    scm.commit(ctx.release.commit.message.format(version=version))
-    scm.tag(ctx.release.tag.name.format(version=version), ctx.release.tag.message.format(version=version))
+    scm.commit(ctx.rituals.release.commit.message.format(version=version))
+    scm.tag(ctx.rituals.release.tag.name.format(version=version),
+            ctx.rituals.release.tag.message.format(version=version))
 
 
-namespace = Collection.from_module(sys.modules[__name__], name='release', config=dict(
+namespace = Collection.from_module(sys.modules[__name__], name='release', config={'rituals': dict(
     release = dict(
         commit = dict(message = ':package: Release v{version}'),
         tag = dict(name = 'v{version}', message = 'Release v{version}'),
         upload = dict(baseurl = '', path='{name}/{version}/{filename}'),
     ),
-))
+)})
