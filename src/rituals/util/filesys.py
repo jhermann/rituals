@@ -78,7 +78,14 @@ def url_as_file(url, ext=None):
         ext = '.' + ext.strip('.')  # normalize extension
     url_hint = 'www-{}-'.format(urlparse(url).hostname or 'any')
 
-    content = requests.get(url).content
+    if url.startswith('file://'):
+        url = os.path.abspath(url[len('file://'):])
+    if os.path.isabs(url):
+        with open(url, 'rb') as handle:
+            content = handle.read()
+    else:
+        content = requests.get(url).content
+
     with tempfile.NamedTemporaryFile(suffix=ext or '', prefix=url_hint, delete=False) as handle:
         handle.write(content)
 
