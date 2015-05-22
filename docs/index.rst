@@ -71,6 +71,7 @@ Documentation Contents
     :maxdepth: 4
 
     usage
+    tasks
     customize
     api-reference
     CONTRIBUTING
