@@ -58,49 +58,6 @@ Command | Description
 `inv bump` | Set the `tag_build` value in `setup.cfg` to something like `0.3.0.dev117+0.2.0.g993edd3.20150408t1747`, uniquely identifying dev builds, even in dirty working directories.
 
 
-## Usage
-
-### Add common tasks to your project's `task.py`
-
-Add `rituals` to your `dev-requirements.txt` or a similar file,
-or add it to `setup_requires` in your `setup.py`.
-Then at the start of your `tasks.py`, use the following statement to define _all_ tasks that are considered standard:
-
-```py
-from rituals.easy import *
-```
-
-Note that this defines Invoke's ``Collection`` and ``task`` identifiers,
-the root ``namespace``with Ritual's default tasks, and some common helpers
-(see the documentation for details).
-Of course, you can also do more selective imports,
-or build your own Invoke namespaces with the specific tasks you need.
-
-:warning: | These tasks expect an importable `setup.py` that defines a `project` dict with the setup parameters, see [javaprops](https://github.com/Feed-The-Web/javaprops) and [py-generic-project](https://github.com/Springerle/py-generic-project) for examples.
----- | :----
-
-To refer to the current GitHub ``master`` branch, use a ``pip`` requirement like this:
-
-```
--e git+https://github.com/jhermann/rituals.git#egg=rituals
-```
-
-
-### Change default project layout
-
-By default, sources are expected in `src/‹packagename›` and tests in `src/tests`.
-
-You can change this by calling one of the following functions, directly after the import from `rituals.invoke_tasks`.
-
-* `config.set_maven_layout()` – Changes locations to `src/main/python/‹packagename›` and `src/test/python`.
-* `config.set_flat_layout()` – Changes locations to `‹packagename›` and `tests`.
-
-
-### Change default project configuration
-
-**TODO**
-
-
 ## Contributing
 
 To create a working directory for this project, call these commands:
