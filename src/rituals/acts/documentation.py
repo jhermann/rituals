@@ -155,7 +155,7 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
     if opts:
         cmd.append(opts)
     cmd.extend(['.', ctx.rituals.docs.build])
-    index_url = os.path.join(ctx.rituals.docs.sources, ctx.rituals.docs.build, 'index.html')
+    index_url = index_file = os.path.join(ctx.rituals.docs.sources, ctx.rituals.docs.build, 'index.html')
     if watchdog:
         watchdogctl(ctx, kill=True)
         cmd[0:1] = ['nohup', 'sphinx-autobuild']
@@ -176,17 +176,36 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
 
     # Wait for watchdog to bind to listening port
     if watchdog:
-        for i in range(60):
-            sys.stdout.write(' {}\r'.format(r'\|/-'[i % 4]))
+        def activity(what=None, i=None):
+            "Helper"
+            if i is None:
+                sys.stdout.write(what + '\n')
+            else:
+                sys.stdout.write(' {}  Waiting for {}\r'.format(r'\|/-'[i % 4], what or 'something'))
             sys.stdout.flush()
+
+        for i in range(60):
+            activity('server start', i)
             if watchdogctl(ctx):
+                activity('OK')
                 break
             time.sleep(1)
-        with open(os.path.join(ctx.rituals.docs.sources, 'index.rst'), 'a'):
-            pass
+        else:
+            activity('ERR')
+
+        for i in range(60):
+            activity('HTML index file', i)
+            if os.path.exists(index_file):
+                activity('OK')
+                break
+            os.utime(os.path.join(ctx.rituals.docs.sources, 'index.rst'), None)
+            time.sleep(1)
+        else:
+            activity('ERR')
 
     # Open in browser?
     if browse:
+        time.sleep(1)
         webbrowser.open_new_tab(index_url)
 
 
