@@ -45,7 +45,16 @@ PKG_INFO_MULTIKEYS = ('Classifier',)
 
 INSTALLER_BASH = """#!/usr/bin/env bash
 set -e
-target="${1:?You need to provide a target location to install to}"
+if test -z "$1"; then
+    cat <<.
+usage: $0 <target-file>
+
+This script installs a self-contained Python application
+to the chosen target path (using eGenix PyRun and PEX).
+.
+    exit 1
+fi
+target="$1"
 script=$(cd $(dirname "${BASH_SOURCE}") && pwd)/$(basename "${BASH_SOURCE}")
 
 test -d $(dirname "$target")"/.pex" || mkdir $(dirname "$target")"/.pex"
