@@ -49,7 +49,7 @@ snakepits           Lookup path for Python interpreters
 =================== =========================================================
 
 
-.. _customize-test
+.. _customize-test:
 
 -----------------------------------------------------------------------------
 Options for 'test'
@@ -59,7 +59,7 @@ If one of the directories in ``rituals.snakepits`` exists, it's added to the
 ``PATH`` of ``tox``.
 
 
-.. _customize-docs
+.. _customize-docs:
 
 -----------------------------------------------------------------------------
 Options for 'docs'
@@ -147,7 +147,7 @@ You have to download the *PyRun* releases you plan to use to that directory,
 using your browser or ``curl``.
 
 
-.. _customize-devpi
+.. _customize-devpi:
 
 -----------------------------------------------------------------------------
 Options for 'devpi'
