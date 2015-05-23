@@ -28,40 +28,18 @@ Overview
 “Rituals” is a task library for `Invoke <http://www.pyinvoke.org/>`_
 that keeps the most common tasks you always need out of your project,
 and makes them centrally maintained. This leaves your ``tasks.py`` small
-and to the point, with only things specific to the project at hand. The
-following lists the common task implementations that the
-``rituals.easy`` module offers. See the next section on how to integrate
-them into your ``tasks.py``.
+and to the point, with only things specific to the project at hand.
 
-  * ``help`` – Default task, when invoked with no task names.
-  * ``clean`` – Perform house-cleaning.
-  * ``build`` – Build the project.
-  * ``test`` – Perform standard unittests.
-  * ``check`` – Perform source code checks.
-  * ``release.bump`` – Bump a development version.
-  * ``release.dist`` – Distribute the project.
-  * ``release.prep`` – Prepare for a release (perform QA checks, and switch to non-dev versioning).
-  * … and *many* more, see ``inv -l`` for a complete list.
+For more information, continue with the :doc:`usage`.
 
-The guiding principle for these tasks is to strictly separate low-level
-tasks for building and installing (via ``setup.py``) from high-level
-convenience tasks a developer uses (via ``invoke``). Invoke tasks can
-use Setuptools ones as building blocks, but never the other way 'round –
-this avoids any bootstrapping headaches during package installations.
 
-Use ``inv -h ‹task›`` as usual to get details on the options of these
-tasks. Look at the modules in
-`acts <https://github.com/jhermann/rituals/blob/master/src/rituals/acts>`__
-if you want to know what these tasks do exactly.
+Important Links
+---------------
 
-.. note::
-
-    The easiest way to get a working project using ``rituals`` is the
-    `py-generic-project <https://github.com/Springerle/py-generic-project>`__
-    cookiecutter archetype. That way you have a working project skeleton
-    within minutes that is fully equipped, with all aspects of building,
-    testing, quality checks, continuous integration, documentation, and
-    releasing covered.
+  * `GitHub Project <https://github.com/jhermann/rituals>`_
+  * `Issue Tracker <https://github.com/jhermann/rituals/issues>`_
+  * `PyPI <https://pypi.python.org/pypi/rituals>`_
+  * `Latest Documentation <https://rituals.readthedocs.org/en/latest/>`_
 
 
 Documentation Contents

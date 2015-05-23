@@ -22,15 +22,21 @@
 Tasks Reference
 ===============
 
+Please make sure you also read the section on :ref:`task-namespaces`.
 
+
+-----------------------------------------------------------------------------
 Fundamental Tasks
------------------
+-----------------------------------------------------------------------------
 
 **TODO**
 
 
+-----------------------------------------------------------------------------
 Documentation Tasks
--------------------
+-----------------------------------------------------------------------------
+
+.. _doc-sphinx:
 
 Building Sphinx Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -53,14 +59,21 @@ due to the optimizations in ``sphinx-autobuild`` that make it so responsive.
 
 
 
+-----------------------------------------------------------------------------
 Release Workflow
-----------------
+-----------------------------------------------------------------------------
+
+.. _release-prep:
 
 Preparing a Release
 ^^^^^^^^^^^^^^^^^^^
 
+``release-prep`` performs QA checks, and switches to non-dev versioning.
+
 **TODO**
 
+
+.. _release-pex:
 
 Building a PEX Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
