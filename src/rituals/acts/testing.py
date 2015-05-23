@@ -103,7 +103,7 @@ def tox(ctx, verbose=False, clean=False, env_list='', opts=''):
     """Perform multi-environment tests."""
     cfg = config.load()
     add_dir2pypath(cfg.project_root)
-    snakepits = ctx.rituals.test.snakepits.split(os.pathsep)
+    snakepits = ctx.rituals.snakepits.split(os.pathsep)
     cmd = []
 
     snakepits = [i for i in snakepits if os.path.isdir(i)]
@@ -123,7 +123,7 @@ def tox(ctx, verbose=False, clean=False, env_list='', opts=''):
 
 
 namespace = Collection.from_module(sys.modules[__name__], name='test', config={'rituals': dict(
-    test = dict(
-        snakepits = '/opt/pyenv/bin:/opt/pyrun/bin',
-    ),
+    #test = dict(
+    #),
+    snakepits = '/opt/pyenv/bin:/opt/pyrun/bin',
 )})

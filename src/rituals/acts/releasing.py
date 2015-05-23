@@ -43,7 +43,7 @@ from ..util._compat import parse_qsl
 
 PKG_INFO_MULTIKEYS = ('Classifier',)
 
-INSTALLER_BASH = """#!/usr/bin/env bash
+INSTALLER_BASH = r"""#!/usr/bin/env bash
 set -e
 if test -z "$1"; then
     cat <<.
@@ -264,10 +264,10 @@ def pex(ctx, pyrun='', upload=False, opts=''):
             if any(pyrun.startswith(i) for i in ('http://', 'https://', 'file://')):
                 pyrun_url = pyrun
             else:
-                namespace = dict(ctx.rituals.pyrun)
-                namespace.update(parse_qsl(pyrun.replace(os.pathsep, '&')))
-                pyrun_url = (namespace['base_url'] + '/' +
-                             namespace['archive']).format(**namespace)
+                pyrun_cfg = dict(ctx.rituals.pyrun)
+                pyrun_cfg.update(parse_qsl(pyrun.replace(os.pathsep, '&')))
+                pyrun_url = (pyrun_cfg['base_url'] + '/' +
+                             pyrun_cfg['archive']).format(**pyrun_cfg)
 
             notify.info("Getting PyRun from '{}'...".format(pyrun_url))
             with url_as_file(pyrun_url, ext='tgz') as pyrun_tarball:
@@ -286,12 +286,12 @@ def pex(ctx, pyrun='', upload=False, opts=''):
                         pex_files.append(pyrun_pex_file)
 
         if upload:
-            baseurl = ctx.rituals.release.upload.baseurl.rstrip('/')
-            if not baseurl:
+            base_url = ctx.rituals.release.upload.base_url.rstrip('/')
+            if not base_url:
                 notify.failure("No base URL provided for uploading!")
 
             for pex_file in pex_files:
-                url = baseurl + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
+                url = base_url + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
                     name=cfg.project.name, version=cfg.project.version, filename=os.path.basename(pex_file))
                 notify.info("Uploading to '{}'...".format(url))
                 with io.open(pex_file, 'rb') as handle:
@@ -370,7 +370,7 @@ namespace = Collection.from_module(sys.modules[__name__], name='release', config
     release = dict(
         commit = dict(message = ':package: Release v{version}'),
         tag = dict(name = 'v{version}', message = 'Release v{version}'),
-        upload = dict(baseurl = '', path='{name}/{version}/{filename}'),
+        upload = dict(base_url = '', path='{name}/{version}/{filename}'),
     ),
     pyrun = dict(
         version = '2.1.0',
