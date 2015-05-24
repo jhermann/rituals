@@ -40,6 +40,7 @@ Important Links
   * `Issue Tracker <https://github.com/jhermann/rituals/issues>`_
   * `PyPI <https://pypi.python.org/pypi/rituals>`_
   * `Latest Documentation <https://rituals.readthedocs.org/en/latest/>`_
+  * `Google Group <https://groups.google.com/forum/#!forum/rituals-dev>`_
 
 
 Documentation Contents
