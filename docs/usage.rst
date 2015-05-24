@@ -48,7 +48,7 @@ on how to integrate them into your ``tasks.py``.
 
 The guiding principle for these tasks is to strictly separate low-level
 tasks for building and installing (via ``setup.py``) from high-level
-convenience tasks a developer uses (via ``invoke``). Invoke tasks can
+convenience tasks a developer uses (via ``invoke``). *Invoke* tasks can
 use *Setuptools* ones as building blocks, but never the other way 'round –
 this avoids any bootstrapping headaches during package installations.
 
@@ -82,8 +82,8 @@ Adding Rituals to Your Project
 -----------------------------------------------------------------------------
 
 First of all, include ``rituals`` as a dependency in your ``dev-requirements.txt``
-or a similar file.
-To refer to the current GitHub ``master`` branch, use a ``pip``
+or a similar file, to get a release from PyPI.
+To refer to the current GitHub ``master`` branch instead, use a ``pip``
 requirement like this::
 
     -e git+https://github.com/jhermann/rituals.git#egg=rituals
@@ -100,7 +100,7 @@ Note that it also defines Invoke's ``Collection`` and ``task`` identifiers,
 and some other common helpers assembled in :py:mod:`rituals.easy`.
 `Rituals' own tasks.py`_ can serve as an example.
 
-Of course, you can also do more selective imports, or build your own
+Of course, you may also do more selective imports, or build your own
 *Invoke* namespaces with the specific tasks you need.
 
 .. warning::
@@ -109,8 +109,16 @@ Of course, you can also do more selective imports, or build your own
     a ``project`` dict with the setup parameters, see
     `rudiments <https://github.com/jhermann/rudiments>`_ and
     `py-generic-project <https://github.com/Springerle/py-generic-project>`_
-    for examples.
+    for examples. The needed changes are minimal:
 
+    .. code:: py
+
+        project = dict(  # this would usually be a setup(…) call
+            name='…',
+            …
+        )
+        if __name__ == '__main__':
+            setup(**project)
 
 
 .. _task-namespaces:
