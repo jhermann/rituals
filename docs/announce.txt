@@ -1,5 +1,15 @@
-The 2nd release (v0.2.0) of `rituals` hit the Internet pipelines
-today, adding a 'release-prep' task and wheel support.
+Version 0.3.0 of `rituals` adds a complete set of documentation,
+support for Sphinx including options to conveniently control a
+'sphinx-autobuild' daemon, and a 'release.pex' task for single-
+file Python application releases (optionally embedding a Python
+interpreter).
+
+There is also a mailing list now (Google groups), see "Links"
+below.
+
+
+ABOUT RITUALS
+=============
 
 The `rituals` package provides PyInvoke tasks that work for any
 project, based on its project metadata, to automate common
@@ -13,7 +23,7 @@ Invoke tasks can use Setuptools ones as building blocks, but
 never the other way 'round – this avoids bootstrapping head-
 aches during package installations using `pip`.
 
-The easiest way to get a working project based on `rituals` is
+The easiest way to get a working project using `rituals` is
 the `py-generic-project` cookiecutter template. That way you have
 a working project skeleton within minutes that is fully equipped,
 with all aspects of bootstrapping, building, testing, quality
@@ -24,18 +34,29 @@ Enjoy, Jürgen
 
 –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 Links:
-  * https://pypi.python.org/pypi/rituals/0.2.0
-  * http://jhermann.github.io/rituals/
+
+  * https://pypi.python.org/pypi/rituals/0.3.0
+  * https://rituals.readthedocs.org/en/latest/
+  * https://groups.google.com/forum/#!forum/rituals-dev
   * http://springerle.github.io/py-generic-project/
 
 Detailed changes:
-  * new: added 'release-prep' task
-  * new: added --skip-root to 'check', and checking './*.py' too
-  * new: 'dist' task automatically creates wheels if possible
-  * chg: better handling of 'build --docs'
-  * chg: added help for task parameters (closes #4)
-  * chg: warn about missing Sphinx docs (when '--docs' is provided)
-  * fix: get src package list for 'check' from 'project.packages'
-  * fix: use 'which' to look for 'py.test' binary (closes #2)
+  * new: 'docs.sphinx' and 'docs.upload' task
+  * new: convenient control of 'sphinx-autobuild' daemon
+  * new: added 'test' namespace and 'tox' task
+  * new: 'release.pex' to create PEX artifacts
+  * new: optional inclusion of PyRun in PEX artifacts
+  * new: 'release.bump' to create unique development versions
+  * new: 'devpi' namespace with a 'refresh' task
+  * new: added 'freeze' as a root task
+  * new: 'util.filesys' module with a 'pushd' helper
+  * chg: 'test.pytest' as the default in 'test' namespace
+  * chg: 'prep' renamed to 'release.prep'
+  * chg: added '--clean' option to 'test.tox', and 'clean --tox'
+  * chg: exclude SCM dirs from 'clean'
+  * chg: improved autoenv script
+  * chg: more unit tests (still missing a lot)
+  * chg: Python 3.4 support
+  * fix: non-git workdirs are handled correctly in 'release.prep'
 
-See also https://github.com/jhermann/rituals/releases/tag/v0.2.0
+See also https://github.com/jhermann/rituals/releases/tag/v0.3.0
