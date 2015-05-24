@@ -50,7 +50,9 @@ if you want to know what these tasks do exactly.
 
 ## Some Practical Examples
 
-In projects that include *Rituals* in their `tasks.py` (e.g. this one), the following commands can be used.
+The following table shows a selection of typical use-cases and how to
+carry them out in projects that include *Rituals* in their `tasks.py`
+(e.g. this one).
 
 Command | Description
 ----: | :----
@@ -58,7 +60,8 @@ Command | Description
 `inv test.tox --clean -e py34` | Run `tox` for Python 3.4 with a clean status, i.e. an empty `.tox` directory.
 `inv release.bump` | Set the `tag_build` value in `setup.cfg` to something like `0.3.0.dev117+0.2.0.g993edd3.20150408t1747`, uniquely identifying dev builds, even in dirty working directories.
 
-See the [full documentation](https://rituals.readthedocs.org/) for a complete reference.
+See the [full documentation](https://rituals.readthedocs.org/)
+for more examples and a complete reference.
 
 
 ## Contributing
