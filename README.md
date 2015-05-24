@@ -57,6 +57,8 @@ Command | Description
 `inv test.tox --clean -e py34` | Run `tox` for Python 3.4 with a clean status, i.e. an empty `.tox` directory.
 `inv bump` | Set the `tag_build` value in `setup.cfg` to something like `0.3.0.dev117+0.2.0.g993edd3.20150408t1747`, uniquely identifying dev builds, even in dirty working directories.
 
+See the [full documentation](https://rituals.readthedocs.org/) for a complete reference.
+
 
 ## Contributing
 
