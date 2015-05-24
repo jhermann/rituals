@@ -22,8 +22,9 @@
 User's Manual
 =============
 
+-----------------------------------------------------------------------------
 Introduction
-------------
+-----------------------------------------------------------------------------
 
 “Rituals” is a task library for `Invoke <http://www.pyinvoke.org/>`_
 that keeps the most common tasks you always need out of your project,
@@ -74,50 +75,116 @@ if you want to know every nuance of what these tasks do.
     releasing covered.
 
 
-.. _task-namespaces:
-
-Provided Task Namespaces
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-**TODO**
-
-
-Basic Usage
------------
-
 .. _import-rituals-easy:
 
-Add common tasks to your project's ``task.py``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------------------------------
+Adding Rituals to Your Project
+-----------------------------------------------------------------------------
 
-Add ``rituals`` to your ``dev-requirements.txt`` or a similar file, or
-add it to ``setup_requires`` in your ``setup.py``. Then at the start of
-your ``tasks.py``, use the following statement to define *all* tasks
-that are considered standard:
-
-.. code:: py
-
-    from rituals.easy import *
-
-Note that this defines Invoke's ``Collection`` and ``task`` identifiers,
-the root ``namespace``\ with Ritual's default tasks, and some common
-helpers (see the documentation for details). Of course, you can also do
-more selective imports, or build your own Invoke namespaces with the
-specific tasks you need.
-
-.. warning::
-
-    These tasks expect an importable ``setup.py`` that defines
-    a ``project`` dict with the setup parameters, see
-    `javaprops <https://github.com/Feed-The-Web/javaprops>`_ and
-    `py-generic-project <https://github.com/Springerle/py-generic-project>`_
-    for examples.
-
+First of all, include ``rituals`` as a dependency in your ``dev-requirements.txt``
+or a similar file.
 To refer to the current GitHub ``master`` branch, use a ``pip``
 requirement like this::
 
     -e git+https://github.com/jhermann/rituals.git#egg=rituals
 
+Then at the start of your ``tasks.py``, use the following statement to define
+*all* tasks that are considered standard:
+
+.. code:: py
+
+    from rituals.easy import *
+
+This works by defining the ``namespace`` identifier containing Ritual's default tasks.
+Note that it also defines Invoke's ``Collection`` and ``task`` identifiers,
+and some other common helpers assembled in :py:mod:`rituals.easy`.
+`Rituals' own tasks.py`_ can serve as an example.
+
+Of course, you can also do more selective imports, or build your own
+*Invoke* namespaces with the specific tasks you need.
+
+.. warning::
+
+    These tasks expect an importable ``setup.py`` that defines
+    a ``project`` dict with the setup parameters, see
+    `rudiments <https://github.com/jhermann/rudiments>`_ and
+    `py-generic-project <https://github.com/Springerle/py-generic-project>`_
+    for examples.
+
+
+
+.. _task-namespaces:
+
+-----------------------------------------------------------------------------
+Task Namespaces
+-----------------------------------------------------------------------------
+
+The Root Namespace
+^^^^^^^^^^^^^^^^^^
+
+The tasks useful for any (Python) project are organized in a root namespace
+When you use the ``from rituals.easy import *`` statement, that also imports
+this root namespace. By convention of *Invoke*, when the identifier ``namespace``
+is defined, that one is taken instead of constructing one automatically from
+all defined tasks.
+
+It contains some fundamentals like ``clean``, and nested namespaces handling
+specific topics. Examples of nested namespaces are ``test``, ``check``,
+``docs``, and ``release``. See :doc:`tasks` for a complete list.
+
+The root namespace has ``help`` as the default task, and
+most nested namespaces also have a default with the most commonly performed
+action. These default tasks are automatically aliased to the name of the
+namespace, so for example ``docs.sphinx`` can also be called as ``docs``.
+
+
+Adding Local Task Definitions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Having an explicit root namespace
+means that within ``tasks.py``, you need to register your own tasks
+using its ``add_task`` method, if you want them to be
+available as top-level names:
+
+.. code:: py
+
+    @task
+    def my_own_task(ctx):
+        """Something project-specific."""
+        …
+
+    namespace.add_task(my_own_task)
+
+`Rituals' own tasks.py`_ uses this to add some local tasks.
+
+
+Constructing Your Own Namespace
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you want to have more control, you can exclude the ``namespace``
+identifier from the import and instead define your own.
+This example taken from
+`py-generic-project <https://github.com/Springerle/py-generic-project/blob/master/tasks.py>`_
+shows how it's done:
+
+.. code:: py
+
+    from rituals.easy import task, Collection
+    from rituals.acts.documentation import namespace as _docs
+
+    …
+
+    namespace = Collection.from_module(sys.modules[__name__], name='')
+    namespace.add_collection(_docs)
+
+Note that the ``name=''`` makes this a root namespace.
+If you need to be even more selective, import individual tasks from modules
+in :py:mod:`rituals.acts` and add them to your namespaces.
+
+
+-----------------------------------------------------------------------------
+How-Tos
+-----------------------------------------------------------------------------
 
 Change default project layout
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -138,3 +205,8 @@ Change default project configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **TODO**
+
+
+
+
+.. _`Rituals' own tasks.py`: https://github.com/jhermann/rituals/blob/master/tasks.py#L3
