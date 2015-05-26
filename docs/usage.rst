@@ -165,6 +165,20 @@ available as top-level names:
 
 `Rituals' own tasks.py`_ uses this to add some local tasks.
 
+Another strategy is to add them in bulk,
+so when you write a new task you cannot forget to make it visible:
+
+.. code:: py
+
+    # Register local tasks in root namespace
+    from invoke import Task
+    for _task in globals().values():
+        if isinstance(_task, Task) and _task.body.__module__ == __name__:
+            namespace.add_task(_task)
+
+Add the above snippet to the *end* of your ``tasks.py``,
+and every *local* task definition gets added to the root namespace.
+
 
 Constructing Your Own Namespace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
