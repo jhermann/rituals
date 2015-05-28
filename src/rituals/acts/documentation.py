@@ -122,7 +122,10 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
     if os.path.exists('LICENSE'):
         with io.open('LICENSE', 'r') as inp:
             license_text = inp.read()
-            _, copyright_text = cfg.project['long_description'].split('Copyright', 1)
+            try:
+                _, copyright_text = cfg.project['long_description'].split('Copyright', 1)
+            except (KeyError, ValueError):
+                copyright_text = cfg.project.get('license', 'N/A')
             with io.open(os.path.join(ctx.rituals.docs.sources, 'LICENSE.rst'), 'w') as out:
                 out.write(
                     'Software License\n'
