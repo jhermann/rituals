@@ -49,6 +49,11 @@ if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
     from .acts.devpi import namespace as _
     namespace.add_collection(_)
 
+# Activate dpkg tasks?
+if os.path.exists('debian/rules'):
+    from .acts.pkgdeb import namespace as _
+    namespace.add_collection(_)
+
 
 __all__ = ['Collection', 'task', 'namespace', 'pushd']
 
