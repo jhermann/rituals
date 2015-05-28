@@ -34,9 +34,10 @@ from ..util import notify
 
 
 @task(default=True, help=dict(
+    dput="Host to upload to (use 'dput -H' to list them)",
     opts="Extra flags for package build",
 ))
-def build(ctx, opts=''):
+def build(ctx, dput='', opts=''):
     """Build a DEB package."""
     # Get package metadata
     with io.open('debian/changelog', encoding='utf-8') as changes:
@@ -51,10 +52,16 @@ def build(ctx, opts=''):
     # Move created artifacts into "dist"
     if not os.path.exists('dist'):
         os.makedirs('dist')
-    artifact_pattern = '{}*{}*'.format(name, re.sub(r'[^-_.a-zA-Z0-9]', '?', version))
+    artifact_pattern = '{}?{}*'.format(name, re.sub(r'[^-_.a-zA-Z0-9]', '?', version))
+    changes_files = []
     for debfile in glob.glob('../' + artifact_pattern):
         shutil.move(debfile, 'dist')
+        if debfile.endswith('.changes'):
+            changes_files.append(os.path.join('dist', os.path.basename(debfile)))
     ctx.run('ls -l dist/{}'.format(artifact_pattern))
+
+    if dput:
+        ctx.run('dput {} {}'.format(dput, ' '.join(changes_files)))
 
 
 namespace = Collection.from_module(sys.modules[__name__], name='deb', config={'rituals': dict(
