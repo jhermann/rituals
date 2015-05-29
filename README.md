@@ -93,7 +93,7 @@ projects that use it will have an identical to very similar sequence of commands
 
 ```sh
 inv release.prep
-inv dist --devpi # local release + tox testing
+inv release.dist --devpi # local release + tox testing
 
 git push && git push --tags # … and wait for Travis CI to do its thing
 
