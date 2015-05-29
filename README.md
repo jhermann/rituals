@@ -107,8 +107,8 @@ If you have any pending changes, staged or unstaged, you'll get an error like th
 
 ## Related Projects
 
-* [Springerle/py-generic-project](https://github.com/Springerle/py-generic-project)
-* [pyinvoke/invoke](https://github.com/pyinvoke/invoke)
+* [Springerle/py-generic-project](https://github.com/Springerle/py-generic-project) – Cookiecutter template that creates a basic Python project, which can be later on augmented with various optional accessories.
+* [pyinvoke/invoke](https://github.com/pyinvoke/invoke) – Task execution tool & library.
 * [pyinvoke/invocations](https://github.com/pyinvoke/invocations) – A collection of reusable Invoke tasks and task modules.
 
 
