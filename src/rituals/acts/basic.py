@@ -63,7 +63,7 @@ def clean(_dummy_ctx, docs=False, backups=False, bytecode=False, dist=False, # p
     # Add patterns based on given parameters
     venv_dirs = ['bin', 'include', 'lib', 'share', 'local', '.venv']
     patterns = ['build/', 'pip-selfcheck.json']
-    excludes = ['.git/', '.hg/', '.svn/']
+    excludes = ['.git/', '.hg/', '.svn/', 'debian/*/']
     if docs or all:
         patterns.append('docs/_build/')
     if dist or all:
