@@ -54,7 +54,7 @@ class PylintTest(unittest.TestCase):
         assert parts[0] == 'pylint', "pylint is actually called"
         assert '--reports=n' in parts, "no pylint reports by default"
         assert '--rcfile=project.d/pylint.cfg' in parts, "pylint config is loaded"
-        assert any(i.endswith('/src/tests/conftest.py"') for i in parts), "test files in pylint command: " + repr(parts)
+        assert '"src/tests/conftest.py"' in parts, "test files in pylint command: " + repr(parts)
         assert '"setup.py"' in parts, "root files in pylint command: " + repr(parts)
 
     def test_pylint_can_skip_test_files(self):
