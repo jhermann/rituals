@@ -144,7 +144,7 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
                 out.write('    {}\n'.format(license_text))
 
     # Build API docs
-    if cfg.project.packages:
+    if cfg.project.get('packages'):
         cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
         for package in cfg.project.packages:
             if '.' not in package:

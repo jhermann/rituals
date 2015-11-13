@@ -63,9 +63,9 @@ def pytest(ctx, coverage=False, opts=''):
         except ImportError:
             pass
         else:
-            for package in cfg.project.packages:
-                if '.' not in package:
-                    cmd.extend(['--cov', package,])
+            for name in cfg.project.get('packages', []) + cfg.project.get('py_modules', []):
+                if '.' not in name:
+                    cmd.extend(['--cov', name,])
             for dirname in ('.', 'project.d'):
                 if os.path.exists(cfg.rootjoin(dirname, 'coverage.cfg')):
                     cmd.extend(['--cov-config', cfg.rootjoin(dirname, 'coverage.cfg'),])

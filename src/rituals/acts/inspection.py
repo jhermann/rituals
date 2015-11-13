@@ -43,9 +43,11 @@ def pylint(ctx, skip_tests=False, skip_root=False, reports=False):
         add_dir2pypath(cfg.testjoin())
 
     cmd = 'pylint'
-    for package in cfg.project.packages:
+    for package in cfg.project.get('packages', []):
         if '.' not in package:
             cmd += ' "{}"'.format(cfg.srcjoin(package))
+    for module in cfg.project.get('py_modules', []):
+        cmd += ' "{}.py"'.format(module)
 
     if not skip_tests:
         test_py = antglob.FileSet(cfg.testdir, '**/*.py')
