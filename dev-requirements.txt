@@ -2,14 +2,14 @@
 # Development requirements
 #
 
-bpython==0.14.1
-yolk3k==0.8.6
+bpython==0.14.2
+yolk3k==0.8.8
 
-tox==1.9.2
-twine==1.5.0
+tox==2.2.1
+twine==1.6.4
 
 -r task-requirements.txt
-sphinx-rtd-theme==0.1.8
+sphinx-rtd-theme==0.1.9
 
 -r requirements.txt
 -e .
