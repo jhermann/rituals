@@ -103,7 +103,7 @@ def refresh(ctx, requirement='', name='', installed=False):
         lines = ctx.run('pip list --local --outdated', hide='out', echo=False).stdout.splitlines()
         if lines:
             notify.banner("Outdated packages")
-            notify.info('    ' + '\n    '.join(lines))
+            notify.info('    ' + '\n    '.join(sorted(lines)))
 
 
 namespace = Collection.from_module(sys.modules[__name__], config={'rituals': dict(
