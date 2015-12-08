@@ -41,15 +41,18 @@ Links:
   * http://springerle.github.io/py-generic-project/
 
 Detailed changes:
-  * new: 'docs.sphinx' and 'docs.upload' task
+  * new: 'docs.sphinx' and 'docs.upload' task (to WebDAV/Artifactory)
   * new: convenient control of 'sphinx-autobuild' daemon
   * new: added 'test' namespace and 'tox' task
   * new: 'release.pex' to create PEX artifacts
   * new: optional inclusion of PyRun in PEX artifacts
   * new: 'release.bump' to create unique development versions
+  * new: build a DEB package (new 'deb' task)
   * new: 'devpi' namespace with a 'refresh' task
   * new: added 'freeze' as a root task
+  * new: support for projects with 'py_modules'
   * new: 'util.filesys' module with a 'pushd' helper
+  * new: 'with_root' param for FileSet.walk()
   * chg: 'test.pytest' as the default in 'test' namespace
   * chg: 'prep' renamed to 'release.prep'
   * chg: added '--clean' option to 'test.tox', and 'clean --tox'
