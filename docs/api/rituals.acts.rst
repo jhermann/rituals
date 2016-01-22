@@ -49,6 +49,14 @@ rituals.acts.inspection module
     :undoc-members:
     :show-inheritance:
 
+rituals.acts.jenkins module
+---------------------------
+
+.. automodule:: rituals.acts.jenkins
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 rituals.acts.pkgdeb module
 --------------------------
 
