@@ -130,7 +130,7 @@ Task Namespaces
 The Root Namespace
 ^^^^^^^^^^^^^^^^^^
 
-The tasks useful for any (Python) project are organized in a root namespace
+The tasks useful for any (Python) project are organized in a root namespace.
 When you use the ``from rituals.easy import *`` statement, that also imports
 this root namespace. By convention of *Invoke*, when the identifier ``namespace``
 is defined, that one is taken instead of constructing one automatically from
