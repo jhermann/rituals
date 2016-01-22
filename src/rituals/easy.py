@@ -44,6 +44,11 @@ namespace.add_collection(_)
 from .acts.releasing import namespace as _
 namespace.add_collection(_)
 
+# Activate Jekins tasks?
+if os.environ.get('JENKINS_URL'):
+    from .acts.jenkins import namespace as _
+    namespace.add_collection(_)
+
 # Activate devpi tasks by default?
 if os.path.exists(os.path.expanduser('~/.devpi/client/current.json')):
     from .acts.devpi import namespace as _

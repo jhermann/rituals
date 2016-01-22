@@ -1,6 +1,6 @@
 rituals (0.3.0) UNRELEASED; urgency=low
 
-  * ...
+  * new: 'jenkins.description' task to display project metadata
 
  -- Juergen Hermann <jh@web.de>  Mon, 17 Mar 2015 10:02:42 +0100
 
