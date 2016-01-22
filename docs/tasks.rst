@@ -96,6 +96,33 @@ Typically this is needed when the sidebar TOC is out of sync, which happens
 due to the optimizations in ``sphinx-autobuild`` that make it so responsive.
 
 
+Publishing Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+To upload documentation to either PyPI or a WebDAV server (like *Artifactory*),
+you can use the ``docs.upload`` tasks after using ``docs.sphinx``. By default,
+the `documentation hosting of PyPI <http://pythonhosted.org/>`_ is used.
+
+To enable a local documentation server, set the following environment variables (e.g. in your ``~/.bashrc``)::
+
+    export INVOKE_RITUALS_DOCS_UPLOAD_METHOD=webdav
+    export INVOKE_RITUALS_DOCS_UPLOAD_TARGETS_WEBDAV_URL='http://repo.example.com/artifactory/wwwdata-local/python/{name}/{version}/{name}-{version}.zip;kind=docs'
+
+This example shows a configuration for an Artifactory server, and as you can see
+the ``name`` and ``version`` of the project can be used to generate appropriate URLs.
+The version defaults to ``latest``, unless you provide a specific version number via the ``--release`` option.
+To use the upload in a browser, add ``!/index.html`` to the URL of the ZIP file,
+and make sure the configuration of your Artifactory installation correctly handles
+image and other relevant MIME types.
+
+Note that you can override the default upload method using the ``target`` option,
+i.e. adding ``--target pypi`` to your task invocation will upload the docs to PyPI no matter what.
+
+.. note::
+
+    The WebDAV upload is tested with Artifactory 4.x, if you encounter problems with
+    other repository servers, open a ticket so support for them can be added.
+
 
 -----------------------------------------------------------------------------
 Release Workflow
