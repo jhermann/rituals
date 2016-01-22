@@ -32,7 +32,7 @@ from rituals.util import notify
 
 DESCRIPTION_TEMPLATES = dict(
     html="""<h2>{project.name} v{project.version}</h2>
-    <p>{project.long_description}</p>
+    {long_description_html}
     <dl>
         <dt>Summary</dt><dd>{project.description}</dd>
         <dt>URL</dt><dd><a href="{project.url}" target="_blank">{project.url}</a></dd>
@@ -77,6 +77,7 @@ def description(_dummy_ctx, markdown=False):
         classifiers='\n'.join(cfg.project.classifiers),
         classifiers_indented='    ' + '\n    '.join(cfg.project.classifiers),
         packages=', '.join(cfg.project.packages),
+        long_description_html='<p>{}</p>'.format(cfg.project.long_description.replace('\n\n', '</p>\n<p>')),
         ##data='\n'.join(["%s=%r" % i for i in cfg.project.iteritems()]),
         **cfg)
     with io.open(description_file, 'w', encoding='utf-8') as handle:
