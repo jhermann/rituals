@@ -1,6 +1,26 @@
-rituals (0.3.0) UNRELEASED; urgency=low
+rituals (0.3.0) unstable; urgency=low
 
-  * new: 'jenkins.description' task to display project metadata
+  * new: 'docs.sphinx' and 'docs.upload' task (to PyPI/WebDAV/Artifactory)
+  * new: convenient control of 'sphinx-autobuild' daemon
+  * new: added 'test' namespace and 'tox' task
+  * new: 'release.pex' to create PEX artifacts
+  * new: optional inclusion of PyRun in PEX artifacts
+  * new: 'release.bump' to create unique development versions
+  * new: build a DEB package (new 'deb' task)
+  * new: 'devpi' namespace with a 'refresh' task
+  * new: added 'freeze' as a root task
+  * new: 'jenkins.description' to display project metadata in the Jenkins UI
+  * new: support for projects with 'py_modules'
+  * new: 'util.filesys' module with a 'pushd' helper
+  * new: 'with_root' param for FileSet.walk()
+  * chg: 'test.pytest' as the default in 'test' namespace
+  * chg: 'prep' renamed to 'release.prep'
+  * chg: added '--clean' option to 'test.tox', and 'clean --tox'
+  * chg: exclude SCM dirs from 'clean'
+  * chg: improved autoenv script
+  * chg: more unit tests (still missing a lot)
+  * chg: Python 3.4 support
+  * fix: non-git workdirs are handled correctly in 'release.prep'
 
  -- Juergen Hermann <jh@web.de>  Mon, 17 Mar 2015 10:02:42 +0100
 

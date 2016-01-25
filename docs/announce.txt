@@ -41,7 +41,7 @@ Links:
   * http://springerle.github.io/py-generic-project/
 
 Detailed changes:
-  * new: 'docs.sphinx' and 'docs.upload' task (to WebDAV/Artifactory)
+  * new: 'docs.sphinx' and 'docs.upload' task (to PyPI/WebDAV/Artifactory)
   * new: convenient control of 'sphinx-autobuild' daemon
   * new: added 'test' namespace and 'tox' task
   * new: 'release.pex' to create PEX artifacts
@@ -50,6 +50,7 @@ Detailed changes:
   * new: build a DEB package (new 'deb' task)
   * new: 'devpi' namespace with a 'refresh' task
   * new: added 'freeze' as a root task
+  * new: 'jenkins.description' to display project metadata in the Jenkins UI
   * new: support for projects with 'py_modules'
   * new: 'util.filesys' module with a 'pushd' helper
   * new: 'with_root' param for FileSet.walk()
