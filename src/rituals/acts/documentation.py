@@ -174,7 +174,7 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
     # Build docs
     notify.info("Starting Sphinx {}build...".format('auto' if watchdog else ''))
     with pushd(ctx.rituals.docs.sources):
-        ctx.run(' '.join(cmd))
+        ctx.run(' '.join(cmd), pty=not watchdog)
 
     # Wait for watchdog to bind to listening port
     if watchdog:
