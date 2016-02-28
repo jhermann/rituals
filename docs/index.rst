@@ -22,6 +22,23 @@
 Welcome to the “Rituals” manual!
 ================================
 
+.. image:: https://img.shields.io/pypi/v/rituals.svg?style=flat
+    :alt: Latest Version
+    :target: https://pypi.python.org/pypi/rituals/
+
+.. image:: https://api.travis-ci.org/jhermann/rituals.svg?style=flat
+    :alt: Travis CI
+    :target: https://travis-ci.org/jhermann/rituals
+
+.. image:: https://img.shields.io/coveralls/jhermann/rituals.svg?style=flat
+    :alt: Coveralls
+    :target: https://coveralls.io/r/jhermann/rituals
+
+.. image:: https://img.shields.io/github/issues/jhermann/rituals.svg?style=flat
+    :alt: GitHub Issues
+    :target: https://github.com/jhermann/rituals/issues
+
+
 Overview
 --------
 
