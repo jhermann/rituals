@@ -294,7 +294,7 @@ class DocsUploader(object):
     'release': "Version for upload path (default: latest)",
 })
 def upload(ctx, browse=False, target=None, release='latest'):
-    """Upload a ZIP of built Sphinx docs (by default to PyPI, else a WebDAV URL)."""
+    """Upload a ZIP of built docs (by default to PyPI, else a WebDAV URL)."""
     cfg = config.load()
     uploader = DocsUploader(ctx, cfg, target)
 
