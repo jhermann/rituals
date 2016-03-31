@@ -3,7 +3,7 @@
 #
 
 # devpi / docs
-requests==2.8.1
+#requests==2.9.1 # already in requirements!
 
 # check
 pylint==1.5.1
