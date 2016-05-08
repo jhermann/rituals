@@ -43,7 +43,7 @@ but never the other way 'round
 Use ``inv -h ‹task›`` as usual to get details on the options of these tasks.
 Look at the modules in [acts](https://github.com/jhermann/rituals/blob/master/src/rituals/acts)
 if you want to know what these tasks do exactly.
-Also consult the [full documentation](https://rituals.readthedocs.org/)
+Also consult the [full documentation](https://rituals.readthedocs.io/)
 for a complete reference.
 
 :bulb: | The easiest way to get a working project using `rituals` is the [py-generic-project](https://github.com/Springerle/py-generic-project) cookiecutter archetype. That way you have a working project skeleton within minutes that is fully equipped, with all aspects of building, testing, quality checks, continuous integration, documentation, and releasing covered.
@@ -62,7 +62,7 @@ Command | Description
 `inv test.tox --clean -e py34` | Run `tox` for Python 3.4 with a clean status, i.e. an empty `.tox` directory.
 `inv release.bump` | Set the `tag_build` value in `setup.cfg` to something like `0.3.0.dev117+0.2.0.g993edd3.20150408t1747`, uniquely identifying dev builds, even in dirty working directories.
 
-See the [full documentation](https://rituals.readthedocs.org/)
+See the [full documentation](https://rituals.readthedocs.io/)
 for more examples and a complete reference.
 
 
