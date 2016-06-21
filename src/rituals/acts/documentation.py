@@ -195,12 +195,14 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
         else:
             activity('ERR')
 
+        # trigger first build
+        os.utime(os.path.join(ctx.rituals.docs.sources, 'index.rst'), None)
+
         for i in range(60):
             activity('HTML index file', i)
             if os.path.exists(index_file):
                 activity('OK')
                 break
-            os.utime(os.path.join(ctx.rituals.docs.sources, 'index.rst'), None)
             time.sleep(1)
         else:
             activity('ERR')
