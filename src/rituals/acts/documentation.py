@@ -258,7 +258,10 @@ class DocsUploader(object):
             elif reply.status_code == 301:
                 url = reply.headers['location']
             else:
-                notify.error("{status_code} {reason}".format(**vars(reply)))
+                data = self.cfg.copy()
+                data.update(self.params)
+                data.update(vars(reply))
+                notify.error("{status_code} {reason} for POST to {url}".format(**data))
         return url
 
     def _to_webdav(self, docs_base, release):
@@ -279,7 +282,10 @@ class DocsUploader(object):
             elif reply.status_code == 301:
                 url = reply.headers['location']
             else:
-                notify.error("{status_code} {reason}".format(**vars(reply)))
+                data = self.cfg.copy()
+                data.update(self.params)
+                data.update(vars(reply))
+                notify.error("{status_code} {reason} for PUT to {url}".format(**data))
 
         if not url:
             notify.warning("Couldn't get URL from upload response!")
