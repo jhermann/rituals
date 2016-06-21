@@ -67,7 +67,7 @@ def watchdogctl(ctx, kill=False, verbose=True):
     pid = capture(cmd, ignore_failures=True)
     while pid:
         assert pid.startswith('p'), "Standard lsof output expected"
-        pid = int(pid[1:], 10)
+        pid = int(pid[1:].split()[0], 10)
         if verbose:
             ctx.run("ps uw {}".format(pid), echo=False)
             verbose = False
