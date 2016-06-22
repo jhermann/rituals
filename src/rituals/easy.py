@@ -22,6 +22,7 @@
 from __future__ import absolute_import, unicode_literals, print_function
 
 import os
+import sys
 
 from invoke import Collection, ctask as task
 
@@ -60,7 +61,14 @@ if os.path.exists('debian/rules'):
     namespace.add_collection(_)
 
 
-__all__ = ['Collection', 'task', 'namespace', 'pushd']
+def fail(message, exitcode=1):
+    """Exit with error code and message."""
+    sys.stderr.write('ERROR: {}\n'.format(message))
+    sys.stderr.flush()
+    sys.exit(exitcode)
+
+
+__all__ = ['Collection', 'task', 'namespace', 'pushd', 'fail']
 
 for _ in namespace.task_names:
     _name = _.replace('-', '_').replace('.', '_')
