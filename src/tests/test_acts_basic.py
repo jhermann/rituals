@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=wildcard-import, unused-wildcard-import, missing-docstring
-# pylint: disable=redefined-outer-name, invalid-name, no-self-use
+# pylint: disable=redefined-outer-name, invalid-name, no-self-use, unused-import
 """ Tests for `rituals.acts.basic`.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

@@ -47,4 +47,4 @@
     The full LICENSE file and source are available at
         https://github.com/jhermann/rituals
 """
-
+# TODO: Actually implement this

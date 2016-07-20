@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=wildcard-import, missing-docstring, redefined-outer-name, invalid-name, no-self-use
+# pylint: disable=unused-wildcard-import, ungrouped-imports
 """ Tests for `rituals.util.antglob`.
 """
 #

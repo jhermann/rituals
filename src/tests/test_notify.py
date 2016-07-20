@@ -26,7 +26,6 @@ import re
 #import unittest
 
 import pytest
-from invoke import exceptions
 
 from rituals.util.notify import *
 
