@@ -25,9 +25,8 @@ import os
 import sys
 import warnings
 
-from invoke import Collection, ctask as task
-
-from rituals.util import notify
+from . import Collection, task
+from ..util import notify
 
 
 DEFAULT_REQUIREMENTS = 'dev-requirements.txt'

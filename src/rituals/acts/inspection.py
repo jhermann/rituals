@@ -24,8 +24,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import os
 import sys
 
-from invoke import Collection, ctask as task, exceptions
-
+from . import Collection, task, exceptions
 from .. import config
 from ..util import antglob, notify, shell, add_dir2pypath
 

@@ -31,9 +31,9 @@ import zipfile
 from contextlib import closing
 
 import requests
-from invoke import Collection, ctask as task
 from bunch import Bunch
 
+from . import Collection, task
 from .. import config
 from ..util import notify, shell
 from ..util.scm import provider as scm_provider

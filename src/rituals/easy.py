@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation
+# pylint: disable=bad-continuation, wrong-import-position
 """ Default namespace for convenient wildcard import in task definition modules.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
@@ -24,8 +24,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import os
 import sys
 
-from invoke import Collection, ctask as task
-
+from .acts import Collection, task
 from .util.filesys import pushd
 
 

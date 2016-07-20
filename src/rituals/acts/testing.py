@@ -26,8 +26,7 @@ import sys
 import shutil
 import webbrowser
 
-from invoke import Collection, ctask as task
-
+from . import Collection, task
 from .. import config
 from ..util import notify, which, add_dir2pypath
 

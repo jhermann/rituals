@@ -26,8 +26,7 @@ import os
 import shlex
 import shutil
 
-from invoke import ctask as task
-
+from . import task
 from .. import config
 from ..util import antglob, notify, shell
 from ..util._compat import isodate

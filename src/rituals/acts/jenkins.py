@@ -24,10 +24,9 @@ from __future__ import absolute_import, unicode_literals, print_function
 import io
 import sys
 
-from invoke import Collection, ctask as task
-
-from rituals import config
-from rituals.util import notify
+from . import Collection, task
+from .. import config
+from ..util import notify
 
 
 DESCRIPTION_TEMPLATES = dict(
@@ -59,7 +58,7 @@ DESCRIPTION_TEMPLATES = dict(
 {classifiers_indented}
 """,
 )
-url=u'http://jhermann.github.io/rituals/'
+url = u'http://jhermann.github.io/rituals/'
 
 
 @task(help=dict(

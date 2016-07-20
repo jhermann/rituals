@@ -20,3 +20,9 @@
 # The full LICENSE file and source are available at
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
+
+from invoke import Collection, exceptions
+try:
+    from invoke import ctask as task
+except ImportError:
+    from invoke import task  # since 0.13.0; TODO: remove try block in 2017 or so

@@ -37,8 +37,8 @@ except ImportError:
     from ConfigParser import RawConfigParser as ConfigParser, Error as ConfigError  # pylint: disable=import-error
 
 import requests
-from invoke import Collection, ctask as task
 
+from . import Collection, task
 from .. import config
 from ..util import notify
 from ..util.filesys import pushd

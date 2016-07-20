@@ -28,8 +28,7 @@ import sys
 import glob
 import shutil
 
-from invoke import Collection, ctask as task
-
+from . import Collection, task
 from ..util import notify
 
 
