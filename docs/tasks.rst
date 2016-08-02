@@ -144,3 +144,25 @@ Building a PEX Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **TODO**
+
+
+-----------------------------------------------------------------------------
+Continuous Integration
+-----------------------------------------------------------------------------
+
+Jenkins
+^^^^^^^
+
+Note that tasks related to *Jenkins* are only available by default when the
+environment variable ``JENKINS_URL`` is defined.
+
+.. image:: _static/img/jenkins-description.png
+   :align: right
+   :width: 240px
+
+The ``jenkins.description`` task creates a text file (by default ``build/project.html``) that can be used via the
+`Jenkins Description Setter`_ plugin to dynamically fill the Jenkins job description from already available metadata.
+The resulting description looks like the example on the right.
+
+
+.. _`Jenkins Description Setter`: https://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin
