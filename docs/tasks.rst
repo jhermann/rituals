@@ -70,6 +70,29 @@ like a Maven POM or Javascript build files might trigger additional build tools.
 You can also include the ``docs`` task by adding the ``--docs`` option.
 
 
+Freezing Requirements
+^^^^^^^^^^^^^^^^^^^^^
+
+Calling ``freeze`` writes the frozen requirements as found in the current environment
+into the file ``frozen-requirements.txt``, by calling ``pip freeze``.
+
+
+-----------------------------------------------------------------------------
+Executing Tests
+-----------------------------------------------------------------------------
+
+The ``test.pytest`` and ``test.tox`` tasks call the related testing tools with
+appropriate parameters. Coverage configuration is added to the ``py.test`` call,
+and if you pass the ``--coverage`` option, the generated report is loaded into
+your web browser. In case the ``py.test`` command isn't available, calling the
+test runner is delegated to ``setup.py``.
+
+For ``test.tox``, ``PATH`` is extended according to the directories in the
+``rituals.snakepits`` configuration value, which defaults to
+``/opt/pyenv/bin:/opt/pyrun/bin``. That way, you can provide the *Python*
+interpreter versions to run multi-environment tests locally.
+
+
 -----------------------------------------------------------------------------
 Documentation Tasks
 -----------------------------------------------------------------------------
