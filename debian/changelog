@@ -12,15 +12,18 @@ rituals (0.3.0) unstable; urgency=low
   * new: 'jenkins.description' to display project metadata in the Jenkins UI
   * new: support for projects with 'py_modules'
   * new: 'util.filesys' module with a 'pushd' helper
+  * new: 'fail' helper function in 'rituals.easy'
   * new: 'with_root' param for FileSet.walk()
   * chg: 'test.pytest' as the default in 'test' namespace
   * chg: 'prep' renamed to 'release.prep'
   * chg: added '--clean' option to 'test.tox', and 'clean --tox'
   * chg: exclude SCM dirs from 'clean'
   * chg: improved autoenv script
+  * chg: better HTTP error reporting for docs upload
   * chg: more unit tests (still missing a lot)
   * chg: Python 3.4 support
   * fix: non-git workdirs are handled correctly in 'release.prep'
+  * fix: support for Invoke 0.13 (`ctask` rename)
 
  -- Juergen Hermann <jh@web.de>  Mon, 17 Mar 2015 10:02:42 +0100
 
