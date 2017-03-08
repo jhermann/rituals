@@ -21,7 +21,8 @@ most common tasks you always need out of your project, and makes them centrally 
 This leaves your `tasks.py` small and to the point,
 with only things specific to the project at hand.
 The following lists the common task implementations that the ``rituals.easy`` module offers.
-See the next section on how to integrate them into your `tasks.py`.
+See the [full docs](https://rituals.readthedocs.io/en/latest/usage.html#adding-rituals-to-your-project)
+on how to integrate them into your `tasks.py`.
 
 * ``help`` –    Default task, when invoked with no task names.
 * ``clean`` –   Perform house-cleaning.
