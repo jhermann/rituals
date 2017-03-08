@@ -73,8 +73,8 @@ To create a working directory for this project, call these commands:
 ```sh
 git clone "https://github.com/jhermann/rituals.git"
 cd rituals
-. .env --yes --develop
-invoke build --docs
+command . .env --yes --develop  # add '--virtualenv /usr/bin/virtualenv' for Python2
+invoke build --docs test check
 ```
 
 To use the source in this working directory within another project,
