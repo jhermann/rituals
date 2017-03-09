@@ -151,12 +151,57 @@ i.e. adding ``--target pypi`` to your task invocation will upload the docs to Py
 Release Workflow
 -----------------------------------------------------------------------------
 
+.. _release-bump:
+
+Managing Development Versions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For intermediate test releases, you can automatically generate a dev version
+compliant to  `PEP-440`_.
+The ``release.bump`` task generates this version, and rewrites the ``tag_build``
+value in ``setup_cfg``.
+For this to work, the config file must already exists, and contain a line with
+an existing ``tag_build`` setting, like this:
+
+.. code-block:: ini
+
+    [egg_info]
+    tag_build = .dev
+    tag_date = false
+
+The created version strives to uniquely describe the code being packaged,
+so it can get quite lengthy.
+The “worst case scenario” when it comes to length looks like this:
+``1.2.2.dev4+1.2.1.g07c5047.20170309t1247.ci.42``.
+
+Let's dissect this:
+
+* ``1.2.2`` is the next-release version as reported by ``setup.py``.
+* ``.dev4`` means we are 4 commits beyond the last release version.
+* ``1.2.1`` is that last release version, found via checking the annotated ``git`` tags.
+* ``g07c5047`` is the ``git`` commit hash of the ``HEAD`` ref.
+* Having the ``20170309t1247`` timestamp means the working directory at the time of the task execution was dirty (had uncommitted changes).
+* ``ci.42`` is appended when the environment contains a ``BUILD_ID`` variable (in this case, set to ``42``).
+
+Use the ``--pypi`` option to prevent creation of the local part of the version info
+(anything after the ``+``). This allows you to push development versions to PyPI
+for open beta release testing. In those cases, you should commit ``setup.cfg``
+with the specific ``tag_build`` setting, and then ``git tag`` that commit.
+
+Adding ``-v`` for verbosity shows a few more details of assembling the version
+information. Right now, only ``git`` is really supported regarding SCM metadata.
+Anything else will give you ``Unsupported SCM`` warnings when using this and some
+other tasks.
+
+.. _`PEP-440`: https://www.python.org/dev/peps/pep-0440/
+
+
 .. _release-prep:
 
 Preparing a Release
 ^^^^^^^^^^^^^^^^^^^
 
-``release-prep`` performs QA checks, and switches to non-dev versioning.
+``release.prep`` performs QA checks, and switches to non-dev versioning.
 
 **TODO**
 
