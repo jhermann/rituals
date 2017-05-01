@@ -64,7 +64,7 @@ def clean(_dummy_ctx, docs=False, backups=False, bytecode=False, dist=False, # p
     patterns = ['build/', 'pip-selfcheck.json']
     excludes = ['.git/', '.hg/', '.svn/', 'debian/*/']
     if docs or all:
-        patterns.append('docs/_build/')
+        patterns.extend(['docs/_build/', 'doc/_build/'])
     if dist or all:
         patterns.append('dist/')
     if backups or all:
