@@ -11,8 +11,7 @@ Common tasks for [Invoke](http://www.pyinvoke.org/) that are needed again and ag
  [![License](https://img.shields.io/pypi/l/rituals.svg)](https://github.com/jhermann/rituals/blob/master/LICENSE)
  [![Development Status](https://img.shields.io/pypi/status/rituals.svg)](https://pypi.python.org/pypi/rituals/)
  [![Latest Version](https://img.shields.io/pypi/v/rituals.svg)](https://pypi.python.org/pypi/rituals/)
- [![Download format](https://img.shields.io/pypi/format/rituals.svg)](https://pypi.python.org/pypi/rituals/)
- [![Downloads](https://img.shields.io/pypi/dw/rituals.svg)](https://pypi.python.org/pypi/rituals/)
+
 
 ## Overview
 
