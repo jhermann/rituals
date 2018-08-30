@@ -50,59 +50,60 @@ def get_devpi_url(ctx):
     ))
 
 
-@task(help=dict(
-    requirement="Refresh from the given requirements file (default: {})".format(DEFAULT_REQUIREMENTS),
-    name="Refresh a specific package",
-    installed="Refresh all installed packages",
-))  # pylint: disable=too-many-locals
-def refresh(ctx, requirement='', name='', installed=False):
-    """Refresh 'devpi' PyPI links."""
-    import requests
-    from pip import get_installed_distributions
-    from pip.download import PipSession
-    from pip.req.req_file import parse_requirements
+# XXX: brtoken due to internal pip chnages, must be rewritten to command calls or other libs
+#@task(help=dict(
+#    requirement="Refresh from the given requirements file (default: {})".format(DEFAULT_REQUIREMENTS),
+#    name="Refresh a specific package",
+#    installed="Refresh all installed packages",
+#))  # pylint: disable=too-many-locals
+#def refresh(ctx, requirement='', name='', installed=False):
+#    """Refresh 'devpi' PyPI links."""
+#    import requests
+#    from pip import get_installed_distributions
+#    from pip.download import PipSession
+#    from pip.req.req_file import parse_requirements
 
-    with warnings.catch_warnings():
-        warnings.simplefilter('once')
+#    with warnings.catch_warnings():
+#        warnings.simplefilter('once')
 
-        # If no option at all is given, default to using 'dev-requirements.txt'
-        if not (requirement or name or installed):
-            requirement = ctx.rituals.devpi.requirements or DEFAULT_REQUIREMENTS
-            if not os.path.exists(requirement):
-                requirement = 'requirements.txt'
+#        # If no option at all is given, default to using 'dev-requirements.txt'
+#        if not (requirement or name or installed):
+#            requirement = ctx.rituals.devpi.requirements or DEFAULT_REQUIREMENTS
+#            if not os.path.exists(requirement):
+#                requirement = 'requirements.txt'
 
-        # Get 'devpi' URL
-        try:
-            base_url = get_devpi_url(ctx)
-        except LookupError as exc:
-            notify.failure(exc.args[0])
-        notify.banner("Refreshing devpi links on {}".format(base_url))
+#        # Get 'devpi' URL
+#        try:
+#            base_url = get_devpi_url(ctx)
+#        except LookupError as exc:
+#            notify.failure(exc.args[0])
+#        notify.banner("Refreshing devpi links on {}".format(base_url))
 
-        # Assemble requirements
-        reqs = set(('pip', 'setuptools', 'wheel'))  # always refresh basics
-        if requirement:
-            reqs |= set(i.name for i in parse_requirements(requirement, session=PipSession()))
-        if name:
-            reqs |= set([name])
-        if installed:
-            installed_pkgs = get_installed_distributions(local_only=True, skip=['python'])
-            reqs |= set(i.project_name for i in installed_pkgs)
-        reqs = [i for i in reqs if i]  # catch flukes
+#        # Assemble requirements
+#        reqs = set(('pip', 'setuptools', 'wheel'))  # always refresh basics
+#        if requirement:
+#            reqs |= set(i.name for i in parse_requirements(requirement, session=PipSession()))
+#        if name:
+#            reqs |= set([name])
+#        if installed:
+#            installed_pkgs = get_installed_distributions(local_only=True, skip=['python'])
+#            reqs |= set(i.project_name for i in installed_pkgs)
+#        reqs = [i for i in reqs if i]  # catch flukes
 
-        for req in sorted(reqs):
-            url = "{}/{}/refresh".format(base_url, req)
-            response = requests.post(url)
-            if response.status_code not in (200, 302):
-                notify.warning("Failed to refresh {}: {} {}".format(url, response.status_code, response.reason))
-            else:
-                notify.info("{:>{width}}: {} {}".format(
-                    req, response.status_code, response.reason, width=4 + max(len(i) for i in reqs),
-                ))
+#        for req in sorted(reqs):
+#            url = "{}/{}/refresh".format(base_url, req)
+#            response = requests.post(url)
+#            if response.status_code not in (200, 302):
+#                notify.warning("Failed to refresh {}: {} {}".format(url, response.status_code, response.reason))
+#            else:
+#                notify.info("{:>{width}}: {} {}".format(
+#                    req, response.status_code, response.reason, width=4 + max(len(i) for i in reqs),
+#                ))
 
-        lines = ctx.run('pip list --local --outdated', hide='out', echo=False).stdout.splitlines()
-        if lines:
-            notify.banner("Outdated packages")
-            notify.info('    ' + '\n    '.join(sorted(lines)))
+#        lines = ctx.run('pip list --local --outdated', hide='out', echo=False).stdout.splitlines()
+#        if lines:
+#            notify.banner("Outdated packages")
+#            notify.info('    ' + '\n    '.join(sorted(lines)))
 
 
 namespace = Collection.from_module(sys.modules[__name__], config={'rituals': dict(
