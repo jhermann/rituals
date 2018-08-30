@@ -9,12 +9,12 @@
 pylint==1.6.5
 
 # test
-pytest==3.0.6
+pytest==3.7.4
 pytest-spec==1.1.0
-pytest-cov==2.4.0
+pytest-cov==2.5.1
 py>=1.4.29
-coveralls==1.1
+coveralls==1.4.0
 
 # docs
-sphinx==1.5.3
-sphinx-autobuild==0.6.0
+sphinx==1.7.8
+sphinx-autobuild==0.7.1
