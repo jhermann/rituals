@@ -62,11 +62,12 @@ def get_pypi_auth(configfile='~/.pypirc'):
 def watchdogctl(ctx, kill=False, verbose=True):
     """Control / check a running Sphinx autobuild process."""
     tries = 40 if kill else 0
-    cmd = 'lsof -i TCP:{} -s TCP:LISTEN -S -Fp'.format(ctx.rituals.docs.watchdog.port)
+    cmd = 'lsof -i TCP:{} -s TCP:LISTEN -S -Fp 2>/dev/null'.format(ctx.rituals.docs.watchdog.port)
 
     pid = capture(cmd, ignore_failures=True)
     while pid:
-        assert pid.startswith('p'), "Standard lsof output expected"
+        pid = pid.splitlines()[-1]
+        assert pid.startswith('p'), "Standard lsof output expected (got '{}')".format(pid)
         pid = int(pid[1:].split()[0], 10)
         if verbose:
             ctx.run("ps uw {}".format(pid), echo=False)
