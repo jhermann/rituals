@@ -214,6 +214,37 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
         webbrowser.open_new_tab(index_url)
 
 
+@task(help={
+    'no-publish': "Do not publish to Confluence, just build",
+    'clean': "Start with a clean build area",
+    'opts': "Extra flags for Sphinx builder",
+})
+def confluence(ctx, no_publish=False, clean=False, opts=''):
+    """Build Sphinx docs and publish to Confluence."""
+    cfg = config.load()
+
+    if clean:
+        ctx.run("invoke clean --docs")
+
+    cmd = ['sphinx-build', '-b', 'confluence']
+    cmd.extend(['-E', '-a'])  # force a full rebuild
+    if opts:
+        cmd.append(opts)
+    cmd.extend(['.', ctx.rituals.docs.build + '_cf'])
+    if no_publish:
+        cmd.extend(['-Dconfluence_publish=False'])
+
+    # Build docs
+    notify.info("Starting Sphinx build...")
+    with pushd(ctx.rituals.docs.sources):
+        ctx.run(' '.join(cmd), pty=True)
+
+try:
+    import sphinxcontrib.confluencebuilder
+except ImportError:
+    del confluence
+
+
 class DocsUploader(object):
     """Helper to perform an upload of pre-built docs."""
 
