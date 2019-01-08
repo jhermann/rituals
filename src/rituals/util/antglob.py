@@ -52,7 +52,7 @@ def glob2re(part):
 def parse_glob(pattern):
     """Generate parts of regex transformed from glob pattern."""
     if not pattern:
-        raise StopIteration
+        return
 
     bits = pattern.split("/")
     dirs, filename = bits[:-1], bits[-1]
