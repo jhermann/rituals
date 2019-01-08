@@ -118,6 +118,8 @@ def _cull(potential, matches, verbose=0):
         matches.append(potential)
         return potential
 
+    return None
+
 
 #---- module API
 

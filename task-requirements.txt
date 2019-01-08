@@ -6,7 +6,7 @@
 #requests==2.9.1 # already in requirements!
 
 # check
-pylint==1.6.5
+pylint==2.2.2
 
 # test
 pytest==4.1.0
