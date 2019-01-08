@@ -5,8 +5,8 @@
 bpython==0.17.1
 yolk3k==0.9
 
-tox==3.2.1
-twine==1.11.0
+tox==3.6.1
+twine==1.12.1
 
 -r task-requirements.txt
 sphinx-rtd-theme==0.1.9
