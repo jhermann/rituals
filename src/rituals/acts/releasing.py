@@ -31,7 +31,7 @@ import zipfile
 from contextlib import closing
 
 import requests
-from bunch import Bunch
+from munch import Munch as Bunch
 
 from . import Collection, task
 from .. import config

@@ -25,7 +25,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 import unittest
 
 from invoke.context import Context
-from bunch import Bunch
+from munch import Munch as Bunch
 #import pytest
 
 import tasks  # pylint: disable=unused-import

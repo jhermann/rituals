@@ -66,4 +66,7 @@ target/
 
 # Jekyll
 _site/
+
+# Project
 docs/README.rst
+.pytest_cache/
