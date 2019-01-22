@@ -9,7 +9,7 @@
 pylint==2.2.2
 
 # test
-pytest==4.1.0
+pytest==4.1.1
 pytest-spec==1.1.0
 pytest-cov==2.6.1
 py>=1.4.29
