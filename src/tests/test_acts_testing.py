@@ -40,6 +40,9 @@ class FakeContext(Context):
     def run(self, command, **kwargs):
         self.memo.cmd = command
 
+    def _modify(self, keypath, key, value):
+        pass
+
 
 class PytestTest(unittest.TestCase):
 
