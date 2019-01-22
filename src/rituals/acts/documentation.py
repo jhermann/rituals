@@ -67,6 +67,8 @@ def watchdogctl(ctx, kill=False, verbose=True):
     pid = capture(cmd, ignore_failures=True)
     while pid:
         pid = pid.splitlines()[-1]
+        if pid.startswith('f'):
+            continue  # 'f' is always selected for output, skip it
         assert pid.startswith('p'), "Standard lsof output expected (got '{}')".format(pid)
         pid = int(pid[1:].split()[0], 10)
         if verbose:
