@@ -25,7 +25,7 @@
         https://github.com/Springerle/py-generic-project
 
 
-    Copyright ⓒ  2015 Jürgen Hermann
+    Copyright ⓒ  2015 - 2019 Jürgen Hermann
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2 as
