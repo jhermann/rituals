@@ -175,8 +175,7 @@ def whichgen(command, path=None, verbose=0, exts=None): # pylint: disable=too-ma
     if os.sep in command or os.altsep and os.altsep in command:
         pass
     else:
-        for i in range(len(path)):
-            dir_name = path[i]
+        for i, dir_name in enumerate(path):
             # On windows the dir_name *could* be quoted, drop the quotes
             if sys.platform.startswith("win") and len(dir_name) >= 2 and dir_name[0] == '"' and dir_name[-1] == '"':
                 dir_name = dir_name[1:-1]

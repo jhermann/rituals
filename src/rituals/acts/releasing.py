@@ -90,9 +90,9 @@ def get_egg_info(cfg, verbose=False):
         return result
 
     egg_info = shell.capture("python {} egg_info".format(setup_py), echo=True if verbose else None)
-    for line in egg_info.splitlines():
-        if line.endswith('PKG-INFO'):
-            pkg_info_file = line.split(None, 1)[1]
+    for info_line in egg_info.splitlines():
+        if info_line.endswith('PKG-INFO'):
+            pkg_info_file = info_line.split(None, 1)[1]
             result['__file__'] = pkg_info_file
             with io.open(pkg_info_file, encoding='utf-8') as handle:
                 lastkey = None

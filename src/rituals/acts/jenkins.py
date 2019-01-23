@@ -59,7 +59,6 @@ DESCRIPTION_TEMPLATES = dict(
 {classifiers_indented}
 """,
 )
-url = u'http://jhermann.github.io/rituals/'
 
 
 @task(help=dict(

@@ -21,9 +21,9 @@
 #    https://github.com/jhermann/rituals
 from __future__ import absolute_import, unicode_literals, print_function
 
-import os
+#import os
 import sys
-import warnings
+#import warnings
 
 from . import Collection, task
 from ..util import notify
@@ -50,7 +50,7 @@ def get_devpi_url(ctx):
     ))
 
 
-# XXX: brtoken due to internal pip chnages, must be rewritten to command calls or other libs
+# XXX: broken due to internal pip changes, must be rewritten to command calls or other libs
 #@task(help=dict(
 #    requirement="Refresh from the given requirements file (default: {})".format(DEFAULT_REQUIREMENTS),
 #    name="Refresh a specific package",

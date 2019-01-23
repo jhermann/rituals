@@ -309,7 +309,7 @@ class DocsUploader(object):
                 try:
                     data = reply.json()
                 except ValueError as exc:
-                    notify.warning("Didn't get a JSON response!")
+                    notify.warning("Didn't get a JSON response! ({})".format(exc))
                 else:
                     if 'downloadUri' in data:  # Artifactory
                         url = data['downloadUri'] + '!/index.html'
