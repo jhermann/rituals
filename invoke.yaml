@@ -1,0 +1,3 @@
+rituals:
+    docs:
+        build: ../build/_html

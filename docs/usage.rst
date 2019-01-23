@@ -230,9 +230,16 @@ after the import from ``rituals.invoke_tasks``.
 Change default project configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**TODO**
+If you want to override the configuration defaults of various tasks,
+without using environment variables, add an ``invoke.yaml`` file in
+the same directory where your ``tasks.py`` is located
+– usually the project root directory.
 
+This example makes *Sphinx* (as called by the default ``docs`` task)
+place generated files in the top-level ``build`` directory instead
+of a sub-directory in ``docs``.
 
-
-
-.. _`Rituals' own tasks.py`: https://github.com/jhermann/rituals/blob/master/tasks.py#L3
+.. literalinclude:: ../invoke.yaml
+   :caption: invoke.yaml
+   :language: yaml
+   :emphasize-lines: 3
