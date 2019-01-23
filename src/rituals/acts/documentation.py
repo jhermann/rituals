@@ -23,6 +23,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 
 import io
 import os
+import re
 import sys
 import time
 import shutil
@@ -64,28 +65,33 @@ def watchdogctl(ctx, kill=False, verbose=True):
     tries = 40 if kill else 0
     cmd = 'lsof -i TCP:{} -s TCP:LISTEN -S -Fp 2>/dev/null'.format(ctx.rituals.docs.watchdog.port)
 
-    pid = capture(cmd, ignore_failures=True)
-    while pid:
-        pid = pid.splitlines()[-1]
-        if pid.startswith('f'):
-            continue  # 'f' is always selected for output, skip it
-        assert pid.startswith('p'), "Standard lsof output expected (got '{}')".format(pid)
-        pid = int(pid[1:].split()[0], 10)
+    pidno = 0
+    pidinfo = capture(cmd, ignore_failures=True)
+    while pidinfo:
+        pidline = next(filter(None, [re.match(r'^p(\d+)$', x) for x in pidinfo.splitlines()]))
+        if not pidline:
+            raise ValueError("Standard lsof output expected (got {!r})".format(pidinfo))
+        pidno = int(pidline.group(1), 10)
         if verbose:
-            ctx.run("ps uw {}".format(pid), echo=False)
+            ctx.run("ps uw {}".format(pidno), echo=False)
             verbose = False
 
         tries -= 1
-        if tries > 0:
-            notify.info("Killing PID {}".format(pid))
-            ctx.run("kill {}".format(pid), echo=False)
-            time.sleep(.25)
-        else:
+        if tries <= 0:
             break
+        else:
+            try:
+                os.kill(pidno, 0)
+            except ProcessLookupError:
+                break
+            else:
+                notify.info("Killing PID {}".format(pidno))
+                ctx.run("kill {}".format(pidno), echo=False)
+                time.sleep(.25)
 
         pid = capture(cmd, ignore_failures=True)
 
-    return pid or 0
+    return pidno
 
 
 @task(default=True, help={
