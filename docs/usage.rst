@@ -243,3 +243,5 @@ of a sub-directory in ``docs``.
    :caption: invoke.yaml
    :language: yaml
    :emphasize-lines: 3
+
+See :doc:`customize` for a list of possible options.
