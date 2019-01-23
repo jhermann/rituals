@@ -82,8 +82,12 @@ def watchdogctl(ctx, kill=False, verbose=True):
         else:
             try:
                 os.kill(pidno, 0)
-            except ProcessLookupError:
-                break
+            #except ProcessLookupError:  # XXX Python3 only
+            #    break
+            except OSError as exc:  # Python2 has no ProcessLookupError
+                if exc.errno == 3:
+                    break
+                raise
             else:
                 notify.info("Killing PID {}".format(pidno))
                 ctx.run("kill {}".format(pidno), echo=False)
