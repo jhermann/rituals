@@ -65,9 +65,8 @@ if you want to know every nuance of what these tasks do.
        :align: left
 
     The easiest way to get a working project using ``rituals`` is the
-    `py-generic-project <https://github.com/Springerle/py-generic-project>`__
-    cookiecutter archetype, which is tightly integrated with the tasks
-    defined here.
+    `py-generic-project`_ cookiecutter archetype, which is tightly
+    integrated with the tasks defined here.
 
     That way you have a working project skeleton
     within minutes that is fully equipped, with all aspects of building,
@@ -108,8 +107,7 @@ Of course, you may also do more selective imports, or build your own
     These tasks expect an importable ``setup.py`` that defines
     a ``project`` dict with the setup parameters, see
     `rudiments <https://github.com/jhermann/rudiments>`_ and
-    `py-generic-project <https://github.com/Springerle/py-generic-project>`_
-    for examples. The needed changes are minimal:
+    `py-generic-project`_ for examples. The needed changes are minimal:
 
     .. code:: py
 
@@ -119,6 +117,9 @@ Of course, you may also do more selective imports, or build your own
         )
         if __name__ == '__main__':
             setup(**project)
+
+
+.. _`py-generic-project`: https://github.com/Springerle/py-generic-project
 
 
 .. _task-namespaces:
@@ -185,8 +186,8 @@ Constructing Your Own Namespace
 
 When you want to have more control, you can exclude the ``namespace``
 identifier from the import and instead define your own.
-This example taken from
-`py-generic-project <https://github.com/Springerle/py-generic-project/blob/master/tasks.py>`_
+This example taken from the
+`tasks.py of py-generic-project <https://github.com/Springerle/py-generic-project/blob/master/tasks.py>`_
 shows how it's done:
 
 .. code:: py
@@ -202,6 +203,9 @@ shows how it's done:
 Note that the ``name=''`` makes this a root namespace.
 If you need to be even more selective, import individual tasks from modules
 in :py:mod:`rituals.acts` and add them to your namespaces.
+
+
+.. _`Rituals' own tasks.py`: https://github.com/jhermann/rituals/blob/master/tasks.py#L3
 
 
 -----------------------------------------------------------------------------
