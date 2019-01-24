@@ -46,8 +46,8 @@
 """
 from __future__ import absolute_import, unicode_literals, print_function
 
-__url__             = 'http://jhermann.github.io/rituals/'
-__version__         = '0.3.1'
+__url__             = 'https://github.com/jhermann/rituals'
+__version__         = '0.3.2'
 __license__         = 'GPL v2'
 __author__          = 'Jürgen Hermann'
 __author_email__    = 'jh@web.de'
