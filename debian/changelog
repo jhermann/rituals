@@ -1,4 +1,4 @@
-rituals (0.3.0) unstable; urgency=low
+rituals (0.3.1) unstable; urgency=low
 
   * new: 'docs.sphinx' and 'docs.upload' task (to PyPI/WebDAV/Artifactory)
   * new: convenient control of 'sphinx-autobuild' daemon
@@ -22,10 +22,11 @@ rituals (0.3.0) unstable; urgency=low
   * chg: better HTTP error reporting for docs upload
   * chg: more unit tests (still missing a lot)
   * chg: Python 3.4 support
+  * chg: Python3 is now the workdir default
   * fix: non-git workdirs are handled correctly in 'release.prep'
-  * fix: support for Invoke 0.13 (`ctask` rename)
+  * fix: support for Invoke v1 (`ctask` rename)
 
- -- Juergen Hermann <jh@web.de>  Mon, 17 Mar 2015 10:02:42 +0100
+ -- Juergen Hermann <jh@web.de>  Thu, 24 Jan 2019 14:07:23 +0100
 
 rituals (0.2.0) unstable; urgency=low
 
