@@ -316,8 +316,9 @@ class DocsUploader(object):
         except subprocess.CalledProcessError:
             git_path = ''
         else:
-            git_path = git_path.decode('ascii').strip().replace('http://', '').replace('https://', '')
-            git_path = re.search((r'[^:]+:' if 'git@' in git_path else r'[^/]+/') + r'(.+)', git_path)
+            git_path = git_path.decode('ascii').strip()
+            git_path = git_path.replace('http://', '').replace('https://', '').replace('ssh://', '')
+            git_path = re.search(r'[^:/]+?[:/](.+)', git_path)
             git_path = git_path.group(1).replace('.git', '') if git_path else ''
         url = None
         with self._zipped(docs_base) as handle:
