@@ -29,6 +29,7 @@ import time
 import shutil
 import tempfile
 import textwrap
+import subprocess
 import webbrowser
 from contextlib import contextmanager
 
@@ -310,9 +311,18 @@ class DocsUploader(object):
 
     def _to_webdav(self, docs_base, release):
         """Upload to WebDAV store."""
+        try:
+            git_path = subprocess.check_output('git remote get-url origin 2>/dev/null', shell=True)
+        except subprocess.CalledProcessError:
+            git_path = ''
+        else:
+            git_path = git_path.decode('ascii').strip().replace('http://', '').replace('https://', '')
+            git_path = re.search((r'[^:]+:' if 'git@' in git_path else r'[^/]+/') + r'(.+)', git_path)
+            git_path = git_path.group(1).replace('.git', '') if git_path else ''
         url = None
         with self._zipped(docs_base) as handle:
-            reply = requests.put(self.params['url'].format(name=self.cfg.project.name, version=release),
+            url_ns = dict(name=self.cfg.project.name, version=release, git_path=git_path)
+            reply = requests.put(self.params['url'].format(**url_ns),
                                  data=handle.read(), headers={'Accept': 'application/json'})
             if reply.status_code in range(200, 300):
                 notify.info("{status_code} {reason}".format(**vars(reply)))
