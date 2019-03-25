@@ -158,7 +158,7 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
                 out.write('    {}\n'.format(license_text))
 
     # Build API docs
-    if cfg.project.get('packages'):
+    if cfg.project.get('packages') and str(ctx.rituals.docs.apidoc).lower()[:1] in 't1y':
         cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
         for package in cfg.project.packages:
             if '.' not in package:
@@ -375,6 +375,7 @@ namespace = Collection.from_module(sys.modules[__name__], name='docs', config={'
     docs = dict(
         sources = 'docs',
         build = '_build',
+        apidoc = True,
         watchdog = dict(
             host = '127.0.0.1',
             port = 8840,
