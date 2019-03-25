@@ -71,7 +71,10 @@ def load():
     # TODO: maybe call "python setup.py egg_info" for metadata
     if cfg.project_root not in sys.path:
         sys.path.append(cfg.project_root)
-    from setup import project # pylint: disable=no-name-in-module
+    try:
+        from setup import project # pylint: disable=no-name-in-module
+    except ImportError:
+        from setup import setup_args as project # pylint: disable=no-name-in-module
     cfg.project = Bunch(project)
 
     return cfg
