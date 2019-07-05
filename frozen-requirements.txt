@@ -1,4 +1,4 @@
-# Requirements frozen by 'pip freeze' on 2019-07-05 17:03:22
+# Requirements frozen by 'pip freeze' on 2019-07-05 17:15:55
 alabaster==0.7.12
 argh==0.26.2
 astroid==2.2.5
@@ -39,7 +39,7 @@ pluggy==0.12.0
 port-for==0.3.1
 py==1.8.0
 Pygments==2.4.2
-pylint==2.2.2
+pylint==2.3.1
 pypandoc==1.4
 pyparsing==2.4.0
 pytest==5.0.1
@@ -50,7 +50,7 @@ PyYAML==5.1.1
 readme-renderer==24.0
 requests==2.22.0
 requests-toolbelt==0.9.1
--e git+git@github.com:jhermann/rituals.git@c7ed17655124efc598cc15cb747b4644a6ffdf85#egg=rituals
+-e git+git@github.com:jhermann/rituals.git@208fa61db14dd958a9b53740c989480656fa206f#egg=rituals
 six==1.12.0
 snowballstemmer==1.9.0
 Sphinx==2.1.2
