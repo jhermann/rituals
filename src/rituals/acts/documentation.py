@@ -69,7 +69,7 @@ def watchdogctl(ctx, kill=False, verbose=True):
     pidno = 0
     pidinfo = capture(cmd, ignore_failures=True)
     while pidinfo:
-        pidline = next(filter(None, [re.match(r'^p(\d+)$', x) for x in pidinfo.splitlines()]))
+        pidline = next(iter(filter(None, [re.match(r'^p(\d+)$', x) for x in pidinfo.splitlines()])))
         if not pidline:
             raise ValueError("Standard lsof output expected (got {!r})".format(pidinfo))
         pidno = int(pidline.group(1), 10)
