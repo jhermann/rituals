@@ -19,5 +19,6 @@ pluggy>=0.12
 coveralls==1.8.1
 
 # docs
-sphinx==2.1.2
+sphinx==1.8.5 ; python_version < "3.5"
+sphinx==2.1.2 ; python_version >= "3.5"
 sphinx-autobuild==0.7.1
