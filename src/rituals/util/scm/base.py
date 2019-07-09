@@ -25,7 +25,7 @@ from .. import notify
 from ..shell import run
 
 
-class ProviderBase(object):
+class ProviderBase():
     """Base class for SCM providers."""
 
 

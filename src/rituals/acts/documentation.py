@@ -83,12 +83,8 @@ def watchdogctl(ctx, kill=False, verbose=True):
         else:
             try:
                 os.kill(pidno, 0)
-            #except ProcessLookupError:  # XXX Python3 only
-            #    break
-            except OSError as exc:  # Python2 has no ProcessLookupError
-                if exc.errno == 3:
-                    break
-                raise
+            except ProcessLookupError:
+                break
             else:
                 notify.info("Killing PID {}".format(pidno))
                 ctx.run("kill {}".format(pidno), echo=False)
@@ -259,7 +255,7 @@ except ImportError:
     del confluence
 
 
-class DocsUploader(object):
+class DocsUploader():
     """Helper to perform an upload of pre-built docs."""
 
     def __init__(self, ctx, cfg, target):

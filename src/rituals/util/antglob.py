@@ -73,7 +73,7 @@ def compile_glob(spec):
     return re.compile(regex)
 
 
-class Pattern(object):
+class Pattern():
     """A single pattern for either inclusion or exclusion."""
 
     def __init__(self, spec, inclusive):
@@ -91,7 +91,7 @@ class Pattern(object):
         return bool(self.compiled.match(path))
 
 
-class FileSet(object):
+class FileSet():
     """ Ant-style file and directory matching.
 
         Produces an iterator of all of the files that match the provided patterns.
