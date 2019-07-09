@@ -1,3 +1,12 @@
+rituals (0.4.1) unstable; urgency=medium
+
+  * docs.upload: add 'git_path' as url variable
+  * docs.upload: fix for 'ssh://' git urls
+  * sdist: fixed MANIFEST omissions
+  * chg: Removed Python 2.7
+
+ -- Juergen Hermann <jh@web.de>  Tue, 09 Jul 2019 17:27:51 +0200
+
 rituals (0.3.1) unstable; urgency=low
 
   * new: 'docs.sphinx' and 'docs.upload' task (to PyPI/WebDAV/Artifactory)
