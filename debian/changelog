@@ -5,7 +5,7 @@ rituals (0.4.1) unstable; urgency=medium
   * sdist: fixed MANIFEST omissions
   * chg: Removed Python 2.7
 
- -- Juergen Hermann <jh@web.de>  Tue, 09 Jul 2019 17:27:51 +0200
+ -- Juergen Hermann <jh@web.de>  Tue, 16 Jul 2019 13:44:59 +0200
 
 rituals (0.3.1) unstable; urgency=low
 
