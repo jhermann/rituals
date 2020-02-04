@@ -140,12 +140,13 @@ def build_zipapp(ctx, app_builder, opts=''):
     # from pprint import pprint; pprint(cfg.project.entry_points)
     for script in cfg.project.entry_points['console_scripts']:
         script, entry_point = script.split('=', 1)
-        script, entry_point = script.strip(), entry_point.strip()
+        script, entry_point = script.strip().replace('-', '_'), entry_point.strip()
         artifact = cfg.rootjoin('dist', '{}-{}'.format(script, version))
         Path(artifact).parent.mkdir(exist_ok=True)
         artifact = app_builder(ctx, cfg, artifact, script, entry_point, opts)
 
-        # Warn about non-portable stuff
+        # Warn about non-portable stuff; note that 'shiv' ships an already
+        # installed site-packages, not the wheels
         non_pure = set()
         with closing(zipfile.ZipFile(artifact, mode="r")) as pyz_contents:
             for pyz_member in pyz_contents.namelist():  # pylint: disable=no-member
@@ -188,13 +189,17 @@ def build_zipapp(ctx, app_builder, opts=''):
 def upload_zipapp(ctx, artifacts):
     """ Upload built zipapp(s) to repository.
     """
+    cfg = config.load()
     base_url = ctx.rituals.release.upload.base_url.rstrip('/')
     if not base_url:
         notify.failure("No base URL provided for uploading!")
 
     for artifact in artifacts:
         url = base_url + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
-            name=cfg.project.name, version=cfg.project.version, filename=os.path.basename(artifact))
+            name=cfg.project.name,
+            version=cfg.project.version,
+            fullversion=os.path.basename(artifact).split('-')[1],
+            filename=os.path.basename(artifact))
         notify.info("Uploading to '{}'...".format(url))
         with io.open(artifact, 'rb') as handle:
             reply = requests.put(url, data=handle.read())
@@ -487,7 +492,7 @@ namespace = Collection.from_module(sys.modules[__name__], name='release', config
     release = dict(
         commit = dict(message = ':package: Release v{version}'),
         tag = dict(name = 'v{version}', message = 'Release v{version}'),
-        upload = dict(base_url = '', path='{name}/{version}/{filename}'),
+        upload = dict(base_url = '', path='{name}/{fullversion}/{filename}'),
     ),
     pyrun = dict(
         version = '2.1.0',
