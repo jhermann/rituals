@@ -206,10 +206,12 @@ Preparing a Release
 **TODO**
 
 
-.. _release-pex:
+.. _release-zipapp:
 
-Building a PEX Distribution
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Building a ZipApp Distribution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Usinf PEX or shiv…
 
 **TODO**
 

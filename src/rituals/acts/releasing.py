@@ -25,9 +25,11 @@ import io
 import os
 import re
 import sys
+import shlex
 import shutil
 import tarfile
 import zipfile
+from pathlib import Path
 from contextlib import closing
 
 import requests
@@ -117,6 +119,89 @@ def get_egg_info(cfg, verbose=False):
             result[multikey] = [result[multikey]]
 
     return result
+
+
+def build_zipapp(ctx, app_builder, opts=''):
+    """ Build a zipapp for each entrypoint
+        and return list of created artifacts.
+    """
+    cfg = config.load()
+
+    # Build and check release
+    ctx.run(": invoke clean --all build test check")
+
+    # Get full version
+    pkg_info = get_egg_info(cfg)
+    # from pprint import pprint; pprint(dict(pkg_info))
+    version = pkg_info.version if pkg_info else cfg.project.version
+
+    # Build a PEX for each console entry-point
+    artifacts = []
+    # from pprint import pprint; pprint(cfg.project.entry_points)
+    for script in cfg.project.entry_points['console_scripts']:
+        script, entry_point = script.split('=', 1)
+        script, entry_point = script.strip(), entry_point.strip()
+        artifact = cfg.rootjoin('dist', '{}-{}'.format(script, version))
+        Path(artifact).parent.mkdir(exist_ok=True)
+        artifact = app_builder(ctx, cfg, artifact, script, entry_point, opts)
+
+        # Warn about non-portable stuff
+        non_pure = set()
+        with closing(zipfile.ZipFile(artifact, mode="r")) as pyz_contents:
+            for pyz_member in pyz_contents.namelist():  # pylint: disable=no-member
+                if pyz_member.endswith('WHEEL') and '-py2.py3-none-any.whl' not in pyz_member:
+                    non_pure.add(pyz_member.split('.whl')[0].split('/')[-1])
+                elif pyz_member.endswith('.egg/EGG-INFO/native_libs.txt'):
+                    non_pure.add(pyz_member.split('.egg')[0].split('/')[-1])
+                elif pyz_member.endswith('.so'):
+                    print(pyz_member)
+                    non_pure.add('cpython-' + pyz_member.split('.cpython-')[1].split('.so')[0])
+        non_pure -= {'WHEEL'}
+        if non_pure:
+            notify.warning("Non-universal or native wheels in zipapp '{}':\n    {}"
+                           .format(artifact.replace(os.getcwd(), '.'), '\n    '.join(sorted(non_pure))))
+            #envs = [i.split('-')[-3:] for i in non_pure]
+            envs = [i.split('-') for i in non_pure]
+            envs = {i[0]: i[1:] for i in envs}
+            if len(envs) > 1:
+                envs = {k: v for k, v in envs.items() if not k.startswith('py')}
+            env_id = []
+            for k, v in sorted(envs.items()):
+                env_id.append(k)
+                env_id.extend(v)
+            env_id = '-'.join(env_id)  # .replace('cpython-', 'py{py.major}.{py.minor}-'.format(py=sys.version_info))
+        else:
+            env_id = 'py{py.major}.{py.minor}-none-any'.format(py=sys.version_info)
+
+        new_artifact = (artifact
+            .replace('.pex', '-{}.pex'.format(env_id))
+            .replace('.pyz', '-{}.pyz'.format(env_id))
+        )
+        notify.info("Renamed zipapp to '{}'".format(os.path.basename(new_artifact)))
+        os.rename(artifact, new_artifact)
+        artifact = new_artifact
+        artifacts.append(artifact)
+
+    return artifacts
+
+
+def upload_zipapp(ctx, artifacts):
+    """ Upload built zipapp(s) to repository.
+    """
+    base_url = ctx.rituals.release.upload.base_url.rstrip('/')
+    if not base_url:
+        notify.failure("No base URL provided for uploading!")
+
+    for artifact in artifacts:
+        url = base_url + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
+            name=cfg.project.name, version=cfg.project.version, filename=os.path.basename(artifact))
+        notify.info("Uploading to '{}'...".format(url))
+        with io.open(artifact, 'rb') as handle:
+            reply = requests.put(url, data=handle.read())
+            if reply.status_code in range(200, 300):
+                notify.info("{status_code} {reason}".format(**vars(reply)))
+            else:
+                notify.warning("{status_code} {reason}".format(**vars(reply)))
 
 
 @task(help=dict(
@@ -300,6 +385,38 @@ def pex(ctx, pyrun='', upload=False, opts=''):
                         notify.info("{status_code} {reason}".format(**vars(reply)))
                     else:
                         notify.warning("{status_code} {reason}".format(**vars(reply)))
+
+
+@task(help=dict(
+    upload="Upload the created archive to a WebDAV repository",
+    python="Custom shebang for the zipapp",
+    opts="Extra flags for 'shiv'",
+))
+def shiv(ctx, upload=False, python='', opts=''):
+    """Package the project to a zipapp with 'shiv'."""
+    def shiv(ctx, cfg, out_base, script, entry_point, opts):
+        """Helper for shiv packaging."""
+        out_name = out_base + '.pyz'
+        cmd = ['shiv',
+               '--compressed', '--compile-pyc',
+               '-e', entry_point,
+               '-p', shlex.quote(shebang),
+               '-o', out_name,
+               cfg.project_root,
+               '-r', cfg.rootjoin('requirements.txt'),
+        ]
+        if opts:
+            cmd.append(opts)
+        ctx.run(' '.join(cmd))
+        return out_name
+
+    shebang = python or '/usr/bin/env python{py.major}.{py.minor}'.format(py=sys.version_info)
+    artifacts = build_zipapp(ctx, shiv, opts)
+    if not artifacts:
+        notify.warning("No entry points found in project configuration!")
+    else:
+        if upload:
+            upload_zipapp(ctx, artifacts)
 
 
 @task(
