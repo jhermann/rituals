@@ -211,9 +211,24 @@ Preparing a Release
 Building a ZipApp Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Usinf PEX or shiv…
+Using PEX or shiv…
 
 **TODO**
+
+You can also directly upload the created artifact to a (local) repository
+by passing the :option:`--upload` option to ``release.pex`` or ``release.shiv``.
+It has to support PUT requests – e.g. any WebDAV server can be used as a target.
+The default path used is ``{name}/{fullversion}/{filename}``, and
+you must add the base URL of your repository server to your environment like this::
+
+    export INVOKE_RITUALS_RELEASE_UPLOAD_BASE_URL=http://artifactory.local/artifactory/pypi-releases-local/
+
+Add that line to one of your shell's configuration files, e.g. ``~/.bashrc``.
+
+If you want to release a zipapp publically, either use ``twine`` to upload to PyPI,
+or some tool to upload to services like GitHub (e.g. `githubrelease asset`_), GitLab, or Bintray.
+
+.. _`githubrelease asset`: https://github.com/j0057/github-release#readme
 
 
 -----------------------------------------------------------------------------
