@@ -33,7 +33,7 @@ from pathlib import Path
 from contextlib import closing
 
 import requests
-from munch import Munch as Bunch
+from munch import munchify, Munch as Bunch
 
 from . import Collection, task
 from .. import config
@@ -186,16 +186,22 @@ def build_zipapp(ctx, app_builder, opts=''):
     return artifacts
 
 
-def upload_zipapp(ctx, artifacts):
-    """ Upload built zipapp(s) to repository.
+def upload_artifacts(ctx, artifacts):
+    """ Upload built artifact(s) to repository.
     """
-    cfg = config.load()
-    base_url = ctx.rituals.release.upload.base_url.rstrip('/')
+    # Check the envvars explicitly, so this can be called from outside a task
+    try:
+        upload = ctx.rituals.release.upload
+    except AttributeError:
+        upload = munchify(namespace.configuration()).rituals.release.upload
+    base_url = os.environ.get('INVOKE_RITUALS_RELEASE_UPLOAD_BASE_URL', upload.base_url).rstrip('/')
+    url_path = os.environ.get('INVOKE_RITUALS_RELEASE_UPLOAD_PATH', upload.path).rstrip('/')
     if not base_url:
         notify.failure("No base URL provided for uploading!")
+    cfg = config.load()
 
     for artifact in artifacts:
-        url = base_url + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
+        url = base_url + '/' + url_path.format(
             name=cfg.project.name,
             version=cfg.project.version,
             fullversion=os.path.basename(artifact).split('-')[1],
@@ -421,7 +427,7 @@ def shiv(ctx, upload=False, python='', opts=''):
         notify.warning("No entry points found in project configuration!")
     else:
         if upload:
-            upload_zipapp(ctx, artifacts)
+            upload_artifacts(ctx, artifacts)
 
 
 @task(
