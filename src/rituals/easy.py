@@ -27,7 +27,6 @@ import sys
 from .acts import Collection, task
 from .util.filesys import pushd
 
-
 # Build root namespace
 from .acts import basic
 namespace = Collection.from_module(basic, name='')  # pylint: disable=invalid-name

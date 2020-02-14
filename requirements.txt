@@ -3,7 +3,8 @@
 #
 
 munch>2,<3
-invoke>=1,<2
+invoke>=1
 #requests>=2.9 ; python_version >= '2.7.9'
 #requests[security]>=2.9 ; python_version < '2.7.9'
 requests>=2.9
+pathlib2 ; python_version == "2.7"

@@ -29,7 +29,7 @@ import shlex
 import shutil
 import tarfile
 import zipfile
-from pathlib import Path
+from .. import pathlib
 from contextlib import closing
 
 import requests
@@ -142,7 +142,7 @@ def build_zipapp(ctx, app_builder, opts=''):
         script, entry_point = script.split('=', 1)
         script, entry_point = script.strip().replace('-', '_'), entry_point.strip()
         artifact = cfg.rootjoin('dist', '{}-{}'.format(script, version))
-        Path(artifact).parent.mkdir(exist_ok=True)
+        pathlib.Path(artifact).parent.mkdir(exist_ok=True)
         artifact = app_builder(ctx, cfg, artifact, script, entry_point, opts)
 
         # Warn about non-portable stuff; note that 'shiv' ships an already

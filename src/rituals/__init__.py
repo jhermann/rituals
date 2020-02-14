@@ -46,6 +46,11 @@
 """
 from __future__ import absolute_import, unicode_literals, print_function
 
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
+
 __url__             = 'https://github.com/jhermann/rituals'
 __version__         = '0.4.2'
 __license__         = 'GPL v2'
