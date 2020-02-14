@@ -5,7 +5,8 @@
 bpython==0.18
 yolk3k==0.9
 
-tox==3.13.2
+pip==20.0.2
+tox==3.14.4
 twine==1.13.0
 
 -r task-requirements.txt
