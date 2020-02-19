@@ -320,7 +320,7 @@ def pex(ctx, pyrun='', upload=False, opts=''):
     for script in cfg.project.entry_points['console_scripts']:
         script, entry_point = script.split('=', 1)
         script, entry_point = script.strip(), entry_point.strip()
-        pex_file = cfg.rootjoin('bin', '{}-{}.pex'.format(script, version))
+        pex_file = cfg.rootjoin('dist', '{}-{}.pex'.format(script, version))
         cmd = ['pex', '-r', cfg.rootjoin('requirements.txt'), cfg.project_root, '-c', script, '-o', pex_file]
         if opts:
             cmd.append(opts)
