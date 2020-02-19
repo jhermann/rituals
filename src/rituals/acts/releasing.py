@@ -382,20 +382,7 @@ def pex(ctx, pyrun='', upload=False, opts=''):
                         pex_files.append(pyrun_pex_file)
 
         if upload:
-            base_url = ctx.rituals.release.upload.base_url.rstrip('/')
-            if not base_url:
-                notify.failure("No base URL provided for uploading!")
-
-            for pex_file in pex_files:
-                url = base_url + '/' + ctx.rituals.release.upload.path.lstrip('/').format(
-                    name=cfg.project.name, version=cfg.project.version, filename=os.path.basename(pex_file))
-                notify.info("Uploading to '{}'...".format(url))
-                with io.open(pex_file, 'rb') as handle:
-                    reply = requests.put(url, data=handle.read())
-                    if reply.status_code in range(200, 300):
-                        notify.info("{status_code} {reason}".format(**vars(reply)))
-                    else:
-                        notify.warning("{status_code} {reason}".format(**vars(reply)))
+            upload_artifacts(ctx, pex_files)
 
 
 @task(help=dict(
