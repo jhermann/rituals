@@ -321,7 +321,7 @@ def pex(ctx, pyrun='', upload=False, opts='', windows=False):
         opts += ' --repo=dist/wheels'
         opts += ' --platform=win_amd64-cp-{py.major}{py.minor}-m'.format(py=sys.version_info)
         pex_ext = '.pyz'
-        ctx.run("python3 -m pip wheel -w dist/wheels -r requirements.txt .")
+        ctx.run(sys.executable + " -m pip wheel -w dist/wheels -r requirements.txt .")
 
     # Build a PEX for each console entry-point
     pex_files = []
@@ -330,10 +330,10 @@ def pex(ctx, pyrun='', upload=False, opts='', windows=False):
         script, entry_point = script.split('=', 1)
         script, entry_point = script.strip(), entry_point.strip()
         pex_file = cfg.rootjoin('dist', '{}-{}{}'.format(script, version, pex_ext))
-        cmd = ['python3', '-m', 'pex',
-                          '-r', cfg.rootjoin('requirements.txt'),
-                          '-c', script,
-                          '-o', pex_file,
+        cmd = [sys.executable, '-m', 'pex',
+               '-r', cfg.rootjoin('requirements.txt'),
+               '-c', script,
+               '-o', pex_file,
         ]
         if opts:
             cmd.extend(shlex.split(opts))
@@ -409,7 +409,7 @@ def shiv(ctx, upload=False, python='', opts=''):
     def shiv(ctx, cfg, out_base, script, entry_point, opts):
         """Helper for shiv packaging."""
         out_name = out_base + '.pyz'
-        cmd = ['python3', '-m', 'shiv.cli',
+        cmd = [sys.executable, '-m', 'shiv.cli',
                '--compressed', '--compile-pyc',
                '-e', entry_point,
                '-p', shlex.quote(shebang),
