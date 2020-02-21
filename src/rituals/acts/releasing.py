@@ -301,8 +301,9 @@ def dist(ctx, devpi=False, egg=False, wheel=False, auto=True):
     pyrun="Create installer including an eGenix PyRun runtime",
     upload="Upload the created archive to a WebDAV repository",
     opts="Extra flags for PEX",
+    windows="Build for Windows platform",
 ))
-def pex(ctx, pyrun='', upload=False, opts=''):
+def pex(ctx, pyrun='', upload=False, opts='', windows=False):
     """Package the project with PEX."""
     cfg = config.load()
 
@@ -314,16 +315,29 @@ def pex(ctx, pyrun='', upload=False, opts=''):
     # from pprint import pprint; pprint(dict(pkg_info))
     version = pkg_info.version if pkg_info else cfg.project.version
 
+    # Create wheels for platform-specific builds (PEX uses '--only-binary :all:')
+    pex_ext = '.pex'
+    if windows:
+        opts += ' --repo=dist/wheels'
+        opts += ' --platform=win_amd64-cp-{py.major}{py.minor}-m'.format(py=sys.version_info)
+        pex_ext = '.pyz'
+        ctx.run("python3 -m pip wheel -w dist/wheels -r requirements.txt .")
+
     # Build a PEX for each console entry-point
     pex_files = []
     # from pprint import pprint; pprint(cfg.project.entry_points)
     for script in cfg.project.entry_points['console_scripts']:
         script, entry_point = script.split('=', 1)
         script, entry_point = script.strip(), entry_point.strip()
-        pex_file = cfg.rootjoin('dist', '{}-{}.pex'.format(script, version))
-        cmd = ['pex', '-r', cfg.rootjoin('requirements.txt'), cfg.project_root, '-c', script, '-o', pex_file]
+        pex_file = cfg.rootjoin('dist', '{}-{}{}'.format(script, version, pex_ext))
+        cmd = ['python3', '-m', 'pex',
+                          '-r', cfg.rootjoin('requirements.txt'),
+                          '-c', script,
+                          '-o', pex_file,
+        ]
         if opts:
-            cmd.append(opts)
+            cmd.extend(shlex.split(opts))
+        cmd.append(cfg.project_root)
         ctx.run(' '.join(cmd))
 
         # Warn about non-portable stuff
@@ -347,7 +361,7 @@ def pex(ctx, pyrun='', upload=False, opts=''):
         else:
             env_id = 'py2.py3-none-any'
 
-        new_pex_file = pex_file.replace('.pex', '-{}.pex'.format(env_id))
+        new_pex_file = pex_file.replace(pex_ext, '-{}{}'.format(env_id, pex_ext))
         notify.info("Renamed PEX to '{}'".format(os.path.basename(new_pex_file)))
         os.rename(pex_file, new_pex_file)
         pex_file = new_pex_file
@@ -395,7 +409,7 @@ def shiv(ctx, upload=False, python='', opts=''):
     def shiv(ctx, cfg, out_base, script, entry_point, opts):
         """Helper for shiv packaging."""
         out_name = out_base + '.pyz'
-        cmd = ['shiv',
+        cmd = ['python3', '-m', 'shiv.cli',
                '--compressed', '--compile-pyc',
                '-e', entry_point,
                '-p', shlex.quote(shebang),
