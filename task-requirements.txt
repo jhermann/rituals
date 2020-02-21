@@ -22,3 +22,7 @@ coveralls==1.11.0
 sphinx==1.8.5 ; python_version < "3.5"
 sphinx==2.1.2 ; python_version >= "3.5"
 sphinx-autobuild==0.7.1
+
+# release
+shiv==0.0.48
+pex==2.1.4
