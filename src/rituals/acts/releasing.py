@@ -352,11 +352,14 @@ def pex(ctx, pyrun='', upload=False, opts='', windows=False):
             envs = [i.split('-')[-3:] for i in non_universal]
             envs = {i[0]: i[1:] for i in envs}
             if len(envs) > 1:
-                envs = {k: v for k, v in envs.items() if not k.startswith('py')}
+                envs = {k: v for k, v in envs.items()
+                        if not k.startswith('py')}
             env_id = []
+            my_abi = 'abi{}'.format(sys.version_info.major)
             for k, v in sorted(envs.items()):
-                env_id.append(k)
-                env_id.extend(v)
+                if my_abi not in v:
+                    env_id.append(k)
+                    env_id.extend(v)
             env_id = '-'.join(env_id)
         else:
             env_id = 'py2.py3-none-any'
