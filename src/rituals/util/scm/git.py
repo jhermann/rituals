@@ -108,7 +108,10 @@ class GitProvider(ProviderBase):
             tag, date, time = tag.split('!')
         except ValueError:
             date = time = ''
-        tag, commits, short_hash = tag.rsplit('-', 3)
+        try:
+            tag, commits, short_hash = tag.rsplit('-', 3)
+        except ValueError as cause:
+            raise ValueError("Cannot split tag {!r}".format(tag)) from cause
         label = tag
         if re.match(r"v[0-9]+(\.[0-9]+)*", label):
             label = label[1:]
