@@ -344,10 +344,10 @@ def pex(ctx, pyrun='', upload=False, opts='', windows=False):
         non_universal = set()
         with closing(zipfile.ZipFile(pex_file, mode="r")) as pex_contents:
             for pex_name in pex_contents.namelist():  # pylint: disable=no-member
-                if pex_name.endswith('WHEEL') and '-py2.py3-none-any.whl' not in pex_name:
+                if pex_name.endswith('WHEEL') and 'py3-none-any.whl' not in pex_name:
                     non_universal.add(pex_name.split('.whl')[0].split('/')[-1])
         if non_universal:
-            notify.warning("Non-universal or native wheels in PEX '{}':\n    {}"
+            notify.warning("Non-pure / native wheels in PEX '{}':\n    {}"
                            .format(pex_file.replace(os.getcwd(), '.'), '\n    '.join(sorted(non_universal))))
             envs = [i.split('-')[-3:] for i in non_universal]
             envs = {i[0]: i[1:] for i in envs}
