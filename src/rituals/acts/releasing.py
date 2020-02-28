@@ -318,8 +318,10 @@ def pex(ctx, pyrun='', upload=False, opts='', windows=False):
     # Create wheels for platform-specific builds (PEX uses '--only-binary :all:')
     pex_ext = '.pex'
     if windows:
+        # For the ABI flag switch, see https://bugs.python.org/issue36707
         opts += ' --repo=dist/wheels'
-        opts += ' --platform=win_amd64-cp-{py.major}{py.minor}-m'.format(py=sys.version_info)
+        opts += ' --platform=win_amd64-cp-{py.major}{py.minor}-cp{py.major}{py.minor}{flags}'.format(
+            py=sys.version_info, flags='m' if sys.version_info < (3, 8) else '')
         pex_ext = '.pyz'
         ctx.run(sys.executable + " -m pip wheel -w dist/wheels -r requirements.txt .")
 
