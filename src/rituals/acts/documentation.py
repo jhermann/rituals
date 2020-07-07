@@ -154,11 +154,18 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
                 out.write('    {}\n'.format(license_text))
 
     # Build API docs
-    if cfg.project.get('packages') and str(ctx.rituals.docs.apidoc).lower()[:1] in 't1y':
-        cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
+    def append_pkg_dirs(cmd, option=None):
+        """Helper to add source dirs."""
         for package in cfg.project.packages:
             if '.' not in package:
+                if option:
+                    cmd.append(option)
                 cmd.append(cfg.srcjoin(package))
+
+    apidocs = cfg.project.get('packages') and str(ctx.rituals.docs.apidoc).lower()[:1] in 't1y'
+    if apidocs:
+        cmd = ['sphinx-apidoc', '-o', 'api', '-f', '-M']
+        append_pkg_dirs(cmd)
         with pushd(ctx.rituals.docs.sources):
             ctx.run(' '.join(cmd))
 
@@ -171,6 +178,8 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
     if watchdog:
         watchdogctl(ctx, kill=True)
         cmd[0:1] = ['nohup', 'sphinx-autobuild']
+        if apidocs:
+            append_pkg_dirs(cmd, option='-z')
         cmd.extend([
                '-H', ctx.rituals.docs.watchdog.host,
                '-p', '{}'.format(ctx.rituals.docs.watchdog.port),
