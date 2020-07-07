@@ -101,7 +101,7 @@ class GitProvider(ProviderBase):
             notify.info("setuptools version = '{}'".format(version))
 
         now = '{:%Y%m%d!%H%M}'.format(datetime.now())
-        tag = capture("git describe --long --tags --dirty='!{}'".format(now), echo=verbose)
+        tag = capture("git describe --long --exclude stable --dirty='!{}'".format(now), echo=verbose)
         if verbose:
             notify.info("git describe = '{}'".format(tag))
         try:
