@@ -1,8 +1,13 @@
-rituals (0.4.2) unstable; urgency=medium
+rituals (0.5.1) unstable; urgency=medium
 
-  * ...
+  * release.pex: '--windows' option for cross-platform builds
+  * release.shiv: new task for single-binary releases
+  * rituals.acts.releasing.upload_artifacts: helper function
+    you can use for WebDAV uploads from your custom tasks
+  * release.bump: only consider annotated tags, and exclude 'stable'
+  * docs autobuild: add sources to watch dirs when using API docs
 
- -- Juergen Hermann <jh@web.de>  Tue, 16 Jul 2019 15:28:22 +0200
+ -- Juergen Hermann <jh@web.de>  Wed, 08 Jul 2020 11:41:57 +0200
 
 rituals (0.4.1) unstable; urgency=medium
 
