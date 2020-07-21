@@ -95,25 +95,18 @@ def watchdogctl(ctx, kill=False, verbose=True):
     return pidno
 
 
-@task(default=True, help={
-    'browse': "Open index page in browser tab",
-    'clean': "Start with a clean build area",
-    'watchdog': "Start autobuild watchdog?",
-    'kill': "Stop autobuild watchdog (and do nothing else)",
-    'status': "Show autobuild watchdog process state",
-    'opts': "Extra flags for Sphinx builder",
-})
-def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=False, opts=''):
-    """Build Sphinx docs."""
-    cfg = config.load()
-
-    if kill or status:
-        if not watchdogctl(ctx, kill=kill):
-            notify.info("No process bound to port {}".format(ctx.rituals.docs.watchdog.port))
-        return
-
-    if clean:
-        ctx.run("invoke clean --docs")
+def convert_markdown(ctx, cfg):
+    """ Convert some markdown files if pypandoc is available
+        and recommonmark not in use.
+    """
+    # Abort early if conf.py adds recommonmark
+    for name in ('docs/conf.py', 'conf.py'):
+        conf_py = cfg.rootjoin(name)
+        if os.path.exists(conf_py):
+            with io.open(conf_py, 'r') as inp:
+                text = inp.read()
+                if 'recommonmark' in text:
+                    return
 
     # Convert markdown files, if applicable
     for basename in ('README', 'CONTRIBUTING'):
@@ -152,6 +145,29 @@ def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=Fa
                 license_text = textwrap.dedent(license_text)
                 license_text = '\n    '.join(license_text.splitlines())
                 out.write('    {}\n'.format(license_text))
+
+
+@task(default=True, help={
+    'browse': "Open index page in browser tab",
+    'clean': "Start with a clean build area",
+    'watchdog': "Start autobuild watchdog?",
+    'kill': "Stop autobuild watchdog (and do nothing else)",
+    'status': "Show autobuild watchdog process state",
+    'opts': "Extra flags for Sphinx builder",
+})
+def sphinx(ctx, browse=False, clean=False, watchdog=False, kill=False, status=False, opts=''):
+    """Build Sphinx docs."""
+    cfg = config.load()
+
+    if kill or status:
+        if not watchdogctl(ctx, kill=kill):
+            notify.info("No process bound to port {}".format(ctx.rituals.docs.watchdog.port))
+        return
+
+    if clean:
+        ctx.run("invoke clean --docs")
+
+    convert_markdown(ctx, cfg)
 
     # Build API docs
     def append_pkg_dirs(cmd, option=None):
