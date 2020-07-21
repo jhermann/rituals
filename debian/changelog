@@ -7,8 +7,9 @@ rituals (0.5.1) unstable; urgency=medium
   * release.bump: only consider annotated tags, and exclude 'stable'
   * docs autobuild: add sources to watch dirs when using API docs
   * docs.sphinx: no markdown file conversion when recommonmark is used
+  * Officially supported Python versions now 3.6 .. 3.8
 
- -- Juergen Hermann <jh@web.de>  Tue, 21 Jul 2020 06:47:41 +0200
+ -- Juergen Hermann <jh@web.de>  Tue, 21 Jul 2020 06:54:10 +0200
 
 rituals (0.4.1) unstable; urgency=medium
 

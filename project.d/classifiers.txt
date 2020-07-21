@@ -1,11 +1,12 @@
 # Details at http://pypi.python.org/pypi?:action=list_classifiers
-Development Status :: 4 - Beta
+Development Status :: 5 - Production/Stable
 Environment :: Console
 Intended Audience :: Developers
 License :: OSI Approved :: GNU General Public License v2 (GPLv2)
 Operating System :: OS Independent
-Programming Language :: Python :: 3.4
-Programming Language :: Python :: 3.5
+Programming Language :: Python :: 3.6
+Programming Language :: Python :: 3.7
+Programming Language :: Python :: 3.8
 Topic :: Software Development
 Topic :: Software Development :: Build Tools
 Topic :: Utilities
