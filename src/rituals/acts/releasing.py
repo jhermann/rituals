@@ -41,6 +41,7 @@ from ..util import notify, shell
 from ..util.scm import provider as scm_provider
 from ..util.filesys import url_as_file, pretty_path
 from ..util.shell import capture
+from ..util.which import which, WhichError
 from ..util._compat import parse_qsl
 
 PKG_INFO_MULTIKEYS = ('Classifier',)
@@ -307,6 +308,12 @@ def pex(ctx, pyrun='', upload=False, opts='', windows=False):
     """Package the project with PEX."""
     cfg = config.load()
 
+    try:
+        which('pex')
+    except WhichError:
+        notify.failure("The 'pex' tool is not installed, please call:\n    "
+                       "{sys.executable} -m pip install pex".format(sys=sys))
+
     # Build and check release
     ctx.run(": invoke clean --all build test check")
 
@@ -426,6 +433,12 @@ def shiv(ctx, upload=False, python='', opts=''):
             cmd.append(opts)
         ctx.run(' '.join(cmd))
         return out_name
+
+    try:
+        which('shiv')
+    except WhichError:
+        notify.failure("The 'shiv' tool is not installed, please call:\n    "
+                       "{sys.executable} -m pip install shiv".format(sys=sys))
 
     shebang = python or '/usr/bin/env python{py.major}.{py.minor}'.format(py=sys.version_info)
     artifacts = build_zipapp(ctx, shiv, opts)
