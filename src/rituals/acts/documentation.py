@@ -305,7 +305,7 @@ class DocsUploader():
             zip_name = shutil.make_archive(ziphandle.name, 'zip')
 
         notify.info("Uploading {:.1f} MiB from '{}' to '{}'..."
-                    .format(os.path.getsize(zip_name) / 1024.0, zip_name, self.target))
+                    .format(os.path.getsize(zip_name) / 1024.0 / 1024.0, zip_name, self.target))
         with io.open(zip_name, 'rb') as zipread:
             try:
                 yield zipread
