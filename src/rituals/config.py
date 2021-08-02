@@ -23,6 +23,7 @@ from __future__ import absolute_import, unicode_literals, print_function
 
 import os
 import sys
+from pathlib import Path
 
 from munch import Munch as Bunch
 
@@ -80,12 +81,31 @@ def load():
     return cfg
 
 
+def is_maven_layout(project_dir):
+    """Apply heuristics to check if the given path is a Maven project."""
+    project_dir = Path(project_dir)
+    result = ((project_dir / 'src/main/tests').exists()
+        and (project_dir / 'src/main/python').exists()
+    )
+    return result
+
+
 def set_maven_layout():
     """Switch default project layout to Maven-like."""
     DEFAULTS.update(
         srcdir = 'src/main/python',
         testdir = 'src/test/python',
     )
+
+
+def is_flat_layout(project_dir):
+    """Apply heuristics to check if the given path is a 'flat' project."""
+    # Right now, we only take care of projects where repo name and package name are equivalent
+    project_dir = Path(project_dir)
+    result = ((project_dir / 'tests').exists()
+        and (project_dir / project_dir.name.replace('-', '_') / '__init__.py').exists()
+    )
+    return result
 
 
 def set_flat_layout():

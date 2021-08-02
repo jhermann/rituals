@@ -27,6 +27,13 @@ import sys
 from .acts import Collection, task
 from .util.filesys import pushd
 
+# Project layout detection
+from . import config
+if config.is_flat_layout(os.getcwd()):
+    config.set_flat_layout()
+elif config.is_maven_layout(os.getcwd()):
+    config.set_maven_layout()
+
 # Build root namespace
 from .acts import basic
 namespace = Collection.from_module(basic, name='')  # pylint: disable=invalid-name

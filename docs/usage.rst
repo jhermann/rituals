@@ -216,9 +216,11 @@ Change default project layout
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default, sources are expected in ``src/‹packagename›`` and tests in
-``src/tests``.
+``src/tests``. However, if you import ``rituals.easy``, an auto-detection
+for other layouts (described below) is performed, and only if that fails
+for some reason, you need to set the layout type explicitly.
 
-You can change this by calling one of the following functions, directly
+You can change the layout by calling one of the following functions, directly
 after the import from ``rituals.invoke_tasks``.
 
   * ``config.set_maven_layout()`` – Changes locations to
