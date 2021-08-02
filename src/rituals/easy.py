@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, wrong-import-position
+# pylint: disable=wrong-import-position
 """ Default namespace for convenient wildcard import in task definition modules.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

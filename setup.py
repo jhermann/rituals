@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-whitespace, attribute-defined-outside-init, invalid-name
-# pylint: disable=bad-continuation, wrong-import-position
+# pylint: disable=attribute-defined-outside-init, invalid-name
+# pylint: disable=wrong-import-position
 """ rituals – Common tasks for 'Invoke' that are needed again and again.
 
     This setuptools script follows the DRY principle and tries to

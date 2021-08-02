@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, no-self-use
+# pylint: disable=no-self-use
 """ Provider for unknown SCM systems.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

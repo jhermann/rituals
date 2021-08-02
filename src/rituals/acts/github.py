@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation
+# pylint: disable=
 """ GitHub automation.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

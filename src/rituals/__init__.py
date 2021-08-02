@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-whitespace
+# pylint: disable=
 """
     Common tasks for 'Invoke' that are needed again and again.
 

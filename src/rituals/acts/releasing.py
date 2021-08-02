@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, superfluous-parens, bad-whitespace
+# pylint: disable=superfluous-parens, 
 """ Release tasks.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

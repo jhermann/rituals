@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=wildcard-import, unused-wildcard-import, unused-import, bad-continuation
+# pylint: disable=wildcard-import, unused-wildcard-import, unused-import
 """ Project automation for Invoke.
 """
 

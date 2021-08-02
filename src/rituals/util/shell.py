@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation
+# pylint: disable=
 """ Shell command calls.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

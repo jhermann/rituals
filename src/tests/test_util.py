@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=wildcard-import, missing-docstring, redefined-outer-name, invalid-name, no-self-use, bad-continuation
+# pylint: disable=wildcard-import, missing-docstring, redefined-outer-name, invalid-name, no-self-use, 
 """ Tests for `rituals.util`.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

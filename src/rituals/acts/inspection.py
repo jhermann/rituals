@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, bad-whitespace
+# pylint: disable=
 """ 'docs' tasks.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

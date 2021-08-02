@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, bad-whitespace
+# pylint: disable=
 """ Project configuration and layout.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

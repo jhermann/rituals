@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, superfluous-parens, wildcard-import
+# pylint: disable=superfluous-parens, wildcard-import
 """ Basic tasks.
 """
 # Copyright ⓒ  2015 Jürgen Hermann

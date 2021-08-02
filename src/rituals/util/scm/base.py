@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=bad-continuation, too-few-public-methods
+# pylint: disable=too-few-public-methods
 """ Provider base class.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
