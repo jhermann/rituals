@@ -48,7 +48,7 @@ pluggy==0.13.1
 port-for==0.3.1
 py==1.9.0
 pycparser==2.20
-Pygments==2.6.1
+Pygments==2.7.4
 pylint==2.9.6
 pyparsing==2.4.7
 pytest==5.3.5
