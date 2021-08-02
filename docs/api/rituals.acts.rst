@@ -80,4 +80,3 @@ rituals.acts.testing module
    :members:
    :undoc-members:
    :show-inheritance:
-

@@ -113,7 +113,7 @@ Of course, you may also do more selective imports, or build your own
 
         project = dict(  # this would usually be a setup(…) call
             name='…',
-            …
+            ...
         )
         if __name__ == '__main__':
             setup(**project)
@@ -160,7 +160,7 @@ available as top-level names:
     @task
     def my_own_task(ctx):
         """Something project-specific."""
-        …
+        ...
 
     namespace.add_task(my_own_task)
 
@@ -195,7 +195,7 @@ shows how it's done:
     from rituals.easy import task, Collection
     from rituals.acts.documentation import namespace as _docs
 
-    …
+    ...
 
     namespace = Collection.from_module(sys.modules[__name__], name='')
     namespace.add_collection(_docs)

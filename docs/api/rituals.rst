@@ -10,6 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    rituals.acts
    rituals.util
@@ -32,4 +33,3 @@ rituals.easy module
    :members:
    :undoc-members:
    :show-inheritance:
-

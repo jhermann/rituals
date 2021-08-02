@@ -10,6 +10,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    rituals.util.scm
 
@@ -55,4 +56,3 @@ rituals.util.which module
    :members:
    :undoc-members:
    :show-inheritance:
-

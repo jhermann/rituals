@@ -32,4 +32,3 @@ rituals.util.scm.null module
    :members:
    :undoc-members:
    :show-inheritance:
-
