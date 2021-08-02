@@ -12,17 +12,17 @@ pylint==2.3.1
 pytest==4.6.4 ; python_version < "3.5"
 pytest==5.3.5 ; python_version >= "3.5"
 
-pytest-spec==2.0.0
-pytest-cov==2.8.1
+pytest-spec==3.2.0
+pytest-cov==2.12.1
 py>=1.5.0
 pluggy>=0.12
-coveralls==1.11.0
+coveralls==3.2.0
 
 # docs
 sphinx==1.8.5 ; python_version < "3.5"
-sphinx==2.1.2 ; python_version >= "3.5"
-sphinx-autobuild==0.7.1
+sphinx==3.5.4 ; python_version >= "3.5"
+sphinx-autobuild==2021.3.14
 
 # release
-shiv==0.0.48
-pex==2.1.4
+shiv==0.5.2
+pex==2.1.44
