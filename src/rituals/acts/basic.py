@@ -28,7 +28,7 @@ import shutil
 
 from . import task
 from .. import config
-from ..util import antglob, notify, shell
+from ..util import antglob, notify, shell, buildsys
 from ..util._compat import isodate
 
 
@@ -105,7 +105,7 @@ def clean(_dummy_ctx, docs=False, backups=False, bytecode=False, dist=False, # p
 def build(ctx, docs=False):
     """Build the project."""
     cfg = config.load()
-    ctx.run("python setup.py build")
+    buildsys.build()
 
     if docs:
         for doc_path in ('docs', 'doc'):

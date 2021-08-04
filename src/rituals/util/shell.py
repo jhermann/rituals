@@ -42,6 +42,7 @@ def capture(cmd, **kw):
         if not ignore_failures:
             notify.error("Command `{}` failed with RC={}!".format(cmd, exc.result.return_code,))
             raise
+        return None
 
 
 def run(cmd, **kw):

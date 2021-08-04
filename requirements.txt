@@ -4,6 +4,7 @@
 
 munch>2,<3
 invoke>=1.5
+toml>=0.10.1
 #requests>=2.9 ; python_version >= '2.7.9'
 #requests[security]>=2.9 ; python_version < '2.7.9'
 requests>=2.9

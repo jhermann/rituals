@@ -27,7 +27,7 @@ from datetime import datetime
 
 from invoke import exceptions
 
-from .. import notify
+from .. import notify, buildsys
 from .base import ProviderBase
 from ..shell import capture
 
@@ -96,9 +96,9 @@ class GitProvider(ProviderBase):
             Result is ``None`` if the workdir is in a release-ready state
             (i.e. clean and properly tagged).
         """
-        version = capture("python setup.py --version", echo=verbose)
+        version = buildsys.project_version()
         if verbose:
-            notify.info("setuptools version = '{}'".format(version))
+            notify.info("project version = '{}'".format(version))
 
         now = '{:%Y%m%d!%H%M}'.format(datetime.now())
         tag = capture("git describe --long --exclude stable --dirty='!{}'".format(now), echo=verbose)

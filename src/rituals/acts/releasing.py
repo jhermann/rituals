@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=superfluous-parens, 
+# pylint: disable=superfluous-parens,
 """ Release tasks.
 """
 # Copyright ⓒ  2015 Jürgen Hermann
@@ -37,10 +37,9 @@ from munch import munchify, Munch as Bunch
 
 from . import Collection, task
 from .. import config
-from ..util import notify, shell
+from ..util import notify, shell, buildsys
 from ..util.scm import provider as scm_provider
 from ..util.filesys import url_as_file, pretty_path
-from ..util.shell import capture
 from ..util.which import which, WhichError
 from ..util._compat import parse_qsl
 
@@ -498,7 +497,7 @@ def prep(ctx, commit=True):
     ctx.run('python setup.py -q develop -U')
 
     # Build a clean dist and check version number
-    version = capture('python setup.py --version')
+    version = buildsys.project_version()
     ctx.run('invoke clean --all build --docs release.dist')
     for distfile in os.listdir('dist'):
         trailer = distfile.split('-' + version)[1]
