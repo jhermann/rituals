@@ -52,7 +52,7 @@ except ImportError:
     import pathlib2 as pathlib
 
 __url__             = 'https://github.com/jhermann/rituals'
-__version__         = '0.4.2'
+__version__         = '0.4.3'
 __license__         = 'GPL v2'
 __author__          = 'Jürgen Hermann'
 __author_email__    = 'jh@web.de'
