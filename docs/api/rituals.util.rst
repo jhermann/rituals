@@ -25,6 +25,14 @@ rituals.util.antglob module
    :undoc-members:
    :show-inheritance:
 
+rituals.util.buildsys module
+----------------------------
+
+.. automodule:: rituals.util.buildsys
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rituals.util.filesys module
 ---------------------------
 
