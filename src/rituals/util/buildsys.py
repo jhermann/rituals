@@ -103,6 +103,6 @@ def build(run=subprocess.check_call):
     """
     root_dir = Path(config.get_project_root() or '.')
     if (root_dir / 'setup.py').exists():
-        run("python setup.py build")
+        run("python setup.py build", shell=True)
     else:
         raise NotImplementedError()
