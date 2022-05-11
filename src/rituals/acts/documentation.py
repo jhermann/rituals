@@ -118,7 +118,11 @@ def convert_markdown(ctx, cfg):
                 notify.warning("Can't import 'pandoc' ({})".format(exc))
                 break
             else:
-                pypandoc.convert(markdown, 'rst', outputfile=os.path.join(ctx.rituals.docs.sources, basename + '.rst'))
+                target = os.path.join(ctx.rituals.docs.sources, basename + '.rst')
+                try:
+                    pypandoc.convert_file(markdown, to='rst', outputfile=target)
+                except AttributeError:
+                    pypandoc.convert(markdown, 'rst', outputfile=target)
 
     # LICENSE file
     if os.path.exists('LICENSE'):
