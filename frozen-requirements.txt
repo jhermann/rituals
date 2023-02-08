@@ -16,7 +16,7 @@ colorama==0.4.4
 colorclass==2.2.0
 coverage==5.5
 coveralls==3.2.0
-cryptography==3.4.7
+cryptography==39.0.1
 curtsies==0.3.5
 cwcwidth==0.1.4
 distlib==0.3.0
